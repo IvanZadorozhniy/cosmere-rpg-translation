@@ -1,0 +1,1143 @@
+{
+    "COSMERE": {
+        "title": "Cosmere RPG",
+        "Actor": {
+            "Character": {
+                "Character": "Персонаж",
+                "Cultures": {
+                    "placeholder": "[Культура]"
+                },
+                "Ancestry": {
+                    "placeholder": "[Происхождение]"
+                },
+                "Path": {
+                    "placeholder": "[Путь]"
+                },
+                "Specialties": {
+                    "placeholder": "[Специализация]"
+                },
+                "Expertise": {
+                    "name": "Компетенция",
+                    "Armor": "Броня",
+                    "Cultural": "Культура",
+                    "Specialist": "Особые",
+                    "Utility": "Полезные навыки",
+                    "Weapon": "Оружие"
+                }
+            },
+            "Adversary": {
+                "Adversary": "Противник",
+                "Traits": {
+                    "placeholder": "[Особая черта противника]"
+                },
+                "Role": {
+                    "Minion": "Приспешник",
+                    "Rival": "Противник",
+                    "Boss": "Босс"
+                }
+            },
+            "Actions": {
+                "Aid": "Помощь",
+                "AvoidDanger": "Избежать опасности",
+                "Banter": "Banter",
+                "Brace": "Болтовня",
+                "Disengage": "Отход",
+                "Dodge": "Уклонение",
+                "Drop": "Выронить",
+                "Enhance": "Усиление",
+                "GainAdvantage": "Получить преимущество",
+                "Grapple": "Захват",
+                "Interact": "Взаимодействие",
+                "Move": "Перемещение",
+                "ReactiveStrike": "Удар реакцией",
+                "Ready": "Подготовка",
+                "Recover": "Восстановление",
+                "Regenerate": "Регенерация",
+                "Shove": "Толчок",
+                "Strike": "Удар",
+                "UseASkill": "Использовать навык"
+            },
+            "ActionCosts": {
+                "Action": "Действие",
+                "Reaction": "Реакция",
+                "FreeAction": "Свободное действие",
+                "Special": "Особое действие"
+            },
+            "Attribute": {
+                "name": "Атрибут",
+                "name_plural": "Атрибуты",
+                "Strength": {
+                    "long": "Сила",
+                    "short": "СИЛ"
+                },
+                "Speed": {
+                    "long": "Скорость",
+                    "short": "СК"
+                },
+                "Intellect": {
+                    "long": "Интеллект",
+                    "short": "ИНТ"
+                },
+                "Willpower": {
+                    "long": "Сила Воли",
+                    "short": "СВ"
+                },
+                "Awareness": {
+                    "long": "Восприятие",
+                    "short": "ВОС"
+                },
+                "Presence": {
+                    "long": "Харизма",
+                    "short": "ХАР"
+                }
+            },
+            "Resource": {
+                "Health": "Здоровье",
+                "Focus": "Фокус",
+                "Investiture": "Инвеститура"
+            },
+            "Skill": {
+                "label": "Навык",
+                "label_p": "Навыки",
+                "Agility": "Ловкость",
+                "Athletics": "Атлетика",
+                "HeavyWeapons": "Тяжёлое оружие",
+                "LightWeapons": "Лёгкое оружие",
+                "Stealth": "Скрытность",
+                "Thievery": "Воровство",
+                "Crafting": "Ремесло",
+                "Deduction": "Дедукция",
+                "Discipline": "Дисциплина",
+                "Intimidation": "Запугивание",
+                "Lore": "Знания",
+                "Medicine": "Медицина",
+                "Deception": "Обман",
+                "Insight": "Проницательность",
+                "Leadership": "Лидерство",
+                "Perception": "Бдительность",
+                "Persuasion": "Убеждение",
+                "Survival": "Выживание"
+            },
+            "Statistics": {
+                "Defense": "Защита",
+                "SensesRange": "Sense",
+                "MovementRate": "Move",
+                "LiftingCapactiy": "Грузоподъемность",
+                "RecoveryDie": "Recovery",
+                "Deflect": "Отражение",
+                "NoObscuredSense": "Не поддается влиянию эффектов, затрудняющих восприятие."
+            },
+            "Deflect": {
+                "Natural": {
+                    "Label": "Естественное отражение",
+                    "Hint": "Естественное отражение используется, когда доспехи не надеты, или когда естественное отражение выше, чем надетая броня."
+                }
+            },
+            "Size": {
+                "Small": "Маленький",
+                "Medium": "Средний",
+                "Large": "Большой",
+                "Huge": "Огромный",
+                "Gargantuan": "Громадный"
+            },
+            "Type": {
+                "Custom": "Custom",
+                "Humanoid": "Гуманоид",
+                "Animal": "Животное"
+            },
+            "Sheet": {
+                "Header": {
+                    "Editable": "Редактируемый",
+                    "Locked": "Заблокированный"
+                },
+                "Item": {
+                    "Edit": "Редактировать",
+                    "Details": "Детально",
+                    "Remove": "Удалить"
+                },
+                "Actions": {
+                    "label": "Действия", 
+                    "Activation": "Активация", 
+                    "Consume": "Стоимость", 
+                    "Uses": "Использование", 
+                    "Use": "Использовать действие", 
+                    "Strike": "Удар", 
+                    "BaseSectionName": "Действие {type}", 
+                    "MiscSectionName": "Разное", 
+                    "NewItem": "Добавить действие"
+                },
+                "Equipment": {
+                    "Quantity": "Количество",
+                    "Weight": "Вес",
+                    "IncreaseQuantity": "Увеличить количество",
+                    "DecreaseQuantity": "Уменьшить количество"
+                },
+                "Inventory": {
+                    "label": "Инвентарь",
+                    "Item": {
+                        "Quantity": "Количество",
+                        "Weight": "Вес"
+                    }
+                },
+                "Conditions": "Состояния",
+                "Injuries": {
+                    "Label": "Травмы",
+                    "Duration": "Длительность",
+                    "Days": "дней",
+                    "Permanent": "Постоянная",
+                    "DecreaseDuration": "Уменьшить длительность",
+                    "IncreaseDuration": "Увеличить длительность",
+                    "CreateInjury": "Добавить травму"
+                },
+                "Level": "Уровень",
+                "Tier": "Тир",
+                "Expertises": "Экспертизы",
+                "EditExpertises": "Редактировать экспертизы",
+                "ConfigureSkills": "Настроить навыки",
+                "EditRole": "Редактировать роль",
+                "EditSize": "Редактировать размер",
+                "EditType": "Редактировать тип",
+                "CreatureType": "Тип",
+                "CustomType": "Пользовательский тип",
+                "Subtype": "Подтип",
+                "Edit": "Редактировать",
+                "View": "Просмотр",
+                "Favorites": "Избранное",
+                "DropFavorite": "Удалить из избранного",
+                "AncestryPlaceholder": "Добавить происхождение",
+                "CulturePlaceholder": "Добавить культуру",
+                "PathPlaceholder": "Добавить путь",
+                "ShortRest": "Короткий отдых",
+                "LongRest": "Длинный отдых",
+                "ToggleShowSkills": "Показывать навыки без рангов",
+                "ToggleCollapseSkills": "Скрыть навыки без рангов",
+                "ConfigureDefense": "Настроить защиту",
+                "ConfigureDeflect": "Настроить уклонение",
+                "ConfigureMovement": "Настроить скорость передвижения",
+                "ConfigureSensesRange": "Настроить дальность чувств",
+                "ConfigureRecovery": "Настроить кубик восстановления",
+                "RollInjury": "Бросить на получение травмы",
+                "Tabs": {
+                    "Details": "Подробности",
+                    "Actions": "Действия",
+                    "Equipment": "Снаряжение",
+                    "Goals": "Цели",
+                    "Effects": "Эффекты и Состояния"
+                },
+                "Search": {
+                    "Item": {
+                        "Placeholder": "Искать действия"
+                    },
+                    "Equipment": {
+                        "Placeholder": "Искать предметы"
+                    },
+                    "Effects": {
+                        "Placeholder": "Искать эффекты"
+                    },
+                    "Clear": "Очистить поиск",
+                    "ChangeSortDirection": "Изменить направление сортировки"
+                },
+                "Details": {
+                    "Purpose": "Намерение",
+                    "Obstacle": "Препятствие",
+                    "Goals": {
+                        "Label": "Цели",
+                        "New": "Добавить новую цель",
+                        "NewText": "Новая цель",
+                        "AdjustProgressTooltipInc": "Левый клик для увеличения прогресса.",
+                        "AdjustProgressTooltipDec": "Правый клик для уменьшения прогресса.",
+                        "HideComplete": "Скрыть завершенные"
+                    },
+                    "Connections": {
+                        "Label": "Связи",
+                        "New": "Добавить новую связь",
+                        "NewText": "Новая связь"
+                    }
+                },
+                "Skills": {
+                    "AdjustTooltip": "Левый клик для увеличения ранга {skill}.<br>Правый клик для уменьшения ранга {skill}."
+                }
+                
+            }
+        },
+        "AttributeGroup": {
+            "Physical": {
+                "long": "Физическая",
+                "short": "ФИЗ"
+            },
+            "Cognitive": {
+                "long": "Когнитивная",
+                "short": "КОГ"
+            },
+            "Spiritual": {
+                "long": "Духовная",
+                "short": "ДУХ"
+            }
+        },
+        "Item": {
+            "Type": {
+                "Weapon": {
+                    "label": "Оружие",
+                    "label_plural": "Оружия",
+                    "desc_placeholder": "Измените это, чтобы описать, что это за оружие и как оно выглядит.",
+                    "New": "Новое оружие"
+                },
+                "Armor": {
+                    "label": "Броня",
+                    "label_plural": "Брони",
+                    "desc_placeholder": "Измените это, чтобы описать, что это за броня и как она выглядит.",
+                    "New": "Новая броня"
+                },
+                "Equipment": {
+                    "label": "Снаряжение",
+                    "label_plural": "Снаряжение",
+                    "desc_placeholder": "Измените это, чтобы описать, что это за предмет снаряжения и как он выглядит.",
+                    "New": "Новое снаряжение"
+                },
+                "Loot": {
+                    "label": "Добыча",
+                    "label_plural": "Добыча",
+                    "desc_placeholder": "Измените это, чтобы описать предмет.",
+                    "New": "Новая добыча"
+                },
+                "Ancestry": {
+                    "label": "Происхождение",
+                    "label_plural": "Происхождения",
+                    "desc_placeholder": "Измените это, чтобы определить возможное наследие для персонажа. Также включите любые специальные правила для игроков."
+                },
+                "Culture": {
+                    "label": "Культура",
+                    "label_plural": "Культуры",
+                    "desc_placeholder": "Измените это, чтобы определить одну из многих культур в сеттинге. Также включите любые специальные правила для игроков."
+                },
+                "Path": {
+                    "label": "Путь",
+                    "label_plural": "Пути",
+                    "desc_placeholder": "Измените это, чтобы описать, каких персонажей представляет этот путь развития."
+                },
+                "Specialty": {
+                    "label": "Специализация",
+                    "label_plural": "Специализации",
+                    "desc_placeholder": "Измените это, чтобы описать уникальную подгруппу персонажей, которую представляет эта специализация."
+                },
+                "Talent": {
+                    "label": "Талант",
+                    "label_plural": "Таланты",
+                    "desc_placeholder": "Измените это, чтобы описать, что делает этот талант.",
+                    "New": "Новый талант"
+                },
+                "Action": {
+                    "label": "Действие",
+                    "label_plural": "Действия",
+                    "desc_placeholder": "Измените это, чтобы описать, что это за действие и что оно делает.",
+                    "New": "Новое действие"
+                },
+                "Trait": {
+                    "label": "Черта",
+                    "label_plural": "Черты",
+                    "desc_placeholder": "Измените это, чтобы описать эту черту.",
+                    "New": "Новая черта"
+                },
+                "Injury": {
+                    "label": "Травма",
+                    "label_plural": "Травмы",
+                    "desc_placeholder": "Измените это, чтобы описать, как эта травма влияет на персонажа."
+                },
+                "Connection": {
+                    "label": "Связь",
+                    "label_plural": "Связи",
+                    "desc_placeholder": "Измените это, чтобы создать описание NPC и их связи с персонажем."
+                },
+                "Goal": {
+                    "label": "Цель",
+                    "label_plural": "Цели",
+                    "desc_placeholder": "Измените это, чтобы описать цель."
+                },
+                "Power": {
+                    "label": "Сила",
+                    "label_plural": "Силы",
+                    "desc_placeholder": "Измените это, чтобы описать силу.",
+                    "New": "Новая {type}"
+                },
+                "TalentTree": {
+                    "label": "Древо талантов",
+                    "label_plural": "Древа талантов"
+                }                
+            },
+            "Weapon": {
+                "Type": {
+                    "Light": "Light",
+                    "Heavy": "Heavy",
+                    "Special": "Special"
+                },
+                "Name": {
+                    "placeholder": "[Weapon Name]"
+                },
+                "Trait": {
+                    "Cumbersome": "Cumbersome",
+                    "Dangerous": "Dangerous",
+                    "Deadly": "Deadly",
+                    "Defensive": "Defensive",
+                    "Discreet": "Discreet",
+                    "Indirect": "Indirect",
+                    "Loaded": "Loaded",
+                    "Momentum": "Momentum",
+                    "Offhand": "Offhand",
+                    "Pierce": "Pierce",
+                    "Quickdraw": "Quickdraw",
+                    "Thrown": "Thrown",
+                    "TwoHanded": "Two-Handed",
+                    "Unique": "Unique",
+                    "Fragile": "Fragile",
+                    "Reach": "Reach"
+                },
+                "Strike": "Strike",
+                "Improvised": "Improvised Weapon",
+                "Unarmed": "Unarmed Strike"
+            },
+            "Armor": {
+                "Name": {
+                    "placeholder": "[Armor Name]"
+                },
+                "Trait": {
+                    "Cumbersome": "Cumbersome",
+                    "Dangerous": "Dangerous",
+                    "Presentable": "Presentable",
+                    "Unique": "Unique"
+                },
+                "Deflect": "Deflect"
+            },
+            "Equipment": {
+                "Type": {
+                    "Basic": "Basic"
+                }
+            },
+            "Action": {
+                "Type": {
+                    "Basic": {
+                        "label": "Basic Action",
+                        "label_plural": "Basic Actions"
+                    },
+                    "Ancestry": {
+                        "label": "Ancestry Action",
+                        "label_plural": "Ancestry Actions"
+                    }
+                },
+                "Ancestry": {
+                    "Label": "Ancestry Identifier",
+                    "Hint": "Identifier of the Ancenstry this action belongs to. (e.g. \"human\")"
+                }
+            },
+            "Goal": {
+                "Level": {
+                    "Label": "Progress"
+                },
+                "Reward": {
+                    "Type": {
+                        "Items": "Items",
+                        "SkillRanks": "Skill Ranks",
+                        "Label": "Type"
+                    },
+                    "Skill": {
+                        "Label": "Skill"
+                    },
+                    "Ranks": {
+                        "Label": "Ranks"
+                    },
+                    "Items": {
+                        "Label": "Items"
+                    },
+                    "Validation": {
+                        "MissingSkillOrRanks": "Must set a Skill and Ranks",
+                        "MissingItems": "Must set Items"
+                    }
+                }
+            },
+            "Power": {
+                "Identifier": {
+                    "Hint": "Used to uniquely identify this power. Should be the same as the identifier of the associated skill, unless a custom skill is used."
+                },
+                "CustomSkill": {
+                    "Label": "Use custom skill?",
+                    "Hint": "If checked, configure a custom skill instead of the skill matching this power's identifier."
+                },
+                "Skill": {
+                    "Label": "Skill",
+                    "Hint": "The skill associated with this power. Gaining this power grants the character access to this skill."
+                },
+                "Notification": {
+                    "PowerExists": "A power with identifier \"{identifier}\" already exists on {actor}."
+                }
+            },
+            "Path": {
+                "LinkedSkills": {
+                    "Label": "Linked Skills",
+                    "Hint": "These skills are displayed alongside the path in the character sheet."
+                }
+            },
+            "Talent": {
+                "Type": {
+                    "Ancestry": "Ancestry",
+                    "Path": "Path",
+                    "Power": "Power"
+                },
+                "Prerequisite": {
+                    "Type": {
+                        "Talent": "Talent",
+                        "Attribute": "Attribute",
+                        "Skill": "Skill",
+                        "Connection": "Connection",
+                        "Level": "Level"
+                    },
+                    "Mode": {
+                        "AnyOf": "Any of",
+                        "AllOf": "All of"
+                    },
+                    "Level": {
+                        "Label": "Level"
+                    }
+                },
+                "GrantRule": {
+                    "Label": "On Obtain",
+                    "Hint": "These rules are applied when the talent is obtained.",
+                    "Type": {
+                        "Items": "Grant Items",
+                        "Label": "Type"
+                    },
+                    "Items": {
+                        "Label": "Items"
+                    }
+                },
+                "Power": {
+                    "Label": "Power Identifier",
+                    "Hint": "Identifier of the power this talent belongs to."
+                }
+            },
+            "TalentTree": {
+                "Width": {
+                    "Label": "Width"
+                },
+                "Height": {
+                    "Label": "Height"
+                }
+            },
+            "Activation": {
+                "Type": {
+                    "Action": "Action",
+                    "SkillTest": "Skill Test",
+                    "Utility": "Utility"
+                },
+                "ConsumeType": {
+                    "Resource": {
+                        "Label": "Resource"
+                    },
+                    "Item": {
+                        "Label": "Item"
+                    }
+                },
+                "Uses": {
+                    "Types": {
+                        "Charge": {
+                            "Singular": "Charge",
+                            "Plural": "Charges"
+                        },
+                        "Use": {
+                            "Singular": "Use",
+                            "Plural": "Uses"
+                        }
+                    },
+                    "Recharge": {
+                        "Label": "Recharge",
+                        "PerScene": "Per scene"
+                    },
+                    "Per": "Per"
+                },
+                "Opportunity": "Opportunity Threshold",
+                "Complication": "Complication Threshold"
+            },
+            "Injuries": {
+                "Name": {
+                    "placeholder": "[Injury Name]"
+                },
+                "Duration": {
+                    "FleshWound": "Flesh Wound",
+                    "ShallowInjury": "Shallow Injury",
+                    "ViciousInjury": "Vicious Injury",
+                    "PermanentInjury": "Permanent Injury",
+                    "Death": "Death"
+                }
+            },
+            "Equip": {
+                "Types": {
+                    "Wear": {
+                        "Label": "Worn"
+                    },
+                    "Hold": {
+                        "Label": "Held"
+                    }
+                },
+                "Hold": {
+                    "OneHanded": {
+                        "Label": "One Handed"
+                    },
+                    "TwoHanded": {
+                        "Label": "Two Handed"
+                    }
+                },
+                "Hand": {
+                    "Main": {
+                        "Label": "Main Hand"
+                    },
+                    "Off": {
+                        "Label": "Off Hand"
+                    }
+                },
+                "Equip": {
+                    "Label": "Equip"
+                },
+                "Unequip": {
+                    "Label": "Unequip"
+                },
+                "Unequipped": {
+                    "Label": "Unequipped"
+                }
+            },
+            "Modality": {
+                "Label": "Modality Identifier",
+                "Hint": "Identifier of the modality this talent belongs to. (e.g. \"stance\")"
+            },
+            "AttackFlavor": "[actor] attacks with their [item].",
+            "Sheet": {
+                "Basics": "Basics",
+                "Tabs": {
+                    "Description": "Description",
+                    "Effects": "Effects",
+                    "Details": "Details"
+                },
+                "Identifier": {
+                    "Label": "Identifier",
+                    "Hint": "Used to uniquely identify this {type}. Identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_)."
+                },
+                "Type": "Type",
+                "Injury": {
+                    "Duration": "Duration",
+                    "InitialDuration": "Initial",
+                    "RemainingDuration": "Remaining"
+                },
+                "Ancestry": {
+                    "Size": "Size",
+                    "Advancement": "Advancement",
+                    "FreePath": "Free Path",
+                    "FreeTalents": "Free Talents",
+                    "BonusTalents": "Bonus Talents",
+                    "Restrictions": "Restrictions",
+                    "PathReferencePlaceholder": "Drop a Path here to set a free path",
+                    "TalentIdDescription": "The identifier column should hold the identifier of the talent item you want characters with this Ancestry to have access to. The path identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_).",
+                    "Component": {
+                        "AdvancementTalentList": {
+                            "DropTalent": "Drop a Talent here to add it to the list",
+                            "Warning": {
+                                "WrongType": "The dropped Document must be of type Talent"
+                            }
+                        },
+                        "BonusTalents": {
+                            "Add": "New Rule"
+                        }
+                    }
+                },
+                "Specialty": {
+                    "PathId": "Path Identifier",
+                    "PathIdDescription": "The identifier of the path this specialty belongs to. The path identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_)."
+                },
+                "Loot": {
+                    "IsMoney": "Is Money",
+                    "IsMoneyDescription": "Is this loot item a form of currency?"
+                },
+                "Properties": {
+                    "Quantity": "Quantity",
+                    "Weight": "Weight",
+                    "Price": "Price"
+                },
+                "Equip": {
+                    "Title": "Equipment Details",
+                    "AlwaysEquipped": "Is Always Equipped?",
+                    "Traits": "Traits",
+                    "ExpertTraits": "Expert Traits",
+                    "LoseTrait": "Loses [trait]",
+                    "ModifyTraitValue": "[trait] [[value]] >",
+                    "ModifyTraitValueFull": "[trait] [[value]] > [[newValue]]",
+                    "TraitsShow": "Show All Traits",
+                    "TraitsHide": "Hide Traits",
+                    "ExpertTraitsShow": "Show All Expert Traits",
+                    "ExpertTraitsHide": "Hide Expert Traits"
+                },
+                "Activation": {
+                    "Title": "Usage",
+                    "Type": "Activation Type",
+                    "Cost": "Activation Cost",
+                    "Consume": "Resource Consumption",
+                    "Uses": "Limited Uses",
+                    "Recharge": "Recharge"
+                },
+                "Attack": {
+                    "Title": "Attack",
+                    "Type": "Attack Type",
+                    "Range": "Range",
+                    "RangeShort": "Short",
+                    "RangeLong": "Long"
+                },
+                "Damage": {
+                    "Title": "Damage",
+                    "Formula": "Damage Formula",
+                    "GrazeOverride": "Override Graze Damage Calculation",
+                    "GrazeShow": "Show New Graze Damage Formula",
+                    "GrazeHide": "Hide New Graze Damage Forumla",
+                    "GrazeFormula": "New Formula",
+                    "GrazeHint": "Formula entered here will be the entirety of the calculation for graze damage. Any die rolls will be rolled separately from the main damage roll. You can pull in all or part of the main roll using @damage.total/@damage.unmodded/@damage.dice (the latter being the system default) or the selected attribute mod with @mod"
+                },
+                "Modality": {
+                    "Title": "Modality",
+                    "HasModality": "Has Modality?"
+                },
+                "Talent": {
+                    "PathId": "Path Identifier",
+                    "PathIdPlaceholder": "Path Identifier",
+                    "PathIdDescription": "The identifier of the path this talent belongs to.",
+                    "SpecialtyId": "Specialty Identifier",
+                    "SpecialtyIdPlaceholder": "Specialty Identifier — Optional",
+                    "SpecialtyIdDescription": "The identifier of the specialty this talent belongs to.",
+                    "AncestryId": "Ancestry Identifier",
+                    "AncestryIdPlaceholder": "Ancestry Identifier",
+                    "AncestryIdDescription": "The identifier of the ancestry this talent belongs to.",
+                    "Prerequisites": {
+                        "Label": "Prerequisites",
+                        "Type": "Type",
+                        "Description": "Description",
+                        "Create": "New Prerequisite",
+                        "Edit": "Edit prerequisite",
+                        "Delete": "Remove prerequisite",
+                        "TalentId": "Talent Identifier",
+                        "TalentIdPlaceholder": "Talent Identifier",
+                        "Attribute": "Attribute",
+                        "AttributeValue": "Value",
+                        "AttributeValuePlaceholder": "Minimum Attribute Value",
+                        "Skill": "Skill",
+                        "SkillRank": "Rank",
+                        "SkillRankPlaceholder": "Minimum Skill Rank",
+                        "Connection": "Connection",
+                        "ConnectionDescription": "Description",
+                        "ConnectionDescriptionPlaceholder": "Connection Description",
+                        "DropTalents": "Drop Talents here to add them to the list."
+                    },
+                    "GrantRules": {
+                        "Description": "Description",
+                        "Create": "New rule",
+                        "Edit": "Edit rule",
+                        "Delete": "Remove rule"
+                    }
+                },
+                "Goal": {
+                    "Reward": {
+                        "Title": "Rewards",
+                        "Create": "New Reward",
+                        "SkillRanksDescriptionValue": "{ranks} ranks in {skill}"
+                    }
+                }
+            }
+        },
+        "Attack": {
+            "Type": {
+                "Melee": "Ближний бой",
+                "Ranged": "Дальний бой"
+            }
+        },
+        "DamageTypes": {
+            "Energy": "Энергетический",
+            "Impact": "Дробящий",
+            "Keen": "Острый",
+            "Spirit": "Духовный",
+            "Vital": "Жизненный",
+            "Healing": "Исцеляющий"
+        },
+        "Paths": {
+            "Types": {
+                "Heroic": {
+                    "Label": "Героический"
+                }
+            }
+        },
+        "Currencies": {},
+        "Combat": {
+            "FastPlayers": "Быстрые персонажи",
+            "SlowPlayers": "Медленные персонажи",
+            "FastAdversaries": "Быстрые противники",
+            "SlowAdversaries": "Медленные противники",
+            "ToggleTurn": "Переключить скорость хода",
+            "ResetActivation": "Сбросить активацию",
+            "Activate": "Отметить как совершившего действие"
+        },
+        "Conditions": {
+            "Afflicted": "Поражённый",
+            "Determined": "Решительный",
+            "Disoriented": "Дезориентирован",
+            "Empowered": "Озарённый",
+            "Enhanced": "Усиление",
+            "Encumbered": "Перегруженный",
+            "Exhausted": "Истощение",
+            "Focused": "Сфокусирован",
+            "Immobilized": "Обездвижен",
+            "Prone": "Сбитый с ног",
+            "Restrained": "Скован",
+            "Slowed": "Замедлен",
+            "Stunned": "Ошеломлен",
+            "Surprised": "Взят врасплох",
+            "Unconscious": "Без сознания"
+        },
+        "Sheet": {
+            "Effects": {
+                "Label": "Эффекты",
+                "Inactive": "Неактивные эффекты",
+                "Passive": "Пассивные эффекты",
+                "Temporary": "Временные эффекты",
+                "Source": "Источник",
+                "Enable": "Включить эффект",
+                "Disable": "Отключить эффект",
+                "Duration": "Длительность",
+                "Create": "Новый эффект",
+                "Edit": "Редактировать эффект",
+                "Delete": "Удалить эффект",
+                "ToggleActive": "Переключить активность"
+            },
+            "Talents": {
+                "Label": "Таланты",
+                "AcquiredAtLevel": "Получено на уровне",
+                "Add": "Новый талант",
+                "Edit": "Редактировать талант",
+                "Delete": "Удалить талант",
+                "Cancel": "Отменить изменения",
+                "Submit": "Завершить редактирование"
+            },
+            "TalentPicks": {
+                "Edit": "Редактировать",
+                "Delete": "Удалить",
+                "Cancel": "Отменить изменения",
+                "Submit": "Завершить редактирование"
+            }            
+        },
+        "Attribute": {
+            "str": "Сила",
+            "spd": "Скорость",
+            "int": "Интеллект",
+            "wil": "Сила Воли",
+            "awa": "Восприятие",
+            "pre": "Харизма"
+        },
+        "Skill": {
+            "agi": "Ловкость",
+            "ath": "Атлетика",
+            "hwp": "Тяжёлое оружие",
+            "lwp": "Лёгкое оружие",
+            "stl": "Скрытность",
+            "thv": "Воровство",
+            "cra": "Ремесло",
+            "ded": "Дедукция",
+            "dis": "Дисциплина",
+            "inm": "Запугивание",
+            "lor": "Знания",
+            "med": "Медицина",
+            "dec": "Обман",
+            "ins": "Проницательность",
+            "lea": "Лидерство",
+            "prc": "Бдительность",
+            "prs": "Убеждение",
+            "sur": "Выживание"
+        },
+        "ChatMessage": {
+            "Buttons": {
+                "DamageFull": "Нажмите, чтобы применить полный урон к выбранному(ым) токену(ам).",
+                "DamageHalf": "Нажмите, чтобы применить половину урона к выбранному(ым) токену(ам).",
+                "DamageDouble": "Нажмите, чтобы применить двойной урон к выбранному(ым) токену(ам).",
+                "Healing": "Нажмите, чтобы применить исцеление к выбранному(ым) токену(ам).",
+                "ReduceFocus": "Нажмите, чтобы уменьшить фокус с выбранного(ых) токенов.",
+                "RollCrit": "Нажмите, чтобы бросить критический урон.",
+                "RollAdvantage": "Нажмите, чтобы бросить с преимуществом.",
+                "RollDisadvantage": "Нажмите, чтобы бросить с недостатком."
+            },
+            "Trays": {
+                "Targets": "Цели"
+            },
+            "InjuryRoll": "Бросок травмы",
+            "InjuryDuration": {
+                "Dead": "{actor} <strong>умер</strong>.",
+                "Permanent": "{actor} <strong>перманентно травмирован</strong>.",
+                "Temporary": "{actor} травмирован на <strong>{days} дней</strong>."
+            },
+            "ApplyDamage": "{actor} получает <strong>{amount} урона</strong>.",
+            "ApplyHealing": "{actor} восстанавливает <strong>{amount} здоровья</strong>.",
+            "DamageCalculation": "Расчет урона: {calculation}",
+            "UndoDamage": "Нажмите, чтобы отменить полученный урон.",
+            "UndoHealing": "Нажмите, чтобы отменить исцеление.",
+            "ViewRollsDetails": "Детали бросков",
+            "Welcome": "<h2>Добро пожаловать в систему RPG Cosmere!</h2> <p>Спасибо, что попробовали систему ролевой игры Cosmere, разработанную сообществом! Сейчас вы используете версию <strong>{version}</strong>. Поскольку это ранний релиз, могут быть ошибки или недостающие функции, но ваши отзывы помогут нам улучшить систему. </p> <p>Для обсуждений, обновлений и поддержки присоединяйтесь к нашему серверу <a href=\"{discordLink}\">Metalworks Discord</a>.</p> <p>Если вы столкнулись с проблемами или у вас есть предложения, мы будем рады их услышать! Пожалуйста, сообщайте о них на нашей <a href=\"{issuesLink}\">странице Issues на GitHub</a> или на сервере <a href=\"{discordLink}\">Metalworks Discord</a>. Обязательно ознакомьтесь с <a href=\"{contributingLink}\">руководством по вкладам</a>, если хотите принять участие в разработке. </p> <p>Мы рады, что вы с нами, и надеемся, что вам понравится играть в Cosmere!</p>"
+        },
+        "Theme": {
+            "Default": "Default",
+            "Stormlight": "Stormlight Archive"
+        }
+    },
+    "DICE": {
+        "RollMode": "Режим броска",
+        "Plot": {
+            "Die": "Кубик сюжета",
+            "RaiseTheStakes": "Повысить ставки",
+            "Complication": "Усложнение",
+            "Opportunity": "Возможность"
+        },
+        "AdvantageMode": {
+            "None": "Нет",
+            "Advantage": "Преимущество",
+            "Disadvantage": "Недостаток"
+        },
+        "Damage": {
+            "Label": "Урон",
+            "Apply": "Применить",
+            "Graze": "Задеть",
+            "Full": "Полный"
+        }
+    },
+    "ROLLS": {
+        "Recovery": "[character] бросает свой кубик восстановления.",
+        "RecoveryTend": "Получает лечение от [tender]."
+    },
+    "DIALOG": {
+        "ItemConsume": {
+            "Title": "Потребление ресурса",
+            "ShouldConsume": "Потребить ресурс?"
+        },
+        "EditExpertise": {
+            "Remove": "Удалить",
+            "Add": "Добавить индивидуальную компетенцию",
+            "AddPlaceholder": "Индивидуальная компетенция"
+        },
+        "ConfigureResource": {
+            "Title": "Настройка максимума {resource}: {actor}"
+        },
+        "LongRest": {
+            "ShouldPerform": "Выполнить долгий отдых?"
+        },
+        "ShortRest": {
+            "Title": "Краткий отдых",
+            "TendedToBy": "Получает лечение от"
+        },
+        "ConfigureDefense": {
+            "Title": "Настройка защиты {attribute-group}: {actor}"
+        },
+        "ConfigureMovementRate": {
+            "Title": "Настройка скорости передвижения: {actor}"
+        },
+        "ConfigureSensesRange": {
+            "Title": "Настройка дальности восприятия: {actor}",
+            "ObscuredUnaffected": "Не поддается влиянию эффектов, затрудняющих восприятие"
+        },
+        "ConfigureRecoveryDie": {
+            "Title": "Настройка кубика восстановления: {actor}"
+        },
+        "ConfigureDeflect": {
+            "Title": "Настройка отражения: {actor}"
+        },
+        "EditTalentPrerequisite": {
+            "Title": "Изменить необходимое условие"
+        },
+        "ConfigureAttack": {
+            "AdvantageMode": {
+                "Title": "Режим преимущества",
+                "Field": {
+                    "Type": "Тип",
+                    "Dice": "Кубики"
+                }
+            }
+        },
+        "EditBonusTalentsRule": {
+            "Title": "Редактировать правило бонусных талантов",
+            "Quantity": "Количество",
+            "Warning": {
+                "DuplicateLevel": "Правило для уровня {level} уже существует"
+            }
+        },
+        "EditGrantRule": {
+            "Title": "Редактировать правило"
+        },
+        "EditGoalReward": {
+            "Title": "Редактировать награду"
+        },
+        "ReleaseNotes": {
+            "Title": "Cosmere Roleplaying Game - Примечания к релизу"
+        },
+        "ConfigureTalentTree": {
+            "Title": "Настройка древа талантов: {name}",
+            "Warning": {
+                "OutOfBounds": "Выбранные границы могут привести к размещению хотя бы одного таланта за пределами древа."
+            },
+            "Notification": {
+                "TalentPicked": "Добавлен талант {talent} для {actor}"
+            }
+        }
+    },
+    "COMPONENT": {
+        "DocumentReferenceInput": {
+            "Placeholder": "Перетащите {type} сюда, чтобы создать ссылку",
+            "Warning": {
+                "WrongType": "Перетащенный документ должен быть типа {type}",
+                "WrongSubtype": "Перетащенный {type} должен быть типа {subtype}"
+            }
+        },
+        "DocumentDropListComponent": {
+            "Placeholder": "Перетащите {type} сюда, чтобы добавить его в список",
+            "Warning": {
+                "DocumentAlreadyInList": "Перетащенный {type} уже есть в списке",
+                "WrongType": "Перетащенный документ должен быть типа {type}",
+                "WrongSubtype": "Перетащенный {type} должен быть типа {subtype}"
+            }
+        },
+        "MultiValueSelect": {
+            "DefaultPlaceholder": "Выберите вариант"
+        }
+    },
+    "GENERIC": {
+        "Unknown": "Неизвестно",
+        "None": "Нет",
+        "Default": "По умолчанию",
+        "Document": "Документ",
+        "Formula": "Формула",
+        "Value": "Значение",
+        "Skill": "Навыки",
+        "Attribute": "Атрибут",
+        "SkillTest": "Тест навыка",
+        "Plot": "Сюжет",
+        "Damage": "Урон",
+        "Cost": "Стоимость",
+        "Configure": "Настроить",
+        "DistanceUnit": "фут.",
+        "ViewDetails": "Посмотреть детали",
+        "HideDetails": "Скрыть детали",
+        "Bonus": "Бонус",
+        "Mode": "Режим",
+        "Turns": "Ходы",
+        "Rounds": "Раунды",
+        "Clear": "Очистить",
+        "Name": "Имя",
+        "Level": "Уровень",
+        "Add": "Добавить",
+        "Type": "Тип",
+        "Description": "Описание",
+        "Button": {
+            "Roll": "Бросить",
+            "Continue": "Продолжить",
+            "Remove": "Удалить",
+            "Edit": "Редактировать",
+            "Save": "Сохранить",
+            "Cancel": "Отменить",
+            "Update": "Обновить",
+            "RemoveFavorite": "Удалить из избранного",
+            "Favorite": "Избранное"
+        },
+        "Notification": {
+            "GrazeFocusSpent": "Снижено внимание на 1",
+            "AddedItem": "Добавлен {type} \"{item}\" для {actor}",
+            "IncreasedSkillRank": "Увеличен ранг навыка {actor}'а на {amount}"
+        },
+        "Warning": {
+            "NotImplemented": "Извините! [action] еще не реализовано",
+            "NoActor": "Не найден выбранный или назначенный актер для этого броска",
+            "NotEnoughResource": "Невозможно потребить, недостаточно ресурса",
+            "NotEnoughUses": "Невозможно потребить, недостаточно использований",
+            "ItemConsumeResourceNotConfigured": "Ресурс, выбранный для потребления, не настроен для этого предмета",
+            "NoDuplicateExpertises": "Невозможно создать дублирующую экспертизу",
+            "NoFocus": "Недостаточно фокуса для выполнения этого действия",
+            "TalentCannotBePrerequisiteOfItself": "Талант не может быть предварительным условием для самого себя",
+            "DuplicatePrerequisiteTalentRef": "Талант с ID {talentId} уже существует ({talentName})",
+            "ItemAlreadyInTree": "Предмет с ID \"{itemId}\" уже существует в дереве талантов {name}"
+        },
+        "DerivedValue": {
+            "Mode": {
+                "Derived": "Выведено",
+                "Override": "Пользовательское"
+            }
+        },
+        "Units": {
+            "Days": "Дни"
+        }
+    },
+    "TYPES": {
+        "Actor": {
+            "character": "Персонаж",
+            "adversary": "Противник"
+        },
+        "Item": {
+            "culture": "Культура",
+            "ancestry": "Род",
+            "path": "Путь",
+            "connection": "Связь",
+            "goal": "Цель",
+            "injury": "Травма",
+            "specialty": "Специализация",
+            "loot": "Добыча",
+            "armor": "Броня",
+            "trait": "Черта",
+            "action": "Действие",
+            "talent": "Талант",
+            "equipment": "Экипировка",
+            "weapon": "Оружие",
+            "power": "Сила",
+            "talent_tree": "Дерево талантов"
+        }
+    },
+    "UNITS": {
+        "Distance": {
+            "Feet": "Футы"
+        }
+    },
+    "SETTINGS": {
+        "itemSheetSideTabs": {
+            "name": "Вертикальные вкладки для листов предметов",
+            "hint": "Если включено, листы предметов будут использовать вертикальные вкладки справа, как в листе персонажа, вместо стандартных горизонтальных вкладок."
+        },
+        "skipRollDialogByDefault": {
+            "name": "Пропускать диалог прокачки по умолчанию",
+            "hint": "Если включено, при клике на прокачку будет пропущен диалог конфигурации прокачки, используя настройки по умолчанию. Диалог все еще можно вызвать, удерживая клавишу 'Пропустить/Показать диалог' в системных настройках."
+        },
+        "enableOverlayButtons": {
+            "name": "Включить кнопки наложения",
+            "hint": "При выводе проверки навыков или прокачки включаются кнопки наложения в чате, которые предлагают дополнительные функции для прокачки."
+        },
+        "enableApplyButtons": {
+            "name": "Включить кнопки применения",
+            "hint": "При выводе прокачки включаются кнопки в чате, которые позволяют применить урон или лечение к токенам, или уменьшить фокус для этих токенов."
+        },
+        "alwaysShowApplyButtons": {
+            "name": "Всегда показывать кнопки применения",
+            "hint": "При выводе прокачки всегда показывать кнопки применения, а не только при наведении."
+        },
+        "applyButtonsTo": {
+            "name": "Опции кнопок применения",
+            "hint": "Определяет, к каким токенам будет применяться урон, лечение или снижение фокуса при применении через кнопки в чате.",
+            "choices": {
+                "SelectedOnly": "Применить к выбранным токенам",
+                "TargetedOnly": "Применить к целевым токенам",
+                "SelectedAndTargeted": "Применить к обоим",
+                "PrioritiseSelected": "Приоритет для выбранных токенов",
+                "PrioritiseTargeted": "Приоритет для целевых токенов"
+            }
+        },
+        "systemTheme": {
+            "name": "Предпочитаемая тема системы",
+            "hint": "Укажите набор цветов для использования в документах системы и элементах интерфейса. Выбранная тема будет уважать предпочтения темной/светлой темы в основных настройках."
+        }
+    },
+    "KEYBINDINGS": {
+        "skipDialogDefault": "Пропустить/Показать диалог",
+        "skipDialogAdvantage": "Пропустить диалог с преимуществом",
+        "skipDialogDisadvantage": "Пропустить диалог с недостатком",
+        "skipDialogRaiseStakes": "Пропустить диалог с повышением ставки"
+    }    
+}
