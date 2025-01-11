@@ -16,7 +16,7 @@ There is a great module that uses Babele to translate other modules in Russian, 
 5. You should find there couple folders:
 ![ru-ru module](https://github.com/IvanZadorozhniy/images_repo/blob/main/cosmere-rpg-translation/Screenshot_2025-01-11_14-26-43.jpg)
 6. Move files from this repo to the same folders in the ru-ru module
-7. In the module.json, you have to add code belove into the languages object
+7. In the module.json, you have to add code below into the languages object
 ```
 {
     "lang": "ru",
