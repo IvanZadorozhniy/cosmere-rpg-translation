@@ -29,4 +29,4 @@ There is a great module that uses Babele to translate other modules in Russian, 
 10. Here we are, it should work. 
 
 There is a "copy_files.py" file. I **highly don't recommend** to use it, but if you know what you do you can use it 
-``` python copy_files.pu -p "Your Foundry User Data Path" ```
+``` python copy_files.py -p "Your Foundry User Data Path" ```
