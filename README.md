@@ -21,6 +21,10 @@
 ``` https://raw.githubusercontent.com/IvanZadorozhniy/cosmere-rpg-translation/refs/heads/main/system.json ```
 3. Создайте новый мир с этой системой.
 4. Если тексты в компендиумах отображаются на русском языке — установка прошла успешно.
+
+#### Вот тут можно посмотреть процесс установки
+```https://github.com/IvanZadorozhniy/images_repo/blob/main/cosmere-rpg-translation/simplescreenrecorder2-2025-11-25_21.12.30.mp4```
+
 ---
 
 ### Поддержка и обновления
