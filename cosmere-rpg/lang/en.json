@@ -3,571 +3,572 @@
         "title": "Cosmere RPG",
         "Actor": {
             "Character": {
-                "Character": "Персонаж",
+                "Character": "Character",
                 "Cultures": {
-                    "placeholder": "[Культура]"
+                    "placeholder": "[Culture]"
                 },
                 "Ancestry": {
-                    "placeholder": "[Наследие]"
+                    "placeholder": "[Ancestry]"
                 },
                 "Path": {
-                    "placeholder": "[Путь]"
+                    "placeholder": "[Path]"
                 },
                 "Specialties": {
-                    "placeholder": "[Специализация]"
+                    "placeholder": "[Specialty]"
                 },
                 "Expertise": {
-                    "name": "Компетенция",
-                    "Armor": "Броня",
-                    "Cultural": "Культура",
-                    "Specialist": "Особые",
-                    "Utility": "Полезные навыки",
-                    "Weapon": "Оружие"
+                    "name": "Expertise",
+                    "Armor": "Armor",
+                    "Cultural": "Cultural",
+                    "Specialist": "Specialist",
+                    "Utility": "Utility",
+                    "Weapon": "Weapon"
                 }
-            },            
+            },
             "Adversary": {
-                "Adversary": "Противник",
+                "Adversary": "Adversary",
                 "Traits": {
-                    "placeholder": "[Особая черта противника"
+                    "placeholder": "[Adversary Trait]"
                 },
                 "Role": {
-                    "Minion": "Приспешник",
-                    "Rival": "Противник",
-                    "Boss": "Босс"
+                    "Minion": "Minion",
+                    "Rival": "Rival",
+                    "Boss": "Boss"
                 }
             },
             "Actions": {
-                "Aid": "Помощь",
-                "AvoidDanger": "Избежать опасности",
-                "Banter": "Болтовня",
-                "Brace": "Укрыться",
-                "Disengage": "Отход",
-                "Dodge": "Уклонение",
-                "Drop": "Выронить",
-                "Enhance": "Усиление",
-                "GainAdvantage": "Получить преимущество",
-                "Grapple": "Захват",
-                "Interact": "Взаимодействие",
-                "Move": "Перемещение",
-                "ReactiveStrike": "Удар реакцией",
-                "Ready": "Подготовка",
-                "Recover": "Восстановление",
-                "Regenerate": "Регенерация",
-                "Shove": "Толчок",
-                "Strike": "Удар",
-                "UseASkill": "Использовать навык"
+                "Aid": "Aid",
+                "AvoidDanger": "Avoid Danger",
+                "Banter": "Banter",
+                "Brace": "Brace",
+                "Disengage": "Disengage",
+                "Dodge": "Dodge",
+                "Drop": "Drop",
+                "Enhance": "Enhance",
+                "GainAdvantage": "Gain Advantage",
+                "Grapple": "Grapple",
+                "Interact": "Interact",
+                "Move": "Move",
+                "ReactiveStrike": "Reactive Strike",
+                "Ready": "Ready",
+                "Recover": "Recover",
+                "Regenerate": "Regenerate",
+                "Shove": "Shove",
+                "Strike": "Strike",
+                "UseASkill": "Use A Skill"
             },
             "ActionCosts": {
-                "Action": "Действие",
-                "Reaction": "Реакция",
-                "FreeAction": "Свободное действие",
-                "Special": "Особое действие"
+                "Action": "Action",
+                "Reaction": "Reaction",
+                "FreeAction": "Free Action",
+                "Special": "Special"
             },
             "Attribute": {
-                "name": "Атрибут",
-                "name_plural": "Атрибуты",
+                "name": "Attribute",
+                "name_plural": "Attributes",
                 "Strength": {
-                    "long": "Сила",
-                    "short": "СИЛ"
+                    "long": "Strength",
+                    "short": "STR"
                 },
                 "Speed": {
-                    "long": "Скорость",
-                    "short": "СКР"
+                    "long": "Speed",
+                    "short": "SPD"
                 },
                 "Intellect": {
-                    "long": "Интеллект",
-                    "short": "ИНТ"
+                    "long": "Intellect",
+                    "short": "INT"
                 },
                 "Willpower": {
-                    "long": "Сила Воли",
-                    "short": "ВОЛ"
+                    "long": "Willpower",
+                    "short": "WIL"
                 },
                 "Awareness": {
-                    "long": "Восприятие",
-                    "short": "ВСП"
+                    "long": "Awareness",
+                    "short": "AWA"
                 },
                 "Presence": {
-                    "long": "Харизма",
-                    "short": "ХАР"
+                    "long": "Presence",
+                    "short": "PRE"
                 }
             },
             "Resource": {
-                "Health": "Здоровье",
-                "Focus": "Фокус",
-                "Investiture": "Инвеститура"
+                "Health": "Health",
+                "Focus": "Focus",
+                "Investiture": "Investiture"
             },
             "Skill": {
-                "label": "Навык",
-                "label_p": "Навыки",
-                "Agility": "Ловкость",
-                "Athletics": "Атлетика",
-                "HeavyWeapons": "Тяжёлое оружие",
-                "LightWeapons": "Лёгкое оружие",
-                "Stealth": "Скрытность",
-                "Thievery": "Воровство",
-                "Crafting": "Ремесло",
-                "Deduction": "Дедукция",
-                "Discipline": "Дисциплина",
-                "Intimidation": "Запугивание",
-                "Lore": "Знания",
-                "Medicine": "Медицина",
-                "Deception": "Обман",
-                "Insight": "Проницательность",
-                "Leadership": "Лидерство",
-                "Perception": "Бдительность",
-                "Persuasion": "Убеждение",
-                "Survival": "Выживание"
+                "label": "Skill",
+                "label_p": "Skills",
+                "Agility": "Agility",
+                "Athletics": "Athletics",
+                "HeavyWeapons": "Heavy Weaponry",
+                "LightWeapons": "Light Weaponry",
+                "Stealth": "Stealth",
+                "Thievery": "Thievery",
+                "Crafting": "Crafting",
+                "Deduction": "Deduction",
+                "Discipline": "Discipline",
+                "Intimidation": "Intimidation",
+                "Lore": "Lore",
+                "Medicine": "Medicine",
+                "Deception": "Deception",
+                "Insight": "Insight",
+                "Leadership": "Leadership",
+                "Perception": "Perception",
+                "Persuasion": "Persuasion",
+                "Survival": "Survival"
             },
             "Statistics": {
-                "Defense": "Защита",
-                "SensesRange": "Чутьё",
-                "MovementRate": "Движ.",
-                "LiftingCapactiy": "Грузоподъемность",
-                "RecoveryDie": "Лечение",
-                "Deflect": "Отражение",
-                "NoObscuredSense": "Не поддается влиянию эффектов, затрудняющих восприятие.",
-                "Immunities": "Иммунитет"
+                "Defense": "Defense",
+                "SensesRange": "Sense",
+                "MovementRate": "Move",
+                "LiftingCapactiy": "Lifting Capactiy",
+                "RecoveryDie": "Recover",
+                "Deflect": "Deflect",
+                "NoObscuredSense": "Unaffected by Obscured Senses.",
+                "Immunities": "Immunities"
             },
             "Deflect": {
                 "Natural": {
-                    "Label": "Естественное отражение",
-                    "Hint": "Естественное отражение используется, когда доспехи не надеты, или когда естественное отражение выше, чем надетая броня."
+                    "Label": "Natural Deflect",
+                    "Hint": "Natural deflect is used when no armor is worn, or when the natural deflect is higher than the worn armor."
                 }
             },
             "Size": {
-                "Small": "Маленькое",
-                "Medium": "Среднее",
-                "Large": "Большое",
-                "Huge": "Огромное",
-                "Gargantuan": "Громадное"
+                "Small": "Small",
+                "Medium": "Medium",
+                "Large": "Large",
+                "Huge": "Huge",
+                "Gargantuan": "Gargantuan"
             },
             "Type": {
-                "Custom": "Особый",
-                "Humanoid": "Гуманоид",
-                "Animal": "Животное"
+                "Custom": "Custom",
+                "Humanoid": "Humanoid",
+                "Animal": "Animal"
             },
             "Movement": {
                 "Type": {
-                    "Walk": "Хотьба",
-                    "Swim": "Плаванье",
-                    "Fly": "Полёт"
+                    "Walk": "Walk",
+                    "Swim": "Swim",
+                    "Fly": "Fly"
                 }
             },
             "Sheet": {
                 "Header": {
-                    "Editable": "Редактируемый",
-                    "Locked": "Заблокированный"
+                    "Editable": "Editable",
+                    "Locked": "Locked"
                 },
                 "Item": {
-                    "Edit": "Редактировать",
-                    "Details": "Детально",
-                    "Remove": "Удалить"
+                    "Edit": "Edit",
+                    "Details": "View/Hide Details",
+                    "Remove": "Remove"
                 },
                 "Actions": {
-                    "label": "Действия",
-                    "Activation": "Активация",
+                    "label": "Actions",
+                    "Activation": "Action",
                     "Consume": {
-                        "label": "Стоимость",
+                        "label": "Cost",
                         "Static": "{amount} {resource}",
                         "RangeCapped": "{min} - {max} {resource}",
                         "RangeUncapped": "{amount}+ {resource}",
-                        "Multiple": "Разный",
-                        "Optional": "{label} (Опц.)"
+                        "Multiple": "Various",
+                        "Optional": "{label} (Optional)"
                     },
-                    "Uses": "Использование",
-                    "Use": "Использовать действие",
-                    "Strike": "Удар",
-                    "BaseSectionName": "Действие {type}",
-                    "MiscSectionName": "Разное",
-                    "NewItem": "Добавить {type}"
+                    "Uses": "Uses",
+                    "Use": "Use Action",
+                    "Strike": "Strike",
+                    "BaseSectionName": "{type} Actions",
+                    "MiscSectionName": "Miscellaneous Actions",
+                    "NewItem": "Add {type}"
                 },
                 "Equipment": {
-                    "Quantity": "Количество",
-                    "Weight": "Вес",
-                    "IncreaseQuantity": "Увеличить количество",
-                    "DecreaseQuantity": "Уменьшить количество"
+                    "Quantity": "Quantity",
+                    "Weight": "Weight",
+                    "IncreaseQuantity": "Increase quantity",
+                    "DecreaseQuantity": "Decrease quantity"
                 },
                 "Inventory": {
-                    "label": "Инвентарь",
+                    "label": "Inventory",
                     "Item": {
-                        "Quantity": "Количество",
-                        "Weight": "Вес"
+                        "Quantity": "Quantity",
+                        "Weight": "Weight"
                     }
                 },
                 "Conditions": {
-                    "Label": "Состояния",
-                    "StackableConditionTooltip": "Левый клик — увеличить количество.<br>Правый клик — уменьшить количество."
+                    "Label": "Conditions",
+                    "StackableConditionTooltip": "Left click to increase the amount.<br>Right click to decrease the amount."
                 },
                 "Injuries": {
-                    "Label": "Травмы",
-                    "Duration": "Длительность",
-                    "Days": "дней",
-                    "Permanent": "Постоянная",
-                    "DecreaseDuration": "Уменьшить длительность",
-                    "IncreaseDuration": "Увеличить длительность",
-                    "CreateInjury": "Добавить травму",
-                    "NewInjury": "Новая травма"
+                    "Label": "Injuries",
+                    "Duration": "Duration",
+                    "Days": "days",
+                    "Permanent": "Permanent",
+                    "DecreaseDuration": "Decrease Injury Duration",
+                    "IncreaseDuration": "Increase Injury Duration",
+                    "CreateInjury": "New Injury",
+                    "NewInjury": "New Injury"
                 },
-                "Level": "Уровень",
-                "Tier": "Тир",
-                "Expertises": "Компетенции",
-                "EditExpertises": "Редактировать компетенции",
-                "EditImmunities": "Редактировать иммунитеты",
-                "ConfigureSkills": "Настроить навыки",
-                "EditRole": "Редактировать роль",
-                "EditSize": "Редактировать размер",
-                "EditType": "Редактировать тип",
-                "CreatureType": "Тип",
-                "CustomType": "Пользовательский тип",
-                "Subtype": "Подтип",
-                "Edit": "Редактировать",
-                "View": "Просмотр",
-                "Favorites": "Избранное",
-                "DropFavorite": "Удалить из избранного",
-                "AncestryPlaceholder": "Добавить наследие",
-                "CulturePlaceholder": "Добавить культуру",
-                "PathPlaceholder": "Добавить путь",
-                "EndScene": "Конец сцены",
-                "ShortRest": "Короткий отдых",
-                "LongRest": "Длинный отдых",
-                "ToggleShowSkills": "Показывать навыки без рангов",
-                "ToggleCollapseSkills": "Скрыть навыки без рангов",
-                "ConfigureDefense": "Настроить защиту",
-                "ConfigureDeflect": "Настроить уклонение",
-                "ConfigureMovement": "Настроить скорость передвижения",
-                "ConfigureSensesRange": "Настроить дальность чувств",
-                "ConfigureRecovery": "Настроить кубик восстановления",
-                "RollInjury": "Бросить на получение травмы",
-                "ImmuneTo": "Иммунитет к {condition}",
+                "Level": "Level",
+                "Tier": "Tier",
+                "Expertises": "Expertises",
+                "EditExpertises": "Edit Expertises",
+                "EditImmunities": "Edit Immunities",
+                "ConfigureSkills": "Configure Skills",
+                "EditRole": "Edit Role",
+                "EditSize": "Edit Size",
+                "EditType": "Edit Type",
+                "CreatureType": "Type",
+                "CustomType": "Custom Type",
+                "Subtype": "Subtype",
+                "Edit": "Edit",
+                "View": "View",
+                "Favorites": "Favorites",
+                "DropFavorite": "Drop Favorite",
+                "AncestryPlaceholder": "Add Ancestry",
+                "CulturePlaceholder": "Add Culture",
+                "PathPlaceholder": "Add Path",
+                "EndScene": "End Scene",
+                "ShortRest": "Short Rest",
+                "LongRest": "Long Rest",
+                "ToggleShowSkills": "Show skills without ranks",
+                "ToggleCollapseSkills": "Hide skills without ranks",
+                "ConfigureDefense": "Configure Defense",
+                "ConfigureDeflect": "Configure Deflect",
+                "ConfigureMovement": "Configure Movement Rate",
+                "ConfigureSensesRange": "Configure Senses Range",
+                "ConfigureRecovery": "Configure Recovery Die",
+                "RollInjury": "Roll Injury",
+                "ImmuneTo": "Immune to {condition}",
                 "Tabs": {
-                    "Details": "Подробности",
-                    "Actions": "Действия",
-                    "Equipment": "Снаряжение",
-                    "Goals": "Цели",
-                    "Notes": "Заметки",
-                    "Effects": "Эффекты и Состояния"
+                    "Details": "Details",
+                    "Actions": "Actions",
+                    "Equipment": "Equipment",
+                    "Goals": "Goals",
+                    "Notes": "Notes",
+                    "Effects": "Effects & Conditions"
                 },
                 "Search": {
                     "Item": {
-                        "Placeholder": "Искать действия"
+                        "Placeholder": "Search actions"
                     },
                     "Equipment": {
-                        "Placeholder": "Искать предметы"
+                        "Placeholder": "Search items"
                     },
                     "Effects": {
-                        "Placeholder": "Искать эффекты"
+                        "Placeholder": "Search effects"
                     },
-                    "Clear": "Очистить поиск",
-                    "Filter": "Фильтр",
-                    "SortManually": "Вручную",
-                    "SortAlphabetically": "По алфавиту"
+                    "Clear": "Clear Filters",
+                    "Filter": "Filter By",
+                    "SortManually": "Sort Manually",
+                    "SortAlphabetically": "Sort Alphabetically"
                 },
                 "Details": {
-                    "Purpose": "Намерения",
-                    "Obstacle": "Препятствие",
+                    "Purpose": "Purpose",
+                    "Obstacle": "Obstacle",
                     "Goals": {
-                        "Label": "Цели",
-                        "New": "Добавить новую цель",
-                        "NewText": "Новая цель",
-                        "AdjustProgressTooltipInc": "Левый клик — увеличить прогресс.",
-                        "AdjustProgressTooltipDec": "Правый клик — уменьшить прогресс.",
-                        "HideComplete": "Скрыть выполненные"
+                        "Label": "Goals",
+                        "New": "Add New Goal",
+                        "NewText": "New Goal",
+                        "AdjustProgressTooltipInc": "Left click to increase progress.",
+                        "AdjustProgressTooltipDec": "Right click to descrease progress.",
+                        "HideComplete": "Hide Completed"
                     },
                     "Connections": {
-                        "Label": "Связи",
-                        "New": "Добавить новую связь",
-                        "NewText": "Новая связь"
+                        "Label": "Connections",
+                        "New": "Add New Connection",
+                        "NewText": "New Connection"
                     },
                     "Biography": {
-                        "Label": "Биография",
-                        "Edit": "Редактировать биографию",
-                        "Show": "Показать биографию",
-                        "Hide": "Свернуть биографию"
+                        "Label": "Biography",
+                        "Edit": "Edit Biography",
+                        "Show": "Show Biography",
+                        "Hide": "Collapse Biography"
                     },
                     "Appearance": {
-                        "Label": "Внешность",
-                        "Edit": "Редактировать внешность",
-                        "Show": "Показать внешность",
-                        "Hide": "Свернуть внешность"
+                        "Label": "Appearance",
+                        "Edit": "Edit Appearance",
+                        "Show": "Show Appearance",
+                        "Hide": "Collapse Appearance"
                     },
                     "Notes": {
-                        "Label": "Заметки",
-                        "Edit": "Редактировать заметки",
-                        "Show": "Показать заметки",
-                        "Hide": "Свернуть заметки"
+                        "Label": "Notes",
+                        "Edit": "Edit Notes",
+                        "Show": "Show Notes",
+                        "Hide": "Collapse Notes"
                     }
                 },
                 "Skills": {
-                    "AdjustTooltip": "Левый клик — увеличить ранг навыка {skill}.<br>Правый клик — уменьшить ранг навыка {skill}.",
-                    "SetTooltip": "Левый клик — изменить ранг навыка {skill}.<br>Правый клик — сбросить ранг навыка {skill}."
+                    "AdjustTooltip": "Left Click to increase {skill}'s Rank.<br>Right Click to decrease {skill}'s Rank.",
+                    "SetTooltip": "Left Click to adjust {skill}'s Rank.<br>Right Click to clear {skill}'s Rank."
                 },
                 "Attributes": {
-                    "IsModifiedTooltip": "Этот атрибут изменён под действием эффекта."
+                    "Defense": "DEF",
+                    "IsModifiedTooltip": "This attribute is being modified by an effect."
                 }
             }
         },
         "AttributeGroup": {
             "Physical": {
-                "long": "Физическая",
-                "short": "ФИЗ"
+                "long": "Physical",
+                "short": "PHY"
             },
             "Cognitive": {
-                "long": "Когнитивная",
-                "short": "КОГ"
+                "long": "Cognitive",
+                "short": "COG"
             },
             "Spiritual": {
-                "long": "Духовная",
-                "short": "ДУХ"
+                "long": "Spiritual",
+                "short": "SPI"
             }
         },
         "Item": {
             "Type": {
                 "Weapon": {
-                    "label": "Оружие",
-                    "label_plural": "Оружие",
-                    "label_action": "Действие с оружием",
-                    "desc_placeholder": "Отредактируйте это поле, чтобы описать, что это за оружие и как оно выглядит.",
-                    "New": "Новое оружие"
+                    "label": "Weapon",
+                    "label_plural": "Weapons",
+                    "label_action": "Weapon Action",
+                    "desc_placeholder": "Edit this to describe what this weapon is & how it looks.",
+                    "New": "New Weapon"
                 },
                 "Armor": {
-                    "label": "Доспех",
-                    "label_plural": "Доспехи",
-                    "label_action": "Действие с доспехом",
-                    "desc_placeholder": "Отредактируйте это поле, чтобы описать, что это за доспех и как он выглядит.",
-                    "New": "Новый доспех"
+                    "label": "Armor",
+                    "label_plural": "Armor",
+                    "label_action": "Armor Action",
+                    "desc_placeholder": "Edit this to describe what this armor is & how it looks.",
+                    "New": "New Armor"
                 },
                 "Equipment": {
-                    "label": "Снаряжение",
-                    "label_plural": "Снаряжение",
-                    "label_action": "Действие с снаряжением",
-                    "desc_placeholder": "Отредактируйте это поле, чтобы описать, что это за предмет снаряжения и как он выглядит.",
-                    "New": "Новое снаряжение"
-                },                
+                    "label": "Equipment",
+                    "label_plural": "Equipment",
+                    "label_action": "Equipment Action",
+                    "desc_placeholder": "Edit this to describe what this piece of equipment is & how it looks.",
+                    "New": "New Equipment"
+                },
                 "Loot": {
-                    "label": "Добыча",
-                    "label_plural": "Добыча",
-                    "desc_placeholder": "Измените это, чтобы описать предмет.",
-                    "New": "Новая добыча"
+                    "label": "Loot",
+                    "label_plural": "Loot",
+                    "desc_placeholder": "Edit this to describe the item.",
+                    "New": "New Loot"
                 },
                 "Ancestry": {
-                    "label": "Наследие",
-                    "label_plural": "Наследия",
-                    "desc_placeholder": "Измените это, чтобы определить возможное наследие для персонажа. Также включите любые специальные правила для игроков."
+                    "label": "Ancestry",
+                    "label_plural": "Ancestries",
+                    "desc_placeholder": "Edit this to define a potential heritage for a character. Also include any special rules text for players to read."
                 },
                 "Culture": {
-                    "label": "Культура",
-                    "label_plural": "Культуры",
-                    "desc_placeholder": "Измените это, чтобы определить одну из многих культур в сеттинге. Также включите любые специальные правила для игроков."
+                    "label": "Culture",
+                    "label_plural": "Cultures",
+                    "desc_placeholder": "Edit this to define one of the many cultures in the setting. Also include any special rules text for players to read."
                 },
                 "Path": {
-                    "label": "Путь",
-                    "label_plural": "Пути",
-                    "desc_placeholder": "Измените это, чтобы описать, каких персонажей представляет этот путь развития."
+                    "label": "Path",
+                    "label_plural": "Paths",
+                    "desc_placeholder": "Edit this to describe this the sorts of characters this progression path represents."
                 },
                 "Specialty": {
-                    "label": "Специализация",
-                    "label_plural": "Специализации",
-                    "desc_placeholder": "Измените это, чтобы описать уникальную подгруппу персонажей, которую представляет эта специализация."
+                    "label": "Specialty",
+                    "label_plural": "Specialties",
+                    "desc_placeholder": "Edit this to describe the unique subset of characters this specialty represents."
                 },
                 "Talent": {
-                    "label": "Талант",
-                    "label_plural": "Таланты",
-                    "desc_placeholder": "Измените это, чтобы описать, что делает этот талант.",
-                    "New": "Новый талант"
+                    "label": "Talent",
+                    "label_plural": "Talents",
+                    "desc_placeholder": "Edit this to describe what this Talent does.",
+                    "New": "New Talent"
                 },
                 "Action": {
-                    "label": "Действие",
-                    "label_plural": "Действия",
-                    "desc_placeholder": "Измените это, чтобы описать, что это за действие и что оно делает.",
-                    "New": "Новое действие"
+                    "label": "Action",
+                    "label_plural": "Actions",
+                    "desc_placeholder": "Edit this to describe what this action is and does.",
+                    "New": "New Action"
                 },
                 "Trait": {
-                    "label": "Черта",
-                    "label_plural": "Черты",
-                    "desc_placeholder": "Измените это, чтобы описать эту черту.",
-                    "New": "Новая черта"
+                    "label": "Feature",
+                    "label_plural": "Features",
+                    "desc_placeholder": "Edit this to describe this feature.",
+                    "New": "New Feature"
                 },
                 "Injury": {
-                    "label": "Травма",
-                    "label_plural": "Травмы",
-                    "desc_placeholder": "Измените это, чтобы описать, как эта травма влияет на персонажа."
+                    "label": "Injury",
+                    "label_plural": "Injuries",
+                    "desc_placeholder": "Edit this to describe how this injury affects a character."
                 },
                 "Connection": {
-                    "label": "Связь",
-                    "label_plural": "Связи",
-                    "desc_placeholder": "Измените это, чтобы создать описание NPC и их связи с персонажем."
+                    "label": "Connection",
+                    "label_plural": "Connections",
+                    "desc_placeholder": "Edit this to create a description of the NPC and how they are connected to the character."
                 },
                 "Goal": {
-                    "label": "Цель",
-                    "label_plural": "Цели",
-                    "desc_placeholder": "Измените это, чтобы описать цель."
+                    "label": "Goal",
+                    "label_plural": "Goals",
+                    "desc_placeholder": "Edit this to describe the goal."
                 },
                 "Power": {
-                    "label": "Сила",
-                    "label_plural": "Силы",
-                    "desc_placeholder": "Измените это, чтобы описать силу.",
-                    "New": "Новая {type}"
+                    "label": "Power",
+                    "label_plural": "Powers",
+                    "desc_placeholder": "Edit this to describe the power.",
+                    "New": "New {type}"
                 },
                 "TalentTree": {
-                    "label": "Древо талантов",
-                    "label_plural": "Древа талантов"
+                    "label": "Talent Tree",
+                    "label_plural": "Talent Trees"
                 }
             },
             "Weapon": {
                 "Type": {
-                    "Light": "Лёгкое",
-                    "Heavy": "Тяжёлое",
-                    "Special": "Особое"
+                    "Light": "Light",
+                    "Heavy": "Heavy",
+                    "Special": "Special"
                 },
                 "Name": {
-                    "placeholder": "[Название оружия]"
+                    "placeholder": "[Weapon Name]"
                 },
                 "Trait": {
-                    "Cumbersome": "Громоздкое",
-                    "Dangerous": "Опасное",
-                    "Deadly": "Смертоносное",
-                    "Defensive": "Защитное",
-                    "Discreet": "Незаметное",
-                    "Indirect": "Косвенное",
-                    "Loaded": "Заряженное",
-                    "Momentum": "Инерционное",
-                    "Offhand": "Удобное",
-                    "Pierce": "Пробивное",
-                    "Quickdraw": "Быстрое извлечение",
-                    "Thrown": "Метательное",
-                    "TwoHanded": "Двуручное",
-                    "Unique": "Уникальное",
-                    "Fragile": "Хрупкое",
-                    "Reach": "Дальнобойное"
+                    "Cumbersome": "Cumbersome",
+                    "Dangerous": "Dangerous",
+                    "Deadly": "Deadly",
+                    "Defensive": "Defensive",
+                    "Discreet": "Discreet",
+                    "Indirect": "Indirect",
+                    "Loaded": "Loaded",
+                    "Momentum": "Momentum",
+                    "Offhand": "Offhand",
+                    "Pierce": "Pierce",
+                    "Quickdraw": "Quickdraw",
+                    "Thrown": "Thrown",
+                    "TwoHanded": "Two-Handed",
+                    "Unique": "Unique",
+                    "Fragile": "Fragile",
+                    "Reach": "Reach"
                 },
-                "Strike": "Удар",
-                "Improvised": "Импровизированное оружие",
-                "Unarmed": "Удар без оружия"
+                "Strike": "Strike",
+                "Improvised": "Improvised Weapon",
+                "Unarmed": "Unarmed Strike"
             },
             "Armor": {
                 "Name": {
-                    "placeholder": "[Название брони]"
+                    "placeholder": "[Armor Name]"
                 },
                 "Trait": {
-                    "Cumbersome": "Неповоротливый",
-                    "Dangerous": "Опасный",
-                    "Presentable": "Презентабельный",
-                    "Unique": "Уникальный"
+                    "Cumbersome": "Cumbersome",
+                    "Dangerous": "Dangerous",
+                    "Presentable": "Presentable",
+                    "Unique": "Unique"
                 },
-                "Deflect": "Отражение"
+                "Deflect": "Deflect"
             },
             "Equipment": {
                 "Type": {
-                    "Basic": "Базовый"
+                    "Basic": "Basic"
                 }
             },
             "Action": {
                 "Type": {
                     "Basic": {
-                        "label": "Базовое Действие",
-                        "label_plural": "Базовые Действия"
+                        "label": "Basic Action",
+                        "label_plural": "Basic Actions"
                     },
                     "Ancestry": {
-                        "label": "Действие от наследия",
-                        "label_plural": "Действия от наследия"
+                        "label": "Ancestry Action",
+                        "label_plural": "Ancestry Actions"
                     },
                     "Adversary": {
-                        "label": "Действие противника",
-                        "label_plural": "Действия противника"
+                        "label": "Adversary Action",
+                        "label_plural": "Adversary Actions"
                     }
                 },
                 "Ancestry": {
-                    "Label": "Идентификатор наследия",
-                    "Hint": "Идентификатор наследия, к которому относится это действие. (например, \"человек\")"
+                    "Label": "Ancestry Identifier",
+                    "Hint": "Identifier of the Ancenstry this action belongs to. (e.g. \"human\")"
                 }
             },
             "Goal": {
                 "Level": {
-                    "Label": "Прогресс"
+                    "Label": "Progress"
                 }
             },
             "Power": {
                 "Identifier": {
-                    "Hint": "Используется для уникальной идентификации этой способности. Должен совпадать с идентификатором связанного навыка, если не используется особый навык."
+                    "Hint": "Used to uniquely identify this power. Should be the same as the identifier of the associated skill, unless a custom skill is used."
                 },
                 "CustomSkill": {
-                    "Label": "Использовать особый навык?",
-                    "Hint": "Если отмечено, настройте особый навык вместо навыка, соответствующего идентификатору этой способности."
+                    "Label": "Use Custom Skill",
+                    "Hint": "If checked, configure a custom skill instead of the skill matching this power's identifier."
                 },
                 "Skill": {
-                    "Label": "Навык",
-                    "Hint": "Навык, связанный с этой способностью. Получение этой способности дает персонажу доступ к этому навыку."
+                    "Label": "Skill",
+                    "Hint": "The skill associated with this power. Gaining this power grants the character access to this skill."
                 },
                 "Notification": {
-                    "PowerExists": "Способность с идентификатором \"{identifier}\" уже существует у {actor}."
+                    "PowerExists": "A power with identifier \"{identifier}\" already exists on {actor}."
                 }
             },
             "Talent": {
                 "Type": {
-                    "Ancestry": "Наследие",
-                    "Path": "Путь",
-                    "Power": "Способность"
+                    "Ancestry": "Ancestry",
+                    "Path": "Path",
+                    "Power": "Power"
                 },
                 "Prerequisite": {
                     "Type": {
-                        "talent": "Талант",
-                        "attribute": "Характеристика",
-                        "skill": "Умение",
-                        "connection": "Связи",
-                        "level": "Уровень",
-                        "ancestry": "Наследие",
-                        "culture": "Культура",
-                        "goal": "Цель"
+                        "talent": "Talent",
+                        "attribute": "Attribute",
+                        "skill": "Skill",
+                        "connection": "Connection",
+                        "level": "Level",
+                        "ancestry": "Ancestry",
+                        "culture": "Culture",
+                        "goal": "Goal"
                     },
                     "Mode": {
-                        "AnyOf": "Любой из",
-                        "AllOf": "Все"
+                        "AnyOf": "Any of",
+                        "AllOf": "All of"
                     },
                     "Level": {
-                        "Label": "Уровень"
+                        "Label": "Level"
                     },
                     "Ancestry": {
-                        "Label": "Наследие"
+                        "Label": "Ancestry"
                     },
                     "Culture": {
-                        "Label": "Культура"
+                        "Label": "Culture"
                     }
                 },
                 "GrantRule": {
-                    "Label": "При получении",
-                    "Hint": "Эти правила применяются при получении таланта.",
+                    "Label": "On Obtain",
+                    "Hint": "These rules are applied when the talent is obtained.",
                     "Type": {
-                        "Items": "Дать предметы",
-                        "Label": "Тип"
+                        "Items": "Grant Items",
+                        "Label": "Type"
                     },
                     "Items": {
-                        "Label": "Предметы"
+                        "Label": "Items"
                     }
                 },
                 "Power": {
-                    "Label": "Идентификатор способности",
-                    "Hint": "Идентификатор способности, к которой принадлежит этот талант."
+                    "Label": "Power Identifier",
+                    "Hint": "Identifier of the power this talent belongs to."
                 }
             },
             "TalentTree": {
                 "Width": {
-                    "Label": "Ширина"
+                    "Label": "Width"
                 },
                 "Height": {
-                    "Label": "Высота"
+                    "Label": "Height"
                 },
                 "Interaction": {
-                    "CreateConnection": "Выберите талант для соединения."
+                    "CreateConnection": "Select a talent to connect to."
                 },
                 "ViewBounds": {
-                    "Label": "Границы просмотра",
-                    "CaptureTooltip": "Захватить текущие границы просмотра",
-                    "ExpandTooltip": "Посмотреть детали",
+                    "Label": "Bounds",
+                    "CaptureTooltip": "Capture current view bounds",
+                    "ExpandTooltip": "View view bound details",
                     "Origin": {
-                        "Label": "Источник"
+                        "Label": "Origin"
                     },
                     "Size": {
-                        "Label": "Размер"
+                        "Label": "Size"
                     },
                     "X": {
                         "Label": "X"
@@ -576,37 +577,37 @@
                         "Label": "Y"
                     },
                     "Width": {
-                        "Label": "Ширина"
+                        "Label": "Width"
                     },
                     "Height": {
-                        "Label": "Высота"
+                        "Label": "Height"
                     }
                 },
                 "Display": {
-                    "Label": "Окно",
+                    "Label": "Window",
                     "Width": {
-                        "Label": "Ширина"
+                        "Label": "Width"
                     },
                     "Height": {
-                        "Label": "Высота"
+                        "Label": "Height"
                     }
                 },
                 "Background": {
-                    "Label": "Фон",
+                    "Label": "Background",
                     "Img": {
-                        "Label": "Изображение"
+                        "Label": "Image"
                     },
                     "Size": {
-                        "Label": "Размер",
+                        "Label": "Size",
                         "Width": {
-                            "Label": "Ширина"
+                            "Label": "Width"
                         },
                         "Height": {
-                            "Label": "Высота"
+                            "Label": "Height"
                         }
                     },
                     "Position": {
-                        "Label": "Позиция",
+                        "Label": "Position",
                         "X": {
                             "Label": "X"
                         },
@@ -617,12 +618,12 @@
                 },
                 "Node": {
                     "Prerequisites": {
-                        "Label": "Предварительные требования",
-                        "OneOf": "Одно из",
-                        "CannotEditManaged": "Невозможно редактировать системное предварительное требование"
+                        "Label": "Prerequisites",
+                        "OneOf": "One of",
+                        "CannotEditManaged": "Cannot edit system generated prerequisite"
                     },
                     "Position": {
-                        "Label": "Позиция",
+                        "Label": "Position",
                         "X": {
                             "Label": "X"
                         },
@@ -634,1078 +635,1084 @@
             },
             "Activation": {
                 "Type": {
-                    "Action": "Действие",
-                    "SkillTest": "Проверка навыка",
-                    "Utility": "?Utility?"
+                    "Action": "Action",
+                    "SkillTest": "Skill Test",
+                    "Utility": "Utility"
                 },
                 "ConsumeType": {
                     "Resource": {
-                        "Label": "Ресурс"
+                        "Label": "Resource"
                     },
                     "Item": {
-                        "Label": "Предмет"
+                        "Label": "Item"
                     }
                 },
                 "Uses": {
                     "Types": {
                         "Charge": {
-                            "Singular": "Заряд",
-                            "Plural": "Заряды"
+                            "Singular": "Charge",
+                            "Plural": "Charges"
                         },
                         "Use": {
-                            "Singular": "Использование",
-                            "Plural": "Использования"
+                            "Singular": "Use",
+                            "Plural": "Uses"
                         }
                     },
                     "Recharge": {
-                        "Label": "Перезарядка",
-                        "PerScene": "За сцену"
+                        "Label": "Recharge",
+                        "PerScene": "Per scene"
                     },
-                    "Per": "За"
+                    "Per": "Per"
                 },
-                "Opportunity": "Порог возможностей",
-                "Complication": "Порог осложнений"
+                "Opportunity": "Opportunity Threshold",
+                "Complication": "Complication Threshold"
             },
             "Injuries": {
                 "Name": {
-                    "placeholder": "[Название раны]"
+                    "placeholder": "[Injury Name]"
                 },
                 "Duration": {
-                    "FleshWound": "Лёгкая рана",
-                    "ShallowInjury": "Неглубокая рана",
-                    "ViciousInjury": "Серьёзная рана",
-                    "PermanentInjury": "Постоянное увечье",
-                    "Death": "Смерть"
+                    "FleshWound": "Flesh Wound",
+                    "ShallowInjury": "Shallow Injury",
+                    "ViciousInjury": "Vicious Injury",
+                    "PermanentInjury": "Permanent Injury",
+                    "Death": "Death"
                 }
             },
             "Equip": {
                 "Types": {
                     "Wear": {
-                        "Label": "Надето"
+                        "Label": "Worn"
                     },
                     "Hold": {
-                        "Label": "В руках"
+                        "Label": "Held"
                     }
                 },
                 "Hold": {
                     "OneHanded": {
-                        "Label": "Одноручное"
+                        "Label": "One Handed"
                     },
                     "TwoHanded": {
-                        "Label": "Двуручное"
+                        "Label": "Two Handed"
                     }
                 },
                 "Hand": {
                     "Main": {
-                        "Label": "Основная рука"
+                        "Label": "Main Hand"
                     },
                     "Off": {
-                        "Label": "Вторая рука"
+                        "Label": "Off Hand"
                     }
                 },
                 "Equip": {
-                    "Label": "Экипировать"
+                    "Label": "Equip"
                 },
                 "Unequip": {
-                    "Label": "Снять"
+                    "Label": "Unequip"
                 },
                 "Unequipped": {
-                    "Label": "Не экипировано"
+                    "Label": "Unequipped"
                 }
             },
             "Modality": {
-                "Label": "Идентификатор модальности",
-                "Hint": "Идентификатор модальности, к которой относится этот талант (например, «стойка»)."
+                "Label": "Modality Identifier",
+                "Hint": "Identifier of the modality this talent belongs to. (e.g. \"stance\")"
             },
-            "AttackFlavor": "[actor] атакует с помощью [item].",            
+            "AttackFlavor": "[actor] attacks with their [item].",
             "EventSystem": {
                 "Event": {
                     "Types": {
                         "create": {
-                            "Label": "Создано",
-                            "Description": "Срабатывает, когда этот объект создан, продублирован, добавлен актёру или импортирован."
+                            "Label": "Created",
+                            "Description": "Triggered when this item is created, duplicated, added to an actor, or imported."
                         },
                         "update": {
-                            "Label": "Обновлено",
-                            "Description": "Срабатывает при обновлении этого объекта."
+                            "Label": "Updated",
+                            "Description": "Triggered when this item is updated."
                         },
                         "delete": {
-                            "Label": "Удалено",
-                            "Description": "Срабатывает при удалении этого объекта."
+                            "Label": "Deleted",
+                            "Description": "Triggered when this item is deleted."
                         },
                         "add-to-actor": {
-                            "Label": "Добавлено актёру",
-                            "Description": "Срабатывает, когда этот объект добавляется актёру."
+                            "Label": "Added to Actor",
+                            "Description": "Triggered when this item is added to an actor."
                         },
                         "remove-from-actor": {
-                            "Label": "Удалено из актёра",
-                            "Description": "Срабатывает, когда этот объект удаляется от актёра."
+                            "Label": "Removed from Actor",
+                            "Description": "Triggered when this item is removed from an actor."
                         },
                         "equip": {
-                            "Label": "Экипировано",
-                            "Description": "Срабатывает при экипировке этого объекта."
+                            "Label": "Equipped",
+                            "Description": "Triggered when this item is equipped."
                         },
                         "unequip": {
-                            "Label": "Снято",
-                            "Description": "Срабатывает при снятии экипировки."
+                            "Label": "Unequipped",
+                            "Description": "Triggered when this item is unequipped."
                         },
                         "use": {
-                            "Label": "Использовано",
-                            "Description": "Срабатывает при использовании или броске этого объекта."
+                            "Label": "Used",
+                            "Description": "Triggered when this item is used/rolled."
                         },
                         "mode-activate": {
-                            "Label": "Режим активирована",
-                            "Description": "Срабатывает, когда режим этого объекта становится активным."
+                            "Label": "Activated Modality",
+                            "Description": "Triggered when this item's mode becomes active for its modality."
                         },
                         "mode-deactivate": {
-                            "Label": "Режим деактивирована",
-                            "Description": "Срабатывает, когда режим этого объекта становится неактивным."
+                            "Label": "Deactivated Modality",
+                            "Description": "Triggered when this item's mode becomes inactive for its modality."
                         },
                         "goal-complete": {
-                        "Label": "Цель достигнута",
-                        "Description": "Срабатывает, когда цель выполнена."
+                            "Label": "Goal Completed",
+                            "Description": "Triggered when this Goal item is completed."
                         },
                         "goal-progress": {
-                        "Label": "Прогресс цели",
-                        "Description": "Срабатывает при обновлении прогресса по цели."
+                            "Label": "Goal Progressed",
+                            "Description": "Triggered when this Goal item's progress is updated towards completion."
                         },
                         "update-actor": {
-                        "Label": "Актёр обновлён",
-                        "Description": "Срабатывает при обновлении родительского актёра объекта."
+                            "Label": "Actor Updated",
+                            "Description": "Triggered when this item's parent actor is updated."
                         },
                         "apply-damage-actor": {
-                        "Label": "Актёр получил урон",
-                        "Description": "Срабатывает при нанесении урона родительскому актёру объекта."
+                            "Label": "Actor Damaged",
+                            "Description": "Triggered when damage is applied to this item's parent actor."
                         },
                         "apply-injury-actor": {
-                        "Label": "Актёр получил травму",
-                        "Description": "Срабатывает при применении травмы к родительскому актёру объекта."
+                            "Label": "Actor Gained Injury",
+                            "Description": "Triggered when an injury is applied to this item's parent actor."
                         },
                         "short-rest-actor": {
-                        "Label": "Короткий отдых актёра",
-                        "Description": "Срабатывает, когда актёр совершает короткий отдых."
+                            "Label": "Actor Short Rested",
+                            "Description": "Triggered when this item's parent actor takes a short rest."
                         },
                         "long-rest-actor": {
-                        "Label": "Долгий отдых актёра",
-                        "Description": "Срабатывает, когда актёр совершает долгий отдых."
+                            "Label": "Actor Long Rested",
+                            "Description": "Triggered when this item's parent actor takes a long rest."
                         }
                     },
                     "Rule": {
                         "Description": {
-                        "Label": "Описание"
+                            "Label": "Description"
                         },
                         "Event": {
-                        "Label": "Событие"
+                            "Label": "Trigger"
                         },
-                        "NewRuleDescription": "Новое правило"
+                        "NewRuleDescription": "New Rule"
                     },
                     "Handler": {
                         "Types": {
                             "grant-expertises": {
-                                "Title": "Выдать компетенции",
-                                "Description": "Выдаёт компетенции актёру.",
+                                "Title": "Grant Expertises",
+                                "Description": "Grants expertises to an actor.",
                                 "Pick": {
-                                    "Label": "Выбор пользователя",
-                                    "Hint": "Позволить ли пользователю выбрать количество компетенций или назначить конкретный набор."
+                                    "Label": "User picks",
+                                    "Hint": "Whether the user should pick a number of expertises or if a specific set of expertises should be granted."
                                 },
                                 "PickAmount": {
-                                    "Label": "Количество",
-                                    "Hint": "Максимальное количество компетенций, которое может выбрать пользователь."
+                                    "Label": "Amount",
+                                    "Hint": "The maximum number of expertises the user can pick."
                                 },
                                 "AllowReplacement": {
-                                    "Label": "Разрешить замену",
-                                    "Hint": "Разрешить ли пользователю заменить уже имеющуюся компетенцию."
+                                    "Label": "Allow Replacement",
+                                    "Hint": "Whether to allow the user to replace a granted expertise if they already have it."
                                 },
                                 "AvailableTypes": {
-                                    "Label": "Доступные категории",
-                                    "Hint": "Категории компетенции, из которых можно выбирать."
+                                    "Label": "Available Categories",
+                                    "Hint": "The categories of expertises available to pick from."
                                 },
                                 "ReplaceExpertise": {
-                                    "Title": "Выберите другую компетенцию",
-                                    "Button": "Выбрать"
+                                    "Title": "Choose another Expertise",
+                                    "Button": "Pick"
                                 },
                                 "PickDialog": {
-                                    "Title": "Выберите {amount} компетенцию",
-                                    "Button": "Выбрать"
+                                    "Title": "Choose {amount} Expertises",
+                                    "Button": "Pick"
                                 }
                             },
                             "grant-items": {
-                                "Title": "Выдать предметы",
-                                "Description": "Выдаёт предметы актёру.",
+                                "Title": "Grant Items",
+                                "Description": "Grants items to an actor.",
                                 "AllowDuplicates": {
-                                    "Label": "Разрешить дубликаты",
-                                    "Hint": "Разрешить ли выдачу предметов, которые уже есть у актёра."
+                                    "Label": "Allow Duplicates",
+                                    "Hint": "Whether to grant items to the actor even if they already have them"
                                 },
                                 "IncreaseQuantity": {
-                                    "Label": "Увеличить количество",
-                                    "Hint": "Увеличивать ли количество физических предметов, если они уже есть у актёра."
+                                    "Label": "Increase Quantity",
+                                    "Hint": "Whether to increase the quantity of physical items if the actor already has them"
                                 },
                                 "PickOne": {
-                                    "Label": "Выбрать один",
-                                    "Hint": "Запрашивать ли у пользователя выбор одного предмета из списка. Если не включено, выдаются все предметы."
+                                    "Label": "Pick One",
+                                    "Hint": "Whether to prompt the user to pick one item from the list of items to grant. If not enabled, all items will be granted."
                                 },
                                 "PickPromptTitle": {
-                                    "Label": "Заголовок окна выбора",
-                                    "Hint": "Заголовок окна при выборе предмета.",
-                                    "Default": "Выберите предмет"
+                                    "Label": "Pick Prompt Title",
+                                    "Hint": "The title of the prompt shown when picking an item to grant.",
+                                    "Default": "Pick Item"
                                 },
                                 "Notify": {
-                                    "Label": "Уведомить пользователя",
-                                    "Hint": "Отправлять ли уведомление пользователю о каждом выданном предмете."
+                                    "Label": "Notify User",
+                                    "Hint": "Whether to send a notification to the user for each item granted."
                                 },
                                 "Items": {
-                                    "Label": "Предметы"
+                                    "Label": "Items"
                                 }
                             },
                             "modify-attribute": {
-                                "Title": "Изменить атрибут",
-                                "Description": "Изменяет атрибут актёра.",
+                                "Title": "Modify Attribute",
+                                "Description": "Modifies an attribute of an actor.",
                                 "Attribute": {
-                                    "Label": "Атрибут"
+                                    "Label": "Attribute"
                                 },
                                 "Amount": {
-                                    "Label": "Значение",
-                                    "Hint": "На сколько изменить атрибут. Может быть положительным или отрицательным."
+                                    "Label": "Amount",
+                                    "Hint": "The amount to modify the attribute by. Can be positive or negative."
                                 },
                                 "Bonus": {
-                                    "Label": "Изменить бонус",
-                                    "Hint": "Изменять ли бонус атрибута вместо самого атрибута."
+                                    "Label": "Modify Bonus",
+                                    "Hint": "Whether to modify the attribute bonus instead of the attribute itself."
                                 }
                             },
                             "modify-skill-rank": {
-                                "Title": "Изменить ранг навыка",
-                                "Description": "Изменяет ранг навыка актёра.",
+                                "Title": "Modify Skill Rank",
+                                "Description": "Modifies the rank of a skill of an actor.",
                                 "Skill": {
-                                    "Label": "Навык"
+                                    "Label": "Skill"
                                 },
                                 "Amount": {
-                                    "Label": "Значение",
-                                    "Hint": "На сколько изменить ранг навыка. Может быть положительным или отрицательным."
+                                    "Label": "Amount",
+                                    "Hint": "The amount to modify the skill rank by. Can be positive or negative."
                                 }
                             },
                             "remove-expertises": {
-                                "Title": "Удалить компетенцию",
-                                "Description": "Удаляет компетенцию у актёра."
+                                "Title": "Remove Expertises",
+                                "Description": "Removes expertises from an actor."
                             },
                             "remove-items": {
-                                "Title": "Удалить предметы",
-                                "Description": "Удаляет предметы у актёра.",
+                                "Title": "Remove Items",
+                                "Description": "Removes items from an actor.",
                                 "ReduceQuantity": {
-                                    "Label": "Уменьшить количество",
-                                    "Hint": "Уменьшить количество физических предметов вместо полного удаления.\nПредметы с количеством 0 будут удалены."
+                                    "Label": "Reduce Quantity",
+                                    "Hint": "Whether to reduce the quantity of physical items instead of removing them outright.\nItems reduced to 0 quantity will be removed."
                                 },
                                 "Amount": {
-                                    "Label": "Количество",
-                                    "Hint": "Сколько удалить. Используется только если включена опция \"Уменьшить количество\" и предмет физический."
+                                    "Label": "Amount",
+                                    "Hint": "The amount of quantity to remove. Only used if \"Reduce Quantity\" is enabled and the item is physical."
                                 },
                                 "Items": {
-                                    "Label": "Предметы"
+                                    "Label": "Items"
                                 }
                             },
                             "set-attribute": {
-                                "Title": "Установить атрибут",
-                                "Description": "Устанавливает значение атрибута актёра.",
+                                "Title": "Set Attribute",
+                                "Description": "Sets the value of an attribute of an actor.",
                                 "Attribute": {
-                                    "Label": "Атрибут"
+                                    "Label": "Attribute"
                                 },
                                 "Value": {
-                                    "Label": "Значение",
-                                    "Hint": "Какое значение установить для атрибута."
+                                    "Label": "Value",
+                                    "Hint": "The value to set the attribute to."
                                 },
                                 "Bonus": {
-                                    "Label": "Установить бонус",
-                                    "Hint": "Устанавливать ли бонус атрибута вместо самого значения."
+                                    "Label": "Set Bonus",
+                                    "Hint": "Whether to set the attribute bonus instead of the attribute itself."
                                 }
                             },
                             "set-skill-rank": {
-                                "Title": "Установить ранг навыка",
-                                "Description": "Устанавливает ранг навыка актёра.",
+                                "Title": "Set Skill Rank",
+                                "Description": "Sets the rank of a skill of an actor.",
                                 "Skill": {
-                                    "Label": "Навык"
+                                    "Label": "Skill"
                                 },
                                 "Value": {
-                                    "Label": "Значение",
-                                    "Hint": "Какое значение установить для ранга навыка."
+                                    "Label": "Value",
+                                    "Hint": "The value to set the skill rank to."
                                 }
                             },
                             "use-item": {
-                                "Title": "Использовать предмет",
-                                "Description": "Использует предмет, выполняя бросок.",
+                                "Title": "Use item",
+                                "Description": "Uses an item by rolling it.",
                                 "Target": {
-                                    "Label": "Цель",
+                                    "Label": "Target",
                                     "Choices": {
-                                        "self": "Сам",
-                                        "sibling": "Другое на том же актёре",
-                                        "global": "Глобально"
+                                        "self": "Self",
+                                        "sibling": "Other on same Actor",
+                                        "global": "Global"
                                     }
                                 },
                                 "UUID": {
-                                    "Label": "Предмет"
+                                    "Label": "Item"
                                 },
                                 "FastForward": {
-                                    "Label": "Без подтверждения",
-                                    "Hint": "Пропускать ли окно броска."
+                                    "Label": "Fast Forward",
+                                    "Hint": "Whether to skip the roll dialog for the roll."
                                 },
                                 "AdvantageMode": {
-                                    "Label": "Режим преимущества"
+                                    "Label": "Advantage Mode"
                                 },
                                 "TemporaryDamageModifiers": {
-                                    "Label": "Бонус урона",
-                                    "Hint": "Формула бонуса урона для броска. Только для предметов с уроном."
+                                    "Label": "Damage Bonus",
+                                    "Hint": "Damage bonus formula to apply to the roll. Only items that can roll damage."
                                 }
                             },
                             "update-actor": {
-                                "Title": "Обновить актёра",
-                                "Description": "Применяет набор изменений к актёру.",
+                                "Title": "Update Actor",
+                                "Description": "Updates an actor by applying a set of changes.",
                                 "Target": {
-                                    "Label": "Цель",
-                                    "Hint": "Целевой актёр. Если не задан, будет использоваться родительский актёр предмета.",
+                                    "Label": "Target",
+                                    "Hint": "The target actor to update. If not set, the item's parent actor will be used.",
                                     "Choices": {
-                                        "parent": "Родительский актёр",
-                                        "global": "Глобально"
+                                        "parent": "Parent Actor",
+                                        "global": "Global"
                                     }
                                 },
                                 "UUID": {
-                                    "Label": "Актёр"
+                                    "Label": "Actor"
                                 },
                                 "Changes": {
-                                    "Label": "Изменения"
+                                    "Label": "Changes"
                                 }
                             },
                             "update-item": {
-                                "Title": "Обновить предмет",
-                                "Description": "Применяет набор изменений к предмету.",
+                                "Title": "Update Item",
+                                "Description": "Updates an item by applying a set of changes.",
                                 "Target": {
-                                    "Label": "Цель",
+                                    "Label": "Target",
                                     "Choices": {
-                                        "self": "Сам",
-                                        "sibling": "Другое на том же актёре",
-                                        "global": "Глобально"
+                                        "self": "Self",
+                                        "sibling": "Other on same Actor",
+                                        "global": "Global"
                                     }
                                 },
                                 "UUID": {
-                                    "Label": "Предмет"
+                                    "Label": "Item"
                                 },
                                 "MatchMode": {
-                                    "Label": "Режим сопоставления",
-                                    "Hint": "Как сопоставлять предмет для обновления.\nИдентификатор — по полю из вкладки \"Сведения\".\nИмя — по точному совпадению (с учётом регистра).\nUUID — только по точному UUID.",
+                                    "Label": "Match Mode",
+                                    "Hint": "How to match the item to update.\nIdentifier matches by the identifier set under Details.\nName matches by exact name, case sensitive.\nUUID matches only the exact item.",
                                     "Choices": {
-                                        "identifier": "Идентификатор",
-                                        "name": "Имя",
+                                        "identifier": "Identifier",
+                                        "name": "Name",
                                         "uuid": "UUID"
                                     }
                                 },
                                 "MatchAll": {
-                                    "Label": "Совпадать со всеми",
-                                    "Hint": "Сопоставлять все предметы или только первый найденный."
+                                    "Label": "Match All",
+                                    "Hint": "Whether to match all items or just the first one encountered."
                                 },
                                 "Changes": {
-                                    "Label": "Изменения"
+                                    "Label": "Changes"
                                 }
                             },
                             "execute-macro": {
-                                "Title": "Выполнить макрос",
-                                "Description": "Выполняет макрос.",
+                                "Title": "Execute Macro",
+                                "Description": "Executes a macro.",
                                 "MacroType": {
-                                    "Label": "Тип макроса"
+                                    "Label": "Macro Type"
                                 },
                                 "Inline": {
-                                    "Label": "Встроенный"
+                                    "Label": "Inline"
                                 },
                                 "UUID": {
-                                    "Label": "Макрос"
+                                    "Label": "Macro"
                                 }
                             }
                         },
                         "General": {
                             "Target": {
-                                "Label": "Цель",
+                                "Label": "Target",
                                 "Choices": {
-                                    "self": "Сам",
-                                    "sibling": "Другое на том же актёре",
-                                    "equipped-weapon": "Экипированное оружие",
-                                    "equipped-armor": "Экипированная броня",
-                                    "global": "Глобально"
+                                    "self": "Self",
+                                    "sibling": "Other on same Actor",
+                                    "equipped-weapon": "Equipped Weapon",
+                                    "equipped-armor": "Equipped Armor",
+                                    "global": "Global"
                                 }
                             },
                             "MatchMode": {
-                                "Label": "Режим сопоставления",
-                                "Hint": "Как сопоставлять предмет.\nИдентификатор — по полю из вкладки \"Сведения\".\nИмя — по точному совпадению (с учётом регистра).\nUUID — только по точному UUID.",
+                                "Label": "Match Mode",
+                                "Hint": "How to match the item.\nIdentifier matches by the identifier set under Details.\nName matches by exact name, case sensitive.\nUUID matches only the exact item.",
                                 "Choices": {
-                                    "identifier": "Идентификатор",
-                                    "name": "Имя",
+                                    "identifier": "Identifier",
+                                    "name": "Name",
                                     "uuid": "UUID"
                                 }
                             },
                             "MatchAll": {
-                                "Label": "Совпадать со всеми",
-                                "Hint": "Сопоставлять все предметы или только первый найденный."
+                                "Label": "Match All",
+                                "Hint": "Whether to match all items or just the first one encountered."
                             }
                         }
                     }
-                },                
+                },
                 "Notification": {
-                    "ExceededMaxDepth": "Превышена максимальная глубина цепочки событий. Выполнение прервано.",
-                    "RecentEventsExceeded": "Слишком много событий типа \"{eventType}\" за короткий период. Выполнение прервано."
+                    "ExceededMaxDepth": "Exceeded maximum event chain depth. Aborting event execution.",
+                    "RecentEventsExceeded": "Exceeded maximum number of \"{eventType}\" events in a short period of time. Aborting event execution."
                 }
-            },              
+            },
             "Sheet": {
-                "Basics": "Основные",
+                "Basics": "Basics",
                 "Tabs": {
-                    "Description": "Описание",
-                    "Effects": "Эффекты",
-                    "Details": "Детали",
-                    "Talents": "Таланты",
-                    "Events": "События"
+                    "Description": "Description",
+                    "Effects": "Effects",
+                    "Details": "Details",
+                    "Talents": "Talents",
+                    "Events": "Events"
                 },
                 "Identifier": {
-                    "Label": "Идентификатор",
-                    "Hint": "Используется для уникальной идентификации этого {type}. Идентификатор может содержать только буквы (a-z), цифры (0-9), дефисы (-) и подчеркивания (_)."
+                    "Label": "Identifier",
+                    "Hint": "Used to uniquely identify this {type}. Identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_)."
                 },
-                "Type": "Тип",
+                "Type": "Type",
                 "Injury": {
-                    "Duration": "Длительность",
-                    "InitialDuration": "Начальная",
-                    "RemainingDuration": "Оставшаяся"
+                    "Duration": "Duration",
+                    "InitialDuration": "Initial",
+                    "RemainingDuration": "Remaining"
                 },
                 "Ancestry": {
-                    "Size": "Размер",
-                    "Advancement": "Развитие",
-                    "FreePath": "Бесплатный путь",
-                    "FreeTalents": "Бесплатные таланты",
-                    "BonusTalents": "Бонусные таланты",
-                    "Restrictions": "Ограничения",
-                    "PathReferencePlaceholder": "Перетащите путь сюда, чтобы установить бесплатный путь",
-                    "TalentIdDescription": "Столбец идентификатора должен содержать идентификатор элемента таланта, к которому вы хотите предоставить доступ персонажам с этой родословной. Идентификатор пути может содержать только буквы (a-z), цифры (0-9), дефисы (-) и подчеркивания (_).",
+                    "Size": "Size",
+                    "Advancement": "Advancement",
+                    "FreePath": "Free Path",
+                    "FreeTalents": "Free Talents",
+                    "BonusTalents": "Bonus Talents",
+                    "Restrictions": "Restrictions",
+                    "PathReferencePlaceholder": "Drop Path Here to Set Free Path",
+                    "TalentIdDescription": "The identifier column should hold the identifier of the talent item you want characters with this Ancestry to have access to. The path identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_).",
                     "Component": {
                         "AdvancementTalentList": {
-                            "DropTalent": "Перетащите талант сюда, чтобы добавить в список",
+                            "DropTalent": "Drop Talent here to add to list",
                             "Warning": {
-                                "WrongType": "Перетаскиваемый документ должен быть типа \"Талант\""
+                                "WrongType": "The dropped Document must be of type Talent"
                             }
                         },
                         "BonusTalents": {
-                            "Add": "Новое правило"
+                            "Add": "New Rule"
                         }
                     }
                 },
                 "Specialty": {
-                    "PathId": "Идентификатор пути",
-                    "PathIdDescription": "Идентификатор пути, к которому принадлежит эта специализация. Идентификатор пути может содержать только буквы (a-z), цифры (0-9), дефисы (-) и подчеркивания (_)."
+                    "PathId": "Path Identifier",
+                    "PathIdDescription": "The identifier of the path this specialty belongs to. The path identifier can only contain letters (a-z), numbers (0-9), dashes (-), and underscores (_)."
                 },
                 "Loot": {
-                    "IsMoney": "Является деньгами",
-                    "IsMoneyDescription": "Является ли этот предмет добычи валютой?"
+                    "IsMoney": "Is Money",
+                    "IsMoneyDescription": "Is this loot item a form of currency?"
                 },
                 "Properties": {
-                    "Quantity": "Количество",
-                    "Weight": "Вес",
-                    "Price": "Цена"
+                    "Quantity": "Quantity",
+                    "Weight": "Weight",
+                    "Price": "Price"
                 },
                 "Equip": {
-                    "Title": "Детали экипировки",
-                    "AlwaysEquipped": "Всегда экипировано",
-                    "Traits": "Черты",
-                    "ExpertTraits": "Экспертные черты",
-                    "LoseTrait": "Теряет [trait]",
+                    "Title": "Equipment Details",
+                    "AlwaysEquipped": "Always Equipped",
+                    "Traits": "Traits",
+                    "ExpertTraits": "Expert Traits",
+                    "LoseTrait": "Loses [trait]",
                     "ModifyTraitValue": "[trait] [[value]] >",
                     "ModifyTraitValueFull": "[trait] [[value]] > [[newValue]]",
-                    "ViewTraits": "Посмотреть черты"
+                    "ViewTraits": "View Traits"
                 },
                 "Armor": {
-                    "DeflectedTypes": "Отражаемые типы урона",
-                    "ViewDeflected": "Просмотреть отражаемые типы"
-                },                
+                    "DeflectedTypes": "Deflected Damage Types",
+                    "ViewDeflected": "View Deflected Types"
+                },
                 "Activation": {
-                    "Title": "Использование",
-                    "Type": "Тип активации",
-                    "Cost": "Стоимость активации",
-                    "Consume": "Расход ресурсов",
-                    "Uses": "Ограниченные использования",
-                    "Recharge": "Перезарядка",
-                    "AdditionalFormula": "Дополнительная формула броска",
-                    "AdditionalFormulaDescription": "Введите любые дополнительные модификаторы, которые вы хотите добавить к броску d20 навыка этого предмета. Этот ввод будет обработан как формула костей, но любые добавленные вами кости в настоящее время не будут доступны для преимущества/помехи. Доступные параметры: @mod, @attribute & @skill.rank относятся к значениям выбранных здесь навыков, но доступен весь список навыков и атрибутов - обратитесь за помощью в Discord!"
+                    "Title": "Usage",
+                    "Type": "Activation Type",
+                    "Cost": "Activation Cost",
+                    "Consume": "Resource Consumption",
+                    "Uses": "Limited Uses",
+                    "Recharge": "Recharge",
+                    "AdditionalFormula": "Roll Formula Extension",
+                    "AdditionalFormulaDescription": "Input any extra modifiers you wish to add to this item's d20 Skill Roll. This input will be treated as a dice formula, but any die you add won't be available for advantage/disadvantage currently. Paramters you can use: @mod, @attribute & @skill.rank refer to the values of the skills selected here, but the whole list of skills and attributes can be accessed - ask on the discord for help!"
                 },
                 "Attack": {
-                    "Title": "Атака",
-                    "Type": "Тип атаки",
-                    "Range": "Дальность",
-                    "RangeShort": "Короткая",
-                    "RangeLong": "Длинная"
+                    "Title": "Attack",
+                    "Type": "Attack Type",
+                    "Range": "Range",
+                    "RangeShort": "Short",
+                    "RangeLong": "Long"
                 },
                 "Damage": {
-                    "Title": "Урон",
-                    "Formula": "Формула урона",
-                    "GrazeOverride": "Переопределить расчёт скользящего урона",
-                    "GrazeFormula": "Новая формула",
-                    "GrazeHint": "Формула, введенная здесь, будет представлять собой полный расчет скользящего урона. Любые броски костей будут производиться отдельно от основного броска урона. Вы можете использовать всю или часть основного броска с помощью @damage.total/@damage.unmodded/@damage.dice (последнее является системным значением по умолчанию) или модификатор выбранного атрибута с помощью @mod",
-                    "ViewGraze": "Посмотреть переопределение скользящего урона"
+                    "Title": "Damage",
+                    "Formula": "Damage Formula",
+                    "GrazeOverride": "Override Graze Damage Calculation",
+                    "GrazeFormula": "New Formula",
+                    "GrazeHint": "Formula entered here will be the entirety of the calculation for graze damage. Any die rolls will be rolled separately from the main damage roll. You can pull in all or part of the main roll using @damage.total/@damage.unmodded/@damage.dice (the latter being the system default) or the selected attribute mod with @mod",
+                    "ViewGraze": "View Graze Override"
                 },
                 "Modality": {
-                    "Title": "Режим",
-                    "HasModality": "Имеет режим"
+                    "Title": "Modality",
+                    "HasModality": "Has Modality"
                 },
                 "Talent": {
-                    "PathId": "Идентификатор пути",
-                    "PathIdPlaceholder": "Идентификатор пути",
-                    "PathIdDescription": "Идентификатор пути, к которому принадлежит этот талант.",
-                    "SpecialtyId": "Идентификатор специализации",
-                    "SpecialtyIdPlaceholder": "Идентификатор специализации — необязательно",
-                    "SpecialtyIdDescription": "Идентификатор специализации, к которой принадлежит этот талант.",
-                    "AncestryId": "Идентификатор наследия",
-                    "AncestryIdPlaceholder": "Идентификатор наследия",
-                    "AncestryIdDescription": "Идентификатор наследия, к которому принадлежит этот талант.",
+                    "PathId": "Path Identifier",
+                    "PathIdPlaceholder": "Path Identifier",
+                    "PathIdDescription": "The identifier of the path this talent belongs to.",
+                    "SpecialtyId": "Specialty Identifier",
+                    "SpecialtyIdPlaceholder": "Specialty Identifier — Optional",
+                    "SpecialtyIdDescription": "The identifier of the specialty this talent belongs to.",
+                    "AncestryId": "Ancestry Identifier",
+                    "AncestryIdPlaceholder": "Ancestry Identifier",
+                    "AncestryIdDescription": "The identifier of the ancestry this talent belongs to.",
                     "Prerequisites": {
-                        "Label": "Предварительные требования",
-                        "Type": "Тип",
-                        "Description": "Описание",
-                        "Create": "Новое требование",
-                        "Edit": "Редактировать требование",
-                        "Delete": "Удалить требование",
-                        "TalentId": "Идентификатор таланта",
-                        "TalentIdPlaceholder": "Идентификатор таланта",
-                        "Attribute": "Атрибут",
-                        "AttributeValue": "Значение",
-                        "AttributeValuePlaceholder": "Минимальное значение атрибута",
-                        "Skill": "Навык",
-                        "SkillRank": "Уровень",
-                        "SkillRankPlaceholder": "Минимальный уровень навыка",
-                        "Connection": "Связь",
-                        "ConnectionDescription": "Описание",
-                        "ConnectionDescriptionPlaceholder": "Описание связи",
-                        "DropTalents": "Перетащите таланты сюда, чтобы добавить их в список.",
-                        "DropGoals": "Перетащите цели сюда, чтобы добавить их в список."
+                        "Label": "Prerequisites",
+                        "Type": "Type",
+                        "Description": "Description",
+                        "Create": "New Prerequisite",
+                        "Edit": "Edit prerequisite",
+                        "Delete": "Remove prerequisite",
+                        "TalentId": "Talent Identifier",
+                        "TalentIdPlaceholder": "Talent Identifier",
+                        "Attribute": "Attribute",
+                        "AttributeValue": "Value",
+                        "AttributeValuePlaceholder": "Minimum Attribute Value",
+                        "Skill": "Skill",
+                        "SkillRank": "Rank",
+                        "SkillRankPlaceholder": "Minimum Skill Rank",
+                        "Connection": "Connection",
+                        "ConnectionDescription": "Description",
+                        "ConnectionDescriptionPlaceholder": "Connection Description",
+                        "DropTalents": "Drop Talents here to add them to the list.",
+                        "DropGoals": "Drop Goals here to add them to the list."
                     },
                     "GrantRules": {
-                        "Description": "Описание",
-                        "Create": "Новое правило",
-                        "Edit": "Редактировать правило",
-                        "Delete": "Удалить правило"
+                        "Description": "Description",
+                        "Create": "New rule",
+                        "Edit": "Edit rule",
+                        "Delete": "Remove rule"
                     }
                 },
                 "TalentTree": {
-                    "View": "Посмотреть"
+                    "View": "View"
                 },
                 "Path": {
-                    "TalentTreePlaceholder": "Перетащите сюда древо талантов",
-                    "NoTalentsConfigured": "Таланты не настроены"
+                    "TalentTreePlaceholder": "Drop Talent Tree Here",
+                    "NoTalentsConfigured": "No Talents Configured"
                 },
                 "TalentsProvider": {
-                    "Title": "Таланты",
+                    "Title": "Talents",
                     "TalentTree": {
-                        "Label": "Дерево талантов",
-                        "Hint": "Дерево талантов, которое содержит все таланты для этого пути. Это дерево отображается на вкладке \"таланты \"."
+                        "Label": "Talent Tree",
+                        "Hint": "Talent tree that contains all talents for this path. This tree is displayed on the \"talents\" tab."
                     }
+                },
+                "EventsList": {
+                    "Description": "Description",
+                    "Trigger": "Trigger",
+                    "Handler": "Handler",
+                    "Create": "Add event rule"
                 }
             },
             "General": {
                 "LinkedSkills": {
-                    "Label": "Связанные навыки",
-                    "Hint": "Эти навыки отображаются вместе с {type} в листе персонажа."
+                    "Label": "Linked Skills",
+                    "Hint": "These skills are displayed alongside the {type} in the character sheet."
                 }
-            }            
+            }
         },
         "Attack": {
             "Type": {
-                "Melee": "Ближний бой",
-                "Ranged": "Дальний бой"
+                "Melee": "Melee",
+                "Ranged": "Ranged"
             }
         },
         "DamageTypes": {
-            "Energy": "Энергетический",
-            "Impact": "Дробящий",
-            "Keen": "Острый",
-            "Spirit": "Духовный",
-            "Vital": "Жизненный",
-            "Healing": "Исцеляющий"
+            "Energy": "Energy",
+            "Impact": "Impact",
+            "Keen": "Keen",
+            "Spirit": "Spirit",
+            "Vital": "Vital",
+            "Healing": "Healing"
         },
         "Paths": {
             "Types": {
                 "Heroic": {
-                    "Label": "Героический"
+                    "Label": "Heroic"
                 }
             }
         },
         "Currencies": {},
         "Combat": {
-            "FastPlayers": "Быстрые персонажи",
-            "SlowPlayers": "Медленные персонажи",
-            "FastAdversaries": "Быстрые противники",
-            "SlowAdversaries": "Медленные противники",
-            "ToggleTurn": "Переключить скорость хода",
-            "ResetActivation": "Сбросить активацию",
-            "Activate": "Отметить как совершившего действие"
+            "FastPlayers": "Fast Characters",
+            "SlowPlayers": "Slow Characters",
+            "FastAdversaries": "Fast Adversaries",
+            "SlowAdversaries": "Slow Adversaries",
+            "ToggleTurn": "Toggle Turn Speed",
+            "ResetActivation": "Reset Activation",
+            "Activate": "Mark as Acted"
         },
         "Status": {
-            "Afflicted": "Поражённый",
-            "Blind": "Ослеплён",
-            "Burrowing": "Погребённый",
-            "Determined": "Решительный",
-            "Disoriented": "Дезориентирован",
-            "Empowered": "Озарённый",
-            "Enhanced": "Усилен",
-            "Exhausted": "Истощен",
-            "Flying": "Полёт",
-            "Focused": "Сфокусирован",
-            "Hidden": "Скрыт",
-            "Immobilized": "Обездвижен",
-            "Invisible": "Невидимый",
-            "Prone": "Сбитый с ног",
-            "Restrained": "Скован",
-            "Slowed": "Замедлен",
-            "Stunned": "Ошеломлен",
-            "Surprised": "Взят врасплох",
-            "Unconscious": "Без сознания",
-            "Dead": "Мёртв"
+            "Afflicted": "Afflicted",
+            "Blind": "Senseblind",
+            "Burrowing": "Burrowing",
+            "Determined": "Determined",
+            "Disoriented": "Disoriented",
+            "Empowered": "Empowered",
+            "Enhanced": "Enhanced",
+            "Exhausted": "Exhausted",
+            "Flying": "Flying",
+            "Focused": "Focused",
+            "Hidden": "Hidden",
+            "Immobilized": "Immobilized",
+            "Invisible": "Invisible",
+            "Prone": "Prone",
+            "Restrained": "Restrained",
+            "Slowed": "Slowed",
+            "Stunned": "Stunned",
+            "Surprised": "Surprised",
+            "Unconscious": "Unconscious",
+            "Dead": "Dead"
         },
         "Sheet": {
             "Descriptions": {
-                "DescriptionHeader": "Описание",
-                "ShortHeader": "Краткое описание",
-                "ChatHeader": "Описание для чата",
-                "Collapsible": "Свернуть/Развернуть",
-                "Edit": "Редактировать описание"
+                "DescriptionHeader": "Description",
+                "ShortHeader": "Short Description",
+                "ChatHeader": "Chat Description",
+                "Collapsible": "Toggle Collapsible",
+                "Edit": "Edit Description"
             },
             "Effects": {
-                "Label": "Эффекты",
-                "Inactive": "Неактивные эффекты",
-                "Passive": "Пассивные эффекты",
-                "Temporary": "Временные эффекты",
-                "Source": "Источник",
-                "Enable": "Включить эффект",
-                "Disable": "Отключить эффект",
-                "Duration": "Длительность",
-                "Create": "Новый эффект",
-                "Edit": "Редактировать эффект",
-                "Delete": "Удалить эффект",
-                "ToggleActive": "Переключить активность"
+                "Label": "Effects",
+                "Inactive": "Inactive Effects",
+                "Passive": "Passive Effects",
+                "Temporary": "Temporary Effects",
+                "Source": "Source",
+                "Enable": "Enable Effect",
+                "Disable": "Disable Effect",
+                "Duration": "Duration",
+                "Create": "New Effect",
+                "Edit": "Edit Effect",
+                "Delete": "Remove Effect",
+                "ToggleActive": "Toggle Active"
             },
             "Talents": {
-                "Label": "Таланты",
-                "AcquiredAtLevel": "Получено на уровне",
-                "Add": "Новый талант",
-                "Edit": "Редактировать талант",
-                "Delete": "Удалить талант",
-                "Cancel": "Отменить изменения",
-                "Submit": "Завершить редактирование"
+                "Label": "Talents",
+                "AtLevel": "At Level",
+                "Add": "New Talent",
+                "Edit": "Edit Talent",
+                "Delete": "Remove Talent",
+                "Cancel": "Discard Changes",
+                "Submit": "Finish Editing"
             },
             "TalentPicks": {
-                "Edit": "Редактировать",
-                "Delete": "Удалить",
-                "Cancel": "Отменить изменения",
-                "Submit": "Завершить редактирование"
+                "Edit": "Edit",
+                "Delete": "Remove",
+                "Cancel": "Discard Changes",
+                "Submit": "Finish Editing"
             }
         },
         "Attribute": {
-            "str": "Сила",
-            "spd": "Скорость",
-            "int": "Интеллект",
-            "wil": "Сила Воли",
-            "awa": "Восприятие",
-            "pre": "Харизма"
+            "str": "Strength",
+            "spd": "Speed",
+            "int": "Intellect",
+            "wil": "Willpower",
+            "awa": "Awareness",
+            "pre": "Presence"
         },
         "Skill": {
-            "agi": "Ловкость",
-            "ath": "Атлетика",
-            "hwp": "Тяжёлое оружие",
-            "lwp": "Лёгкое оружие",
-            "stl": "Скрытность",
-            "thv": "Воровство",
-            "cra": "Ремесло",
-            "ded": "Дедукция",
-            "dis": "Дисциплина",
-            "inm": "Запугивание",
-            "lor": "Знания",
-            "med": "Медицина",
-            "dec": "Обман",
-            "ins": "Проницательность",
-            "lea": "Лидерство",
-            "prc": "Бдительность",
-            "prs": "Убеждение",
-            "sur": "Выживание"
+            "agi": "Agility",
+            "ath": "Athletics",
+            "hwp": "Heavy Weapons",
+            "lwp": "Light Weapons",
+            "stl": "Stealth",
+            "thv": "Thievery",
+            "cra": "Crafting",
+            "ded": "Deduction",
+            "dis": "Discipline",
+            "inm": "Intimidation",
+            "lor": "Lore",
+            "med": "Medicine",
+            "dec": "Deception",
+            "ins": "Insight",
+            "lea": "Leadership",
+            "prc": "Perception",
+            "prs": "Persuasion",
+            "sur": "Survival"
         },
         "ChatMessage": {
             "Buttons": {
-                "DamageFull": "Нажмите, чтобы нанести полный урон выбранным токенам.",
-                "DamageHalf": "Нажмите, чтобы нанести половину урона выбранным токенам.",
-                "DamageDouble": "Нажмите, чтобы нанести двойной урон выбранным токенам.",
-                "Healing": "Нажмите, чтобы применить лечение к выбранным токенам.",
-                "ReduceFocus": "Нажмите, чтобы уменьшить концентрацию у выбранных токенов.",
-                "RollCrit": "Нажмите, чтобы бросить критический урон.",
-                "RollAdvantage": "Нажмите, чтобы бросить с преимуществом.",
-                "RollDisadvantage": "Нажмите, чтобы бросить с помехой.",
-                "ApplyInjury": "Нажмите, чтобы наложить ранение на персонажа.",
-                "UndoDamage": "Нажмите, чтобы отменить полученный урон.",
-                "UndoHealing": "Нажмите, чтобы отменить лечение."
+                "DamageFull": "Click to apply full damage to selected token(s).",
+                "DamageHalf": "Click to apply half damage to selected token(s).",
+                "DamageDouble": "Click to apply double damage to selected token(s).",
+                "Healing": "Click to apply healing to selected token(s).",
+                "ReduceFocus": "Click to reduce focus from selected token(s).",
+                "RollCrit": "Click to roll critical damage.",
+                "RollAdvantage": "Click to roll with advantage.",
+                "RollDisadvantage": "Click to roll with disadvantage.",
+                "ApplyInjury": "Click to apply injury to character.",
+                "UndoDamage": "Click to undo damage taken.",
+                "UndoHealing": "Click to undo healing."
             },
             "Trays": {
-                "Targets": "Цели"
+                "Targets": "Targets"
             },
-            "InjuryRoll": "Бросок травмы",
+            "InjuryRoll": "Injury Roll",
             "InjuryDuration": {
-                "Dead": "{actor} <strong>умер</strong>.",
-                "Permanent": "{actor} <strong>перманентно травмирован</strong>.",
-                "Temporary": "{actor} травмирован на <strong>{days} дней</strong>."
+                "Dead": "{actor} has <strong>died</strong>.",
+                "Permanent": "{actor} is <strong>permanently injured</strong>.",
+                "Temporary": "{actor} is injured for <strong>{days} days</strong>."
             },
-            "ApplyDamage": "{actor} получает <strong>{amount} урона</strong>.",
-            "ApplyHealing": "{actor} восстанавливает <strong>{amount} здоровья</strong>.",
+            "ApplyDamage": "{actor} takes <strong>{amount} damage</strong>.",
+            "ApplyHealing": "{actor} recovers <strong>{amount} health</strong>.",
             "ModifierDialog": {
-                "DamageTitle": "Изменить урон",
-                "HealingTitle": "Изменить лечение",
-                "FocusTitle": "Изменить потерю концентрации"
+                "DamageTitle": "Modify Damage",
+                "HealingTitle": "Modify Healing",
+                "FocusTitle": "Modify Focus Loss"
             },
-            "DamageCalculation": "Расчет урона: {calculation}",
-            "ViewRollsDetails": "Детали бросков",
-            "Welcome": "<h2>Добро пожаловать в систему RPG Cosmere!</h2> <p>Спасибо, что попробовали систему ролевой игры Cosmere, разработанную сообществом! Сейчас вы используете версию <strong>{version}</strong>. Поскольку это ранний релиз, могут быть ошибки или недостающие функции, но ваши отзывы помогут нам улучшить систему. </p> <p>Для обсуждений, обновлений и поддержки присоединяйтесь к нашему серверу <a href=\"{discordLink}\">Metalworks Discord</a>.</p> <p>Если вы столкнулись с проблемами или у вас есть предложения, мы будем рады их услышать! Пожалуйста, сообщайте о них на нашей <a href=\"{issuesLink}\">странице Issues на GitHub</a> или на сервере <a href=\"{discordLink}\">Metalworks Discord</a>. Обязательно ознакомьтесь с <a href=\"{contributingLink}\">руководством по вкладам</a>, если хотите принять участие в разработке. </p> <p>Мы рады, что вы с нами, и надеемся, что вам понравится играть в Cosmere!</p>"
+            "DamageCalculation": "Damage Calculation: {calculation}",
+            "ViewRollsDetails": "Roll Details",
+            "Welcome": "<h2>Welcome to the Cosmere RPG!</h2> <p>Thank you for using the community-developed <strong>Cosmere Roleplaying Game</strong> system! You're running version <strong>{version}</strong>.</p> <p>For news, support, or to connect with other players and developers, join us on the <a href=\"{discordLink}\">Metalworks Discord</a>.</p> <p>If you run into any issues or have suggestions for improvements, please let us know via our <a href=\"{issuesLink}\">GitHub Issues page</a> or by reaching out on Discord. Interested in contributing? Check out our <a href=\"{contributingLink}\">contribution guidelines</a>.</p> <p>We hope you enjoy your journey through the Cosmere!</p>"
         },
         "Theme": {
             "Default": "Cosmere"
         },
         "Damage": {
-            "IgnoreDeflect": "Игнорировать поглощение"
+            "IgnoreDeflect": "Ignore Deflect"
         },
         "Migration": {
-            "DocumentMigrationFailed": "Ошибка миграции {type} \"{name}\". {error}"
+            "DocumentMigrationFailed": "Failed to migrate {type} \"{name}\". {error}"
         }
     },
     "DICE": {
-        "RollMode": "Режим броска",
+        "RollMode": "Roll Mode",
         "Plot": {
-            "Die": "Кубик сюжета",
-            "RaiseTheStakes": "Повысить ставки",
-            "Complication": "Усложнение",
-            "Opportunity": "Возможность"
+            "Die": "Plot Die",
+            "RaiseTheStakes": "Raise the Stakes",
+            "Complication": "Complication",
+            "Opportunity": "Opportunity"
         },
         "AdvantageMode": {
-            "None": "Нет",
-            "Advantage": "Преимущество",
-            "Disadvantage": "Недостаток"
+            "None": "None",
+            "Advantage": "Advantage",
+            "Disadvantage": "Disadvantage"
         },
         "Damage": {
-            "Label": "Урон",
-            "Apply": "Применить",
-            "Graze": "Задеть",
-            "Full": "Полный"
+            "Label": "Damage",
+            "Apply": "Apply",
+            "Graze": "Graze",
+            "Full": "Full"
         },
         "TemporaryBonus": {
-            "Label": "Временный бонус",
-            "Hint": "Введите необязательную формулу для применения в качестве временного модификатора к этой проверке навыка."
+            "Label": "Temporary Bonus",
+            "Hint": "Enter an optional formula to apply as a temporary modifier to this skill test."
         }
     },
     "ROLLS": {
-        "Recovery": "[character] бросает свой кубик восстановления.",
-        "RecoveryTend": "Получает лечение от [tender]."
+        "Recovery": "[character] rolls their recovery die.",
+        "RecoveryTend": "Tended to by [tender]."
     },
     "DIALOG": {
         "ItemConsume": {
-            "Title": "Потребление ресурса",
+            "Title": "Consume Resource",
             "ShouldConsume": {
                 "None": "None",
-                "Static": "Использовать {amount} {resource}?",
-                "RangeCapped": "Использовать {min}-{max} {resource}:",
-                "RangeUncapped": "Использовать {amount} или больше {resource}:"
+                "Static": "Consume {amount} {resource}?",
+                "RangeCapped": "Consume {min}-{max} {resource}:",
+                "RangeUncapped": "Consume {amount} or more {resource}:"
             }
         },
         "EditExpertise": {
-            "Remove": "Удалить",
-            "Add": "Добавить пользовательскую компетенцию",
-            "AddPlaceholder": "Пользовательская компетенция",
+            "Remove": "Remove",
+            "Add": "Add Custom Expertise",
+            "AddPlaceholder": "Custom Expertise",
             "Warning": {
-                "MaxExpertises": "Можно выбрать только {max} компетенций."
+                "MaxExpertises": "Can only select up to {max} expertises."
             }
         },
         "ConfigureResource": {
-            "Title": "Настройка максимума {resource}: {actor}"
+            "Title": "Configure Max {resource}: {actor}"
         },
         "LongRest": {
-            "ShouldPerform": "Выполнить долгий отдых?"
+            "ShouldPerform": "Perform Long Rest?"
         },
         "ShortRest": {
-            "Title": "Краткий отдых",
-            "TendedToBy": "Получает лечение от"
+            "Title": "Short Rest",
+            "TendedToBy": "Tended to by"
         },
         "ConfigureDefense": {
-            "Title": "Настройка защиты {attribute-group}: {actor}"
+            "Title": "Configure {attribute-group} Defense: {actor}"
         },
         "ConfigureMovementRate": {
-            "Title": "Настройка скорости передвижения: {actor}"
+            "Title": "Configure Movement Rate: {actor}"
         },
         "ConfigureSensesRange": {
-            "Title": "Настройка дальности восприятия: {actor}",
-            "ObscuredUnaffected": "Не поддается влиянию эффектов, затрудняющих восприятие"
+            "Title": "Configure Senses Range: {actor}",
+            "IgnoreObscure": "Ignores Obscured"
         },
         "ConfigureRecoveryDie": {
-            "Title": "Настройка кубика восстановления: {actor}"
+            "Title": "Configure Recovery Die: {actor}"
         },
         "ConfigureDeflect": {
-            "Title": "Настройка отражения: {actor}"
+            "Title": "Configure Deflect: {actor}"
         },
         "EditTalentPrerequisite": {
-            "Title": "Изменить необходимое условие"
+            "Title": "Edit Prerequisite"
         },
         "ConfigureRoll": {
-            "Title": "Настройка бросков",
-            "Hint": "Нажмите левой или правой кнопкой мыши на отдельный кубик, чтобы применить преимущество или помеху соответственно."
+            "Title": "Configure Rolls",
+            "Hint": "Left click or right click any individual die to apply advantage or disadvantage respectively."
         },
         "ConfigureAttack": {
             "AdvantageMode": {
-                "Title": "Режим преимущества",
+                "Title": "Advantage Mode",
                 "Field": {
-                    "Type": "Тип",
-                    "Dice": "Кубики"
+                    "Type": "Type",
+                    "Dice": "Dice"
                 }
             }
         },
         "EditBonusTalentsRule": {
-            "Title": "Редактировать правило бонусных талантов",
-            "Quantity": "Количество",
+            "Title": "Edit Bonus Talents Rule",
+            "Quantity": "Amount",
             "Warning": {
-                "DuplicateLevel": "Правило для уровня {level} уже существует"
+                "DuplicateLevel": "A rule for level {level} already exists"
             }
         },
         "ReleaseNotes": {
-            "Title": "Космер РПГ - Примечание к релизу"
+            "Title": "Cosmere Roleplaying Game - Release Notes"
         },
         "ConfigureTalentTree": {
-            "Title": "Настройка древа талантов: {name}",
+            "Title": "Configure Talent Tree: {name}",
             "Warning": {
-                "OutOfBounds": "Выбранные границы могут привести к размещению хотя бы одного таланта за пределами древа."
+                "OutOfBounds": "The selected bounds would place at least one talent outside the tree."
             },
             "Notification": {}
         },
         "PickDiceResult": {
-            "Title": "Выберите результат",
-            "Header": "Осталось выбрать:",
-            "SelectRoll": "Выбрать бросок",
+            "Title": "Pick Result",
+            "Header": "Left to Pick:",
+            "SelectRoll": "Select Roll",
             "Error": {
-                "TooManyPicked": "Нельзя выбрать больше {max} бросков!"
+                "TooManyPicked": "Cannot pick more than {max} roll(s)!"
             }
         },
         "EditEventRule": {
-            "Title": "Изменить правило события"
+            "Title": "Edit Event Rule"
         }
     },
     "COMPONENT": {
         "DocumentReferenceInput": {
-            "Placeholder": "Перетащите {type} сюда, чтобы создать ссылку",
+            "Placeholder": "Drop {type} here to create reference",
             "Warning": {
-                "WrongType": "Перетащенный документ должен быть типа {type}",
-                "WrongSubtype": "Перетащенный {type} должен быть типа {subtype}"
+                "WrongType": "The dropped Document must be of type {type}",
+                "WrongSubtype": "The dropped {type} must be of type {subtype}"
             }
         },
         "DocumentDropListComponent": {
-            "Placeholder": "Перетащите {type} сюда, чтобы добавить его в список",
+            "Placeholder": "Drop {type} here to add to list",
             "Warning": {
-                "DocumentAlreadyInList": "Перетащенный {type} уже есть в списке",
-                "WrongType": "Перетащенный документ должен быть типа {type}",
-                "WrongSubtype": "Перетащенный {type} должен быть типа {subtype}"
+                "DocumentAlreadyInList": "The dropped {type} is already in the list",
+                "WrongType": "The dropped Document must be of type {type}",
+                "WrongSubtype": "The dropped {type} must be of type {subtype}"
             }
         },
         "MultiValueSelect": {
-            "DefaultPlaceholder": "Выберите вариант"
+            "DefaultPlaceholder": "Select Option"
         },
         "DocumentChangesList": {
             "Header": {
-                "Key": "Ключ атрибута",
-                "Mode": "Режим изменения",
-                "Value": "Значение"
+                "Key": "Attribute Key",
+                "Mode": "Change Mode",
+                "Value": "Value"
             },
-            "Add": "Добавить изменение",
-            "Remove": "Удалить изменение"
-        }        
+            "Add": "Add Change",
+            "Remove": "Remove Change"
+        }
     },
     "GENERIC": {
-        "Unknown": "Неизвестно",
-        "None": "Нет",
-        "Custom": "Пользовательский",
-        "Default": "По умолчанию",
-        "Document": "Документ",
-        "Formula": "Формула",
-        "Value": "Значение",
-        "Modifier": "Модификатор",
-        "DC": "КС(DC)",
-        "Skill": "Навыки",
-        "Attribute": "Атрибут",
-        "SkillTest": "Тест навыка",
-        "Test": "Тест",
-        "Plot": "Сюжет",
-        "Damage": "Урон",
-        "Healing": "Лечение",
-        "Immune": "Имунный",
-        "Condition": "Состояние",
-        "Cost": "Стоимость",
-        "Configure": "Настроить",
-        "DistanceUnit": "фт.",
-        "ViewDetails": "Посмотреть детали",
-        "HideDetails": "Скрыть детали",
-        "Bonus": "Бонус",
-        "Mode": "Режим",
-        "Turns": "Ходы",
-        "Rounds": "Раунды",
-        "Clear": "Очистить",
-        "Name": "Имя",
-        "Image": "Рисунок",
-        "Level": "Уровень",
-        "Add": "Добавить",
-        "Type": "Тип",
-        "Description": "Описание",
-        "Talent": "Талант",
-        "Goal": "Цель",
+        "Unknown": "Unknown",
+        "None": "None",
+        "Custom": "Custom",
+        "Default": "Default",
+        "Document": "Document",
+        "Formula": "Formula",
+        "Value": "Value",
+        "Modifier": "Modifier",
+        "DC": "DC",
+        "Skill": "Skill",
+        "Attribute": "Attribute",
+        "SkillTest": "Skill Test",
+        "Test": "Test",
+        "Plot": "Plot",
+        "Damage": "Damage",
+        "Healing": "Healing",
+        "Immune": "Immune",
+        "Condition": "Condition",
+        "Cost": "Cost",
+        "Configure": "Configure",
+        "DistanceUnit": "ft.",
+        "ViewDetails": "View Details",
+        "HideDetails": "Hide Details",
+        "Bonus": "Bonus",
+        "Mode": "Mode",
+        "Turns": "Turns",
+        "Rounds": "Rounds",
+        "Clear": "Clear",
+        "Name": "Name",
+        "Image": "Image",
+        "Level": "Level",
+        "Add": "Add",
+        "Type": "Type",
+        "Description": "Description",
+        "Talent": "Talent",
+        "Goal": "Goal",
         "Button": {
-            "Roll": "Бросить",
-            "Continue": "Продолжить",
-            "Remove": "Удалить",
-            "Edit": "Редактировать",
-            "Save": "Сохранить",
-            "Cancel": "Отменить",
-            "Update": "Обновить",
-            "RemoveFavorite": "Удалить из избранного",
-            "Favorite": "Избранное",
-            "Confirm": "Подтвердить"
+            "Roll": "Roll",
+            "Continue": "Continue",
+            "Remove": "Remove",
+            "Edit": "Edit",
+            "Save": "Save",
+            "Cancel": "Cancel",
+            "Update": "Update",
+            "RemoveFavorite": "Remove Favorite",
+            "Favorite": "Favorite",
+            "Confirm": "Confirm"
         },
         "Notification": {
-            "GrazeFocusSpent": "Снижено внимание на 1",
-            "AddedItem": "Добавлен {type} \"{item}\" для {actor}",
-            "IncreasedSkillRank": "Увеличен ранг навыка {actor}'а на {amount}",
-            "TalentObtained": "Талант {talent} был добавлен к {actor}",
-            "TalentRemoved": "Удалить талант {talent} из {actor}",
-            "TalentCannotBeRemoved": "Нельзя удалить {talent} из {actor} поскольку это предпосылка для другого таланта"
+            "GrazeFocusSpent": "Reduced focus by 1",
+            "AddedItem": "Added {item}{quantity} to {actor}",
+            "IncreasedSkillRank": "Increased {actor}'s {skill} rank by {amount}",
+            "TalentObtained": "Added talent {talent} to {actor}",
+            "TalentRemoved": "Removed talent {talent} from {actor}",
+            "TalentCannotBeRemoved": "Cannot remove talent {talent} from {actor} as it is a prerequisite for another talent"
         },
         "Warning": {
-            "NotImplemented": "Извините! [action] еще не реализовано",
-            "NoActor": "Не найден выбранный или назначенный актер для этого броска",
-            "NotEnoughResource": "Невозможно потребить, недостаточно ресурса",
-            "NotEnoughUses": "Невозможно потребить, недостаточно использований",
-            "ItemConsumeResourceNotConfigured": "Ресурс, выбранный для потребления, не настроен для этого предмета",
-            "NoDuplicateExpertises": "Невозможно создать дублирующую компетенцию",
-            "NoFocus": "Недостаточно фокуса для выполнения этого действия",
-            "TalentCannotBePrerequisiteOfItself": "Талант не может быть предварительным условием для самого себя",
-            "DuplicatePrerequisiteTalentRef": "Талант с ID {talentId} уже существует ({talentName})",
-            "ItemAlreadyInTree": "Предмет с ID \"{itemId}\" уже существует в дереве талантов {name}",
-            "ActorConditionImmune": "{actor} имеет иммунитет к {condition}"
+            "NotImplemented": "Sorry! [action] is not implemented yet",
+            "NoActor": "No selected or assigned actor found for this roll",
+            "NotEnoughResource": "Cannot consume, not enough of resource",
+            "NotEnoughUses": "Cannot consume, not enough uses left",
+            "ItemConsumeResourceNotConfigured": "The resource selected to be consumed is not configured on this item",
+            "NoDuplicateExpertises": "Cannot create duplicate expertise",
+            "NoFocus": "Not enough focus to perform this action",
+            "TalentCannotBePrerequisiteOfItself": "A talent cannot be a prerequisite of itself",
+            "DuplicatePrerequisiteTalentRef": "A talent with id {talentId} already exists ({talentName})",
+            "ItemAlreadyInTree": "An item with id \"{itemId}\" already exists in the {name} talent tree",
+            "ActorConditionImmune": "{actor} is immune to {condition}"
         },
         "Error": {
-            "RegisteringConfigs": "Ошибка при регистрации конфигураций. Подробности см. в консоли."
+            "RegisteringConfigs": "Error while registering configs. Check console for details."
         },
         "Enrichers": {
             "Test": {
-                "Against": "Против",
-                "VsDefense": "Против защиты цели",
-                "NoSkill": "Навык не указан"
+                "Against": "against",
+                "VsDefense": "against the target's",
+                "NoSkill": "No Skill Provided"
             },
             "Damage": {
-                "NoFormula": "Не указана формула или кубики урона",
-                "NoType": "Тип урона не указан",
-                "DoubleType": "Тип урона указан более одного раза",
-                "BadType": "Тип урона не поддерживается"
+                "NoFormula": "No Formula or Dice Terms Provided",
+                "NoType": "No Damage Type Provided",
+                "DoubleType": "Damage Type Defined More Than Once",
+                "BadType": "Damage Type Not Supported"
             },
             "Lookup": {
-                "NoPath": "Не указан путь для поиска"
+                "NoPath": "No Lookup Path Provided"
             },
-            "Error": "ОШИБКА"
+            "Error": "ENRICHER ERROR"
         },
         "DerivedValue": {
             "Mode": {
-                "Derived": "Выведено",
-                "Override": "Пользовательское"
+                "Derived": "Derived",
+                "Override": "Custom"
             }
         },
         "Units": {
-            "Days": "Дни"
+            "Days": "Days"
         }
     },
     "TYPES": {
         "Actor": {
-            "character": "Персонаж",
-            "adversary": "Противник"
+            "character": "Character",
+            "adversary": "Adversary"
         },
         "Item": {
-            "culture": "Культура",
-            "ancestry": "Наследие",
-            "path": "Путь",
-            "connection": "Связь",
-            "goal": "Цель",
-            "injury": "Травма",
-            "specialty": "Специализация",
-            "loot": "Добыча",
-            "armor": "Броня",
-            "trait": "Черта",
-            "action": "Действие",
-            "talent": "Талант",
-            "equipment": "Экипировка",
-            "weapon": "Оружие",
-            "power": "Сила",
-            "talent_tree": "Дерево талантов"
+            "culture": "Culture",
+            "ancestry": "Ancestry",
+            "path": "Path",
+            "connection": "Connection",
+            "goal": "Goal",
+            "injury": "Injury",
+            "specialty": "Specialty",
+            "loot": "Loot",
+            "armor": "Armor",
+            "trait": "Adversary Feature",
+            "action": "Action",
+            "talent": "Talent",
+            "equipment": "Equipment",
+            "weapon": "Weapon",
+            "power": "Power",
+            "talent_tree": "Talent Tree"
         }
     },
     "UNITS": {
         "Distance": {
-            "Feet": "Футы"
+            "Feet": "Feet"
         }
     },
     "SETTINGS": {
         "skipRollDialogByDefault": {
-            "name": "Пропускать диалог броска по умолчанию",
-            "hint": "Если включено, броски будут пропускать диалог настройки броска при нажатии, используя конфигурацию броска по умолчанию. Доступ к диалогу по-прежнему можно получить, удерживая клавишу-модификатор 'Пропустить/Показать диалог' из системных настроек."
+            "name": "Skip Roll Dialog by Default",
+            "hint": "If enabled, rolls will skip the roll configuration dialog when clicked, using the default roll configuration. The dialog can still be accessed by holding the 'Skip/Show Dialog' key modifier from the system controls."
         },
         "skipDamageModDialogByDefault": {
-            "name": "Пропускать диалог модификатора урона по умолчанию",
-            "hint": "Если включено, карта урона/лечения в чате будет пропускать диалог модификатора при нажатии, используя значение, показанное непосредственно на карте. Доступ к диалогу по-прежнему можно получить, удерживая клавишу-модификатор 'Пропустить/Показать диалог' из системных настроек."
+            "name": "Skip Damage Modifier Dialog by Default",
+            "hint": "If enabled, the damage/healing card in chat will skip the modifier dialog when clicked, using the value shown in the card directly. The dialog can still be accessed by holding the 'Skip/Show Dialog' key modifier from the system controls."
         },
         "enableOverlayButtons": {
-            "name": "Включить наложенные кнопки",
-            "hint": "При выводе проверки навыка или броска урона включить наложенные кнопки на сообщении чата, которые предлагают дополнительную функциональность для броска."
+            "name": "Enable Overlay Buttons",
+            "hint": "When outputting a skill test or damage roll, enable overlay buttons on the chat message that offer additional functionality for the roll."
         },
         "enableApplyButtons": {
-            "name": "Включить кнопки применения",
-            "hint": "При выводе броска урона включить кнопки на сообщении чата, которые позволяют применять урон или лечение к токенам, или уменьшать концентрацию у этих токенов."
+            "name": "Enable Apply Buttons",
+            "hint": "When outputting a damage roll, enable buttons on the chat message that allow for damage or healing to be applied to tokens, or to reduce focus from those tokens."
         },
         "alwaysShowApplyButtons": {
-            "name": "Всегда показывать кнопки применения",
-            "hint": "При выводе броска урона всегда показывать кнопки применения, а не только при наведении."
+            "name": "Always Show Apply Buttons",
+            "hint": "When outputting a damage roll always show the apply buttons, instead of only on hover."
         },
         "applyButtonsTo": {
-            "name": "Параметры кнопок применения",
-            "hint": "Определяет, к каким токенам применяется урон, лечение или уменьшение концентрации при применении с помощью кнопок на карте чата.",
+            "name": "Apply Button Options",
+            "hint": "Determines which tokens damage, healing, or focus reduction is applied to when applying via the chat card buttons.",
             "choices": {
-                "SelectedOnly": "Применять только к выбранным токенам",
-                "TargetedOnly": "Применять только к выделенным целям",
-                "SelectedAndTargeted": "Применять к обоим",
-                "PrioritiseSelected": "Приоритет выбранным токенам",
-                "PrioritiseTargeted": "Приоритет выделенным целям"
+                "SelectedOnly": "Apply to Selected Tokens",
+                "TargetedOnly": "Apply to Targeted Tokens",
+                "SelectedAndTargeted": "Apply to Both",
+                "PrioritiseSelected": "Prioritise Selected Tokens",
+                "PrioritiseTargeted": "Prioritise Targeted Tokens"
             }
         },
         "expandDescriptionByDefault": {
-            "name": "Разворачивать описание предмета по умолчанию",
-            "hint": "Определяет, должна ли секция описания предмета быть развернута по умолчанию при открытии листа предмета."
+            "name": "Expand Item Description By Default",
+            "hint": "Determines whether the description section of an item should be expanded by default when opening the item sheet."
         },
         "skillIncrementDecrementToggle": {
-            "name": "Включить пошаговое изменение навыка",
-            "hint": "Определяет, будет ли левый/правый клик увеличивать или уменьшать значение навыка на один шаг, вместо установки его на выбранный уровень."
-        },        
+            "name": "Enable Skill Pip Increment Behavior",
+            "hint": "Determines whether the skill pips increment/decrement on left click or right click, rather than setting to the clicked rank."
+        },
         "systemTheme": {
-            "name": "Предпочитаемая тема системы",
-            "hint": "Укажите тематический набор цветов для системных документов и элементов интерфейса. Выбранная тема будет учитывать предпочтительный темный/светлый режим, выбранный в основных настройках."
+            "name": "Preferred System Theme",
+            "hint": "Specify the themed set of colours to use for system documents and interface elements. The selected theme will respect the preferred Dark/Light mode selected in the core settings."
         }
     },
     "KEYBINDINGS": {
-        "skipDialogDefault": "Пропустить/Показать диалог",
-        "skipDialogAdvantage": "Пропустить диалог с преимуществом",
-        "skipDialogDisadvantage": "Пропустить диалог с недостатком",
-        "skipDialogRaiseStakes": "Пропустить диалог с повышением ставки",
-        "changeQuantity5": "Увеличить/уменьшить количество на 5",
-        "changeQuantity10": "Увеличить/уменьшить количество на 10",
-        "changeQuantity50": "Увеличить/уменьшить количество на 50"
+        "skipDialogDefault": "Skip/Show Dialog",
+        "skipDialogAdvantage": "Skip Dialog with Advantage",
+        "skipDialogDisadvantage": "Skip Dialog with Disadvantage",
+        "skipDialogRaiseStakes": "Skip Dialog with Raise Stakes",
+        "changeQuantity5": "Increase/Decrease Quantity by 5",
+        "changeQuantity10": "Increase/Decrease Quantity by 10",
+        "changeQuantity50": "Increase/Decrease Quantity by 50"
     },
     "STORMLIGHT": {
         "Currency": {
-            "Spheres": "Сферы"
+            "Spheres": "Spheres"
         },
         "Macro": {
             "StartingPath": {
-                "Set": "Установить начальный путь {path} для {actor}. Установлен начальный навык: {skill}.",
-                "Replaced": "Начальный путь {oldPath} заменён на {newPath} для {actor}. Установлен начальный навык: {skill}.",
-                "Unset": "Начальный путь для {actor} сброшен. Начальный навык удалён: {skill}."
+                "Set": "Set starting path {path} for {actor}. Set starting skill: {skill}.",
+                "Replaced": "Replaced starting path {oldPath} with {newPath} for {actor}. Set starting skill: {skill}.",
+                "Unset": "Cleared starting path for {actor}. Removed starting skill: {skill}."
             }
         }
     }

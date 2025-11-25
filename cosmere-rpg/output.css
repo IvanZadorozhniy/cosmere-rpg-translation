@@ -1,9 +1,17 @@
-.application.sheet {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) {
   --minimized-width: 250px;
   border: 3px solid var(--cosmere-color-accent);
   border-radius: 0;
 }
-.application.sheet > .window-corners {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-corners {
   position: absolute;
   top: -3px;
   left: -3px;
@@ -13,23 +21,42 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  filter: var(--cosmere-drop-shadow);
 }
-.application.sheet > .window-corners .corner {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-corners .corner {
   background-color: var(--cosmere-color-accent);
   mask: var(--border-sheet-corner-svg) no-repeat center;
 }
-.application.sheet > .window-corners .corner-pair {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-corners .corner-pair {
   display: flex;
   justify-content: space-between;
 }
-.application.sheet > .window-corners .bot {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-corners .bot {
   transform: scaleY(-1);
 }
-.application.sheet > .window-corners .right {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-corners .right {
   transform: scaleX(-1);
 }
-.application.sheet > .window-background {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -37,7 +64,11 @@
   bottom: 0;
   border: none;
 }
-.application.sheet > .window-background .banners {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-background .banners {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -45,20 +76,40 @@
   height: 100%;
   position: relative;
 }
-.application.sheet > .window-background .banners .top, .application.sheet > .window-background .banners .bot {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-background .banners .top, .application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-background .banners .bot {
   height: 200px;
 }
-.application.sheet .html-field-list {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-.application.sheet .html-field-list .html-field {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field {
   background-color: var(--cosmere-color-base-3);
   border-radius: 6px;
   padding: 0.5rem;
 }
-.application.sheet .html-field-list .html-field > .header {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field > .header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -71,50 +122,94 @@
   font-weight: 600;
   text-shadow: none;
 }
-.application.sheet .html-field-list .html-field > .header::before {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field > .header::before {
   content: "\f078";
   font-family: var(--font-awesome);
   transition: all 250ms ease;
   transform: rotate(-90deg);
   color: var(--cosmere-color-faded);
 }
-.application.sheet .html-field-list .html-field > .header .title {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field > .header .title {
   font-size: var(--font-size-12);
   color: var(--cosmere-color-text-sub);
   margin-top: 0.25rem;
 }
-.application.sheet .html-field-list .html-field > .header > a {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field > .header > a {
   color: var(--cosmere-color-faded);
 }
-.application.sheet .html-field-list .html-field > .collapsible-content {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field > .collapsible-content {
   padding: 0 0.25rem;
 }
-.application.sheet .html-field-list .html-field.expanded > .header::before {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .html-field-list .html-field.expanded > .header::before {
   transform: none;
 }
-.application.sheet .collapsible .collapsible-content {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .collapsible .collapsible-content {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 250ms ease;
 }
-.application.sheet .collapsible .collapsible-content > .wrapper {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .collapsible .collapsible-content > .wrapper {
   overflow: hidden;
 }
-.application.sheet .collapsible.expanded .collapsible-content {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .collapsible.expanded .collapsible-content {
   grid-template-rows: 1fr;
 }
-.application.sheet prose-mirror {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror {
   flex: 1;
   overflow: hidden;
 }
-.application.sheet prose-mirror menu {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu {
   --color-hover-bg: var(--cosmere-color-base-4);
   --color-control-bg: var(--cosmere-color-base-4);
   --color-form-label-hover: var(--cosmere-color-text-sub);
   background: var(--cosmere-color-base-3);
   justify-content: space-evenly;
 }
-.application.sheet prose-mirror menu button {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu button {
   font-family: var(--cosmere-font-normal);
   font-variant: lining-nums;
   font-weight: 600;
@@ -122,30 +217,58 @@
   background: none;
   padding: 0;
 }
-.application.sheet prose-mirror menu button:hover {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu button:hover {
   color: var(--cosmere-color-text-sub);
   box-shadow: none;
 }
-.application.sheet prose-mirror menu button:focus {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu button:focus {
   outline: none;
   box-shadow: none;
 }
-.application.sheet prose-mirror menu .pm-dropdown i.fa-chevron-down {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu .pm-dropdown i.fa-chevron-down {
   color: var(--cosmere-color-faded);
 }
-.application.sheet prose-mirror menu .pm-dropdown:hover i {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror menu .pm-dropdown:hover i {
   color: var(--cosmere-color-text-sub);
 }
-.application.sheet prose-mirror .editor-container {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror .editor-container {
   overflow: hidden auto;
   margin-right: 0;
 }
-.application.sheet prose-mirror .editor-container .editor-content {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror .editor-container .editor-content {
   position: unset;
   min-height: 300px;
   padding: 0.25rem 0.5rem;
 }
-.application.sheet prose-mirror > textarea {
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) prose-mirror > textarea {
   min-height: 300px;
   padding: 0.25rem 0.5rem;
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
@@ -247,6 +370,7 @@
   padding: 0.375rem;
   margin-top: 0.375rem;
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
+  width: 100%;
 }
 .application.sheet.actor.character .bullet-list .bullet {
   font-size: 0.375rem;
@@ -557,10 +681,14 @@
 }
 .application.sheet.actor .sheet-header {
   margin-top: 0.5rem;
+  display: flex;
 }
 .application.sheet.actor .sheet-header .title {
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
+  flex: 1;
 }
 .application.sheet.actor .sheet-header .title .document-name {
   font-family: var(--cosmere-font-header-sc);
@@ -568,6 +696,11 @@
   font-size: var(--font-size-48);
   text-transform: capitalize;
   color: var(--cosmere-color-text-main);
+  margin: 0;
+}
+.application.sheet.actor .sheet-header .title .document-name > input {
+  height: auto;
+  line-height: var(--font-size-48);
 }
 .application.sheet.actor .sheet-header .title .details {
   font-family: var(--cosmere-font-normal);
@@ -628,7 +761,6 @@
   overflow-x: hidden;
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
   scrollbar-gutter: stable;
-  filter: var(--cosmere-drop-shadow);
 }
 .application.sheet.actor .sheet-content .col-left .scroll-container .scroll-body {
   overflow: visible;
@@ -648,7 +780,6 @@
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
   scrollbar-gutter: stable;
   flex: 1;
-  filter: var(--cosmere-drop-shadow);
 }
 .application.sheet.actor .sheet-content .col-main .scroll-container .tab-body {
   overflow: visible;
@@ -667,7 +798,6 @@
   text-align: center;
 }
 .application.sheet.actor .sheet-stack .container {
-  filter: var(--cosmere-drop-shadow);
   position: relative;
   text-align: center;
 }
@@ -834,12 +964,12 @@
   align-items: center;
 }
 .application.sheet.actor app-actor-details .portrait-info .portrait {
+  position: relative;
   width: 100%;
   aspect-ratio: 1/1;
   overflow: hidden;
   border: 4px solid var(--cosmere-color-accent);
   border-radius: 50%;
-  filter: var(--cosmere-drop-shadow);
 }
 .application.sheet.actor app-actor-details .portrait-info .portrait img {
   width: 100%;
@@ -1035,7 +1165,6 @@
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 0.25rem;
-  font-weight: 600;
 }
 .application.sheet.actor app-actor-attributes .attribute-group .attributes {
   align-items: flex-start;
@@ -1395,7 +1524,6 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
   scrollbar-gutter: stable;
   margin-bottom: 0.75rem;
-  filter: var(--cosmere-drop-shadow);
 }
 .application.sheet.item .scroll-container .tab-body {
   overflow: visible;
@@ -1411,9 +1539,9 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 }
 .application.sheet.item nav {
   border: none;
-  margin: -1.875rem 0 1.375rem 6.25rem;
-  justify-content: space-between;
-  /*gap: 2rem;*/
+  margin: -38px 0 16px 100px;
+  justify-content: flex-start;
+  gap: 28px;
 }
 .application.sheet.item nav > a {
   text-transform: uppercase;
@@ -1537,7 +1665,7 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .application.sheet.item .item-details-form {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 .application.sheet.item app-item-details-activation:empty,
 .application.sheet.item app-item-details-attack:empty,
@@ -1636,7 +1764,9 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .application.sheet.item app-talent-tree-editor .menu .form-group-stacked,
 .application.sheet.item .item-details-form .form-group,
 .application.sheet.item .item-details-form .form-group-stacked {
-  gap: 0.625rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
   margin: 0;
   min-height: 32px;
 }
@@ -1707,7 +1837,8 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   display: flex;
   flex-direction: column;
   flex: 2;
-  gap: 0.25rem;
+  gap: 4px;
+  align-items: center;
 }
 .application.sheet.item app-item-details-activation .form-group > app-id-input,
 .application.sheet.item app-item-details-activation .form-group .form-fields,
@@ -1752,6 +1883,8 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   display: flex;
   flex-direction: row;
   flex: 2;
+  gap: 4px;
+  align-items: center;
 }
 .application.sheet.item app-item-details-activation .form-group > app-id-input input[type=text],
 .application.sheet.item app-item-details-activation .form-group > app-id-input input[type=number],
@@ -2218,6 +2351,19 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .application.sheet.item .item-details-form .form-group-stacked .form-fields > .delim {
   flex: none;
 }
+.application.sheet.item app-item-details-activation .form-group-stacked,
+.application.sheet.item app-item-details-attack .form-group-stacked,
+.application.sheet.item app-item-details-damage .form-group-stacked,
+.application.sheet.item app-item-details-equip .form-group-stacked,
+.application.sheet.item app-item-details-deflect .form-group-stacked,
+.application.sheet.item app-item-details-id .form-group-stacked,
+.application.sheet.item app-item-details-modality .form-group-stacked,
+.application.sheet.item app-item-details-type .form-group-stacked,
+.application.sheet.item app-talent-tree-editor .menu .form-group-stacked,
+.application.sheet.item .item-details-form .form-group-stacked {
+  flex-direction: column;
+  align-items: stretch;
+}
 .application.sheet.item app-item-details-activation .hint,
 .application.sheet.item app-item-details-attack .hint,
 .application.sheet.item app-item-details-damage .hint,
@@ -2257,6 +2403,21 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .sheet.journal-sheet section[data-link] h1 > a, .sheet.journal-sheet section[data-link] h2 > a, .sheet.journal-sheet section[data-link] h3 > a, .sheet.journal-sheet section[data-link] h4 > a, .sheet.journal-sheet section[data-link] h5 > a, .sheet.journal-sheet section[data-link] h6 > a {
   vertical-align: super;
   font-size: 10pt;
+}
+.sheet.journal-sheet section[data-link] > a.embed-label {
+  float: left;
+  position: relative;
+  padding-right: 1ch;
+}
+.sheet.journal-sheet section[data-link] > a.embed-label span {
+  font-weight: bold;
+  color: var(--cosmere-color-opportunity);
+}
+.sheet.journal-sheet section[data-link] > a.embed-label > i.icon {
+  position: absolute;
+  font-size: 0.5em;
+  top: 2px;
+  right: 0.9ch;
 }
 .sheet.journal-sheet section.item-embed.talent-tree {
   display: flex;
@@ -2656,11 +2817,12 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   margin: 0;
   width: 100%;
 }
-:is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-formula.graze::before {
+:is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-formula > .label {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-10);
   font-weight: 600;
   color: var(--cosmere-color-light-2);
+  text-transform: uppercase;
   text-align: left !important;
   flex-grow: 1;
   position: absolute;
@@ -2673,7 +2835,6 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   justify-content: flex-start;
   align-items: center;
   z-index: 1;
-  content: "Задевание";
 }
 :is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-total {
   font-weight: bold;
@@ -2720,14 +2881,14 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 }
 :is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-subtotal .value {
   color: var(--cosmere-color-dark-6);
-  font-size: var(--font-size-12);
+  font-size: var(--font-size-10);
   font-family: var(--cosmere-font-normal);
 }
 :is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-subtotal .label {
   color: var(--cosmere-color-light-1);
   font-size: var(--font-size-8);
   font-family: var(--cosmere-font-condensed);
-  text-transform: uppercase;
+  text-transform: uppercase; 
 }
 :is(.chat-popout, #chat-log, .chat-log) .chat-message .message-content .chat-card .chat-card-section .dice-roll .dice-result .dice-subtotal.active {
   padding: 0;
@@ -2922,7 +3083,7 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   border: none;
 }
 
-.combat-sidebar #combat-tracker {
+.combat-sidebar .combat-tracker {
   --combat-fast-turn-svg: url("assets/icons/svg/combat/icon_combat_fast_turn_on.svg");
   --combat-fast-turn-hover-svg: url("assets/icons/svg/combat/icon_combat_fast_turn_hover.svg");
   --combat-slow-turn-svg: url("assets/icons/svg/combat/icon_combat_slow_turn_on.svg");
@@ -2932,7 +3093,7 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   --combat-turn-done-svg: url("assets/icons/svg/combat/icon_combat_turn_done.svg");
   overflow-x: hidden;
 }
-.combat-sidebar #combat-tracker .combat-phase {
+.combat-sidebar .combat-tracker .combat-phase {
   padding: 0.5rem 0px;
   display: flex;
   align-items: center;
@@ -2940,44 +3101,43 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   border-top: 1px solid var(--color-border-dark-1);
   border-bottom: 1px solid var(--color-border-dark-1);
 }
-.combat-sidebar #combat-tracker .combat-phase.fast {
+.combat-sidebar .combat-tracker .combat-phase.fast {
   background-color: var(--cosmere-color-turn-fast);
 }
-.combat-sidebar #combat-tracker .combat-phase.slow {
+.combat-sidebar .combat-tracker .combat-phase.slow {
   background-color: var(--cosmere-color-turn-slow);
 }
-.combat-sidebar #combat-tracker .combat-phase .title {
+.combat-sidebar .combat-tracker .combat-phase .title {
   font-family: var(--cosmere-font-header);
   font-size: var(--font-size-12);
   text-transform: uppercase;
   padding-top: 0.25rem;
 }
-.combat-sidebar #combat-tracker .combatant {
+.combat-sidebar .combat-tracker .combatant {
   border: none;
 }
-.combat-sidebar #combat-tracker .combatant.defeated {
+.combat-sidebar .combat-tracker .combatant.defeated {
   color: var(--cosmere-color-complication-text);
 }
-.combat-sidebar #combat-tracker .combatant.defeated > img {
+.combat-sidebar .combat-tracker .combatant.defeated > img {
   opacity: 0.3;
   transform: scale(0.75);
 }
-.combat-sidebar #combat-tracker .combatant-name {
+.combat-sidebar .combat-tracker .combatant-name {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-15);
   font-weight: 600;
 }
-.combat-sidebar #combat-tracker .combatant-turn-controls {
+.combat-sidebar .combat-tracker .combatant-turn-controls {
   display: flex;
   text-align: center;
   justify-content: center;
   flex: 0;
   margin-right: 0.25rem;
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control,
-.combat-sidebar #combat-tracker .combatant-turn-finish-control {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control,
+.combat-sidebar .combat-tracker .combatant-turn-finish-control {
   cursor: pointer;
-  filter: var(--cosmere-drop-shadow);
   display: block;
   width: 32px;
   height: var(--sidebar-item-height);
@@ -2985,30 +3145,30 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   background-position: center;
   background-repeat: no-repeat;
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control:hover,
-.combat-sidebar #combat-tracker .combatant-turn-finish-control:hover {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control:hover,
+.combat-sidebar .combat-tracker .combatant-turn-finish-control:hover {
   filter: var(--cosmere-shadow-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control.fast {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control.fast {
   background-image: var(--combat-fast-turn-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control.fast:hover {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control.fast:hover {
   background-image: var(--combat-fast-turn-hover-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control.slow {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control.slow {
   background-image: var(--combat-slow-turn-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-speed-control.slow:hover {
+.combat-sidebar .combat-tracker .combatant-turn-speed-control.slow:hover {
   background-image: var(--combat-slow-turn-hover-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-finish-control:not(.done) {
+.combat-sidebar .combat-tracker .combatant-turn-finish-control:not(.done) {
   background-image: var(--combat-turn-pending-svg);
 }
-.combat-sidebar #combat-tracker .combatant-turn-finish-control:not(.done):hover {
+.combat-sidebar .combat-tracker .combatant-turn-finish-control:not(.done):hover {
   background-image: var(--combat-turn-hover-svg);
   animation: rotating 2s linear infinite;
 }
-.combat-sidebar #combat-tracker .combatant-turn-finish-control.done {
+.combat-sidebar .combat-tracker .combatant-turn-finish-control.done {
   background-image: var(--combat-turn-done-svg);
   opacity: 0.4;
 }
@@ -3047,7 +3207,6 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   overflow-x: hidden;
   scrollbar-color: var(--cosmere-color-base-6) var(--color-scrollbar-track);
   scrollbar-gutter: stable;
-  filter: var(--cosmere-drop-shadow);
 }
 .application.dialog ul {
   list-style-type: none;
@@ -3060,6 +3219,8 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 }
 .application.dialog .expertise-list .header,
 .application.dialog .immunities-list .header {
+  display: flex;
+  align-items: center;
   min-height: 30px;
   background-color: var(--cosmere-color-base-1);
   border-radius: 6px 6px 0 0;
@@ -3103,15 +3264,23 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .application.dialog .immunities-list .custom {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 0.375rem;
   background-color: var(--cosmere-color-base-3);
   gap: 0.375rem;
+  min-height: 26px;
+}
+.application.dialog .expertise-list .configured > label,
+.application.dialog .expertise-list .custom > label,
+.application.dialog .immunities-list .configured > label,
+.application.dialog .immunities-list .custom > label {
+  flex: 1;
 }
 .application.dialog .expertise-list .custom > a,
 .application.dialog .immunities-list .custom > a {
-  flex: 0;
-  padding-right: 0.313rem;
   color: var(--cosmere-color-faded);
+  flex: 0 0 18px;
+  text-align: center;
 }
 .application.dialog .expertise-list .custom > input,
 .application.dialog .immunities-list .custom > input {
@@ -3132,6 +3301,9 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   font-weight: 600;
   text-align: center;
   color: var(--cosmere-color-faded);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .application.dialog .expertise-list li:last-child,
 .application.dialog .immunities-list li:last-child {
@@ -3158,9 +3330,6 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 .application.dialog .dialog-content.standard-form .form-footer > button {
   height: auto;
 }
-.application.dialog .dialog-content.standard-form > .window-content, .application.dialog.configure-resource > .window-content, .application.dialog.configure-deflect > .window-content, .application.dialog.configure-defense > .window-content, .application.dialog.configure-movement-rate > .window-content, .application.dialog.configure-recovery-die > .window-content, .application.dialog.configure-senses-range > .window-content, .application.dialog.edit-bonus-talents-rule > .window-content, .application.dialog.pick-dice-result > .window-content, .application.dialog.roll-configuration > .window-content, .application.dialog.edit-event-rule > .window-content, .application.dialog.edit-creature-type > .window-content {
-  filter: var(--cosmere-drop-shadow);
-}
 .application.dialog .dialog-content.standard-form form,
 .application.dialog .dialog-content.standard-form #consumables, .application.dialog.configure-resource form,
 .application.dialog.configure-resource #consumables, .application.dialog.configure-deflect form,
@@ -3177,7 +3346,7 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.25rem;
+  gap: 4px;
 }
 .application.dialog .dialog-content.standard-form input, .application.dialog.configure-resource input, .application.dialog.configure-deflect input, .application.dialog.configure-defense input, .application.dialog.configure-movement-rate input, .application.dialog.configure-recovery-die input, .application.dialog.configure-senses-range input, .application.dialog.edit-bonus-talents-rule input, .application.dialog.pick-dice-result input, .application.dialog.roll-configuration input, .application.dialog.edit-event-rule input, .application.dialog.edit-creature-type input {
   color: var(--cosmere-color-text-sub);
@@ -3201,7 +3370,9 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   line-height: var(--form-field-height);
 }
 .application.dialog .dialog-content.standard-form .form-group, .application.dialog.configure-resource .form-group, .application.dialog.configure-deflect .form-group, .application.dialog.configure-defense .form-group, .application.dialog.configure-movement-rate .form-group, .application.dialog.configure-recovery-die .form-group, .application.dialog.configure-senses-range .form-group, .application.dialog.edit-bonus-talents-rule .form-group, .application.dialog.pick-dice-result .form-group, .application.dialog.roll-configuration .form-group, .application.dialog.edit-event-rule .form-group, .application.dialog.edit-creature-type .form-group {
-  gap: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
 }
 .application.dialog .dialog-content.standard-form .form-group > .form-fields, .application.dialog.configure-resource .form-group > .form-fields, .application.dialog.configure-deflect .form-group > .form-fields, .application.dialog.configure-defense .form-group > .form-fields, .application.dialog.configure-movement-rate .form-group > .form-fields, .application.dialog.configure-recovery-die .form-group > .form-fields, .application.dialog.configure-senses-range .form-group > .form-fields, .application.dialog.edit-bonus-talents-rule .form-group > .form-fields, .application.dialog.pick-dice-result .form-group > .form-fields, .application.dialog.roll-configuration .form-group > .form-fields, .application.dialog.edit-event-rule .form-group > .form-fields, .application.dialog.edit-creature-type .form-group > .form-fields {
@@ -3279,6 +3450,9 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
 }
 .application.dialog .dialog-content.standard-form .submit, .application.dialog.configure-resource .submit, .application.dialog.configure-deflect .submit, .application.dialog.configure-defense .submit, .application.dialog.configure-movement-rate .submit, .application.dialog.configure-recovery-die .submit, .application.dialog.configure-senses-range .submit, .application.dialog.edit-bonus-talents-rule .submit, .application.dialog.pick-dice-result .submit, .application.dialog.roll-configuration .submit, .application.dialog.edit-event-rule .submit, .application.dialog.edit-creature-type .submit {
   margin-top: 0.625rem;
+}
+.application.dialog .dialog-content.standard-form .submit > button, .application.dialog.configure-resource .submit > button, .application.dialog.configure-deflect .submit > button, .application.dialog.configure-defense .submit > button, .application.dialog.configure-movement-rate .submit > button, .application.dialog.configure-recovery-die .submit > button, .application.dialog.configure-senses-range .submit > button, .application.dialog.edit-bonus-talents-rule .submit > button, .application.dialog.pick-dice-result .submit > button, .application.dialog.roll-configuration .submit > button, .application.dialog.edit-event-rule .submit > button, .application.dialog.edit-creature-type .submit > button {
+  flex: 1;
 }
 .application.dialog.edit-creature-type fieldset {
   margin-top: 0.5rem;
@@ -3392,9 +3566,6 @@ app-talent-tree-editor > .container .menu .view-bounds.expanded .header .form-fi
   width: 48px;
   height: 48px;
 }
-.application.dialog.configure-skills .skills-column {
-  filter: var(--cosmere-drop-shadow);
-}
 .application.dialog.release-notes {
   max-height: 1000px;
 }
@@ -3489,7 +3660,8 @@ app-document-reference-input .drop-area {
 app-multi-value-select {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
+  flex: 1;
 }
 app-multi-value-select .values {
   flex: 1;
@@ -3641,6 +3813,7 @@ app-item-drop-list .drop-area {
 }
 
 :root {
+  --stormlight-journal-color-text: #000000;
   --stormlight-journal-translucent-1: rgba(215, 215, 215, 0.4);
   --stormlight-journal-yellow-1: #dcbc88;
   --stormlight-journal-yellow-2: #f8f0e2;
@@ -3744,6 +3917,7 @@ app-item-drop-list .drop-area {
   margin: 0px;
 }
 .sheet.journal-entry.sljsr .journal-entry-page {
+  color: var(--stormlight-journal-color-text);
   font-family: var(--cosmere-font-normal);
   font-weight: 600;
   font-variant-numeric: lining-nums;
@@ -3775,6 +3949,7 @@ app-item-drop-list .drop-area {
   font-size: 14pt;
   border-bottom-width: 1px;
   border-bottom-color: var(--cosmere-color-opportunity);
+  border-bottom-style: solid;
   font-variant-numeric: lining-nums;
 }
 .sheet.journal-entry.sljsr .journal-entry-page h4 {
@@ -3791,12 +3966,14 @@ app-item-drop-list .drop-area {
   background: none;
   border: none;
   text-decoration: underline;
+  color: unset;
 }
 .sheet.journal-entry.sljsr .journal-entry-page a.content-link > i {
   position: absolute;
   font-size: 0.5em;
   top: 2px;
   right: 0;
+  color: var(--content-link-border-color);
 }
 .sheet.journal-entry.sljsr .journal-entry-page a.content-link > i::before {
   content: "\f0c1";
@@ -3880,13 +4057,18 @@ app-item-drop-list .drop-area {
 .sheet.journal-entry.sljsr .journal-entry-page .sl-sidebar tbody tr:first-child td {
   color: var(--cosmere-color-white);
   font-family: var(--cosmere-font-normal);
-  font-weight: bold;
-  font-size: 20px;
   font-variant-caps: small-caps;
   padding-left: 1rem !important;
   padding-top: 0;
   padding-bottom: 0;
   transform: scaleX(0.998);
+}
+.sheet.journal-entry.sljsr .journal-entry-page .sl-blue tbody tr:first-child td p,
+.sheet.journal-entry.sljsr .journal-entry-page .sl-red tbody tr:first-child td p,
+.sheet.journal-entry.sljsr .journal-entry-page .sl-foundry tbody tr:first-child td p,
+.sheet.journal-entry.sljsr .journal-entry-page .sl-sidebar tbody tr:first-child td p {
+  font-weight: bold;
+  font-size: 20px;
 }
 .sheet.journal-entry.sljsr .journal-entry-page .sl-blue tbody tr:first-child td strong,
 .sheet.journal-entry.sljsr .journal-entry-page .sl-red tbody tr:first-child td strong,
@@ -3955,6 +4137,14 @@ app-item-drop-list .drop-area {
 .sheet.journal-entry.sljsr .journal-entry-page ul p, .sheet.journal-entry.sljsr .journal-entry-page .sl-ul p {
   margin-left: 16px;
 }
+.sheet.journal-entry.sljsr .journal-entry-page img.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.sheet.journal-entry.sljsr .journal-entry-page table {
+  background-color: unset;
+}
 .sheet.journal-entry.sljsr .journal-entry-page .sl-blue tbody tr:first-child td {
   background-color: var(--cosmere-color-opportunity);
 }
@@ -3979,7 +4169,7 @@ app-item-drop-list .drop-area {
   width: 30px;
   height: 30px;
   z-index: 100;
-  top: calc(100% - 37.5px);
+  top: calc(100% - 36px);
   left: 3px;
 }
 .sheet.journal-entry.sljsr .journal-entry-page .sl-foundry tbody tr:last-child td {
@@ -3994,7 +4184,11 @@ app-item-drop-list .drop-area {
   color: var(--stormlight-journal-foundry-orange);
 }
 
-.application.sheet,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config),
 .application.dialog {
   --border-corner-svg: url("assets/icons/svg/sheet/border_corner.svg");
   --star-cosmere-svg: url("assets/icons/cosmere/svg/star_cosmere.svg");
@@ -4002,42 +4196,86 @@ app-item-drop-list .drop-area {
   background-color: var(--cosmere-color-sheet);
   background-image: var(--cosmere-sheet-texture);
 }
-.application.sheet.minimized,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config).minimized,
 .application.dialog.minimized {
   border: 1px solid var(--cosmere-color-accent);
   border-radius: 6px;
 }
-.application.sheet.minimized > .window-corners,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config).minimized > .window-corners,
 .application.dialog.minimized > .window-corners {
   display: none;
 }
-.application.sheet.minimized > .window-background,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config).minimized > .window-background,
 .application.dialog.minimized > .window-background {
   display: none;
 }
-.application.sheet.minimized > .window-header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config).minimized > .window-header,
 .application.dialog.minimized > .window-header {
   padding: 0 0.5rem;
 }
-.application.sheet.minimized > .window-header > button:not([data-action=close]),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config).minimized > .window-header > button:not([data-action=close]),
 .application.dialog.minimized > .window-header > button:not([data-action=close]) {
   display: none;
 }
-.application.sheet:not(.minimized) > .window-header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config):not(.minimized) > .window-header,
 .application.dialog:not(.minimized) > .window-header {
   padding: 0 1.875rem;
 }
-.application.sheet:not(.minimized) > .window-header #mode-toggle,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config):not(.minimized) > .window-header #mode-toggle,
 .application.dialog:not(.minimized) > .window-header #mode-toggle {
   display: unset;
 }
-.application.sheet:not(.minimized) > .window-header .window-title,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config):not(.minimized) > .window-header .window-title,
 .application.dialog:not(.minimized) > .window-header .window-title {
   visibility: hidden;
 }
-.application.sheet input[type=text],
-.application.sheet input[type=number],
-.application.sheet select,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) input[type=text],
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) input[type=number],
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) select,
 .application.dialog input[type=text],
 .application.dialog input[type=number],
 .application.dialog select {
@@ -4052,18 +4290,30 @@ app-item-drop-list .drop-area {
   outline: none;
   box-shadow: none;
 }
-.application.sheet input[type=checkbox],
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) input[type=checkbox],
 .application.dialog input[type=checkbox] {
   margin: 0;
   --checkbox-checked-color: var(--cosmere-color-accent);
   --checkbox-disabled-color: var(--cosmere-color-neutral);
   --checkbox-background-color: color(from var(--cosmere-color-faded) srgb r g b / 0.4);
 }
-.application.sheet input[type=radio],
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) input[type=radio],
 .application.dialog input[type=radio] {
   margin: 0;
 }
-.application.sheet fieldset,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) fieldset,
 .application.dialog fieldset {
   display: flex;
   flex-direction: column;
@@ -4072,7 +4322,11 @@ app-item-drop-list .drop-area {
   border: 1px solid var(--cosmere-color-faded);
   margin: 0;
 }
-.application.sheet fieldset > legend,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) fieldset > legend,
 .application.dialog fieldset > legend {
   font-family: var(--cosmere-font-header);
   font-size: var(--font-size-11);
@@ -4080,47 +4334,79 @@ app-item-drop-list .drop-area {
   color: var(--cosmere-color-text-sub);
   padding: 0 0.375rem;
 }
-.application.sheet button,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) button,
 .application.dialog button {
   color: var(--cosmere-color-text-sub);
   border-color: var(--cosmere-color-faded);
   background: var(--cosmere-color-base-1);
 }
-.application.sheet button :not(.fa-solid, .fas),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) button :not(.fa-solid, .fas),
 .application.dialog button :not(.fa-solid, .fas) {
   font-family: var(--cosmere-font-normal);
   font-weight: 600;
 }
-.application.sheet button:hover,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) button:hover,
 .application.dialog button:hover {
   color: var(--cosmere-color-text-main);
   border-color: var(--cosmere-color-accent);
   background: var(--cosmere-color-base-5);
   box-shadow: 0 0 5px var(--cosmere-color-faded);
 }
-.application.sheet button:disabled,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) button:disabled,
 .application.dialog button:disabled {
   opacity: 0.4;
 }
-.application.sheet > .window-header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header,
 .application.dialog > .window-header {
   background: transparent;
   position: relative;
   z-index: 1;
   border: none;
   align-items: center;
-  filter: var(--cosmere-drop-shadow);
 }
-.application.sheet > .window-header .window-title,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header .window-title,
 .application.dialog > .window-header .window-title {
   font-weight: 600;
   color: var(--cosmere-color-text-sub);
 }
-.application.sheet > .window-header button.header-control,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header button.header-control,
 .application.dialog > .window-header button.header-control {
   color: var(--cosmere-color-text-sub);
+  background: none;
 }
-.application.sheet > .window-header button.header-control:hover,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header button.header-control:hover,
 .application.dialog > .window-header button.header-control:hover {
   box-shadow: none;
   text-shadow: 0 0 5px var(--color-shadow-primary);
@@ -4128,47 +4414,83 @@ app-item-drop-list .drop-area {
   background: none;
   box-shadow: none;
 }
-.application.sheet > .window-header button.header-control:focus,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header button.header-control:focus,
 .application.dialog > .window-header button.header-control:focus {
   outline: none;
   box-shadow: none;
 }
-.application.sheet > .window-header #mode-toggle,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-header #mode-toggle,
 .application.dialog > .window-header #mode-toggle {
   display: none;
 }
-.application.sheet > .window-content,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) > .window-content,
 .application.dialog > .window-content {
   backdrop-filter: blur(0rem);
   overflow: visible;
   min-height: 0;
 }
-.application.sheet .icon.active,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .icon.active,
 .application.dialog .icon.active {
   color: var(--cosmere-color-text-sub);
 }
-.application.sheet .icon.faded,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .icon.faded,
 .application.dialog .icon.faded {
   color: var(--cosmere-color-faded);
 }
-.application.sheet .info,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .info,
 .application.dialog .info {
   font-size: var(--font-size-11);
   color: var(--cosmere-color-faded);
   margin-left: 0.125rem;
   cursor: help;
 }
-.application.sheet .info:hover,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .info:hover,
 .application.dialog .info:hover {
   text-shadow: 0 0 6px var(--color-shadow-primary);
 }
-.application.sheet .skills-column,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .skills-column,
 .application.dialog .skills-column {
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
 }
-.application.sheet .pip-list,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pip-list,
 .application.dialog .pip-list {
   display: flex;
   flex-direction: row;
@@ -4177,26 +4499,46 @@ app-item-drop-list .drop-area {
   margin: 0;
   gap: 0.25rem;
 }
-.application.sheet .pip-list .pip > div,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pip-list .pip > div,
 .application.dialog .pip-list .pip > div {
   width: 10px;
   height: 10px;
   border: 1px solid var(--cosmere-color-base-5);
   border-radius: 50%;
 }
-.application.sheet .pip-list .pip.active > div,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pip-list .pip.active > div,
 .application.dialog .pip-list .pip.active > div {
   background-color: var(--cosmere-color-text-main);
 }
-.application.sheet .pip-list .pip.locked > div,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pip-list .pip.locked > div,
 .application.dialog .pip-list .pip.locked > div {
   opacity: 0.35;
 }
-.application.sheet .pip-list .pip:not(.active) > div,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pip-list .pip:not(.active) > div,
 .application.dialog .pip-list .pip:not(.active) > div {
   background-color: var(--cosmere-color-base-1);
 }
-.application.sheet .box-corners,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .box-corners,
 .application.dialog .box-corners {
   pointer-events: none;
   position: absolute;
@@ -4209,27 +4551,47 @@ app-item-drop-list .drop-area {
   flex-direction: column;
   justify-content: space-between;
 }
-.application.sheet .box-corners .corner,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .box-corners .corner,
 .application.dialog .box-corners .corner {
   width: 10px;
   height: 10px;
   background-color: var(--cosmere-color-accent);
   mask: var(--border-corner-svg) no-repeat center;
 }
-.application.sheet .box-corners .corner-pair,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .box-corners .corner-pair,
 .application.dialog .box-corners .corner-pair {
   display: flex;
   justify-content: space-between;
 }
-.application.sheet .box-corners .bot,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .box-corners .bot,
 .application.dialog .box-corners .bot {
   transform: scaleY(-1);
 }
-.application.sheet .box-corners .right,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .box-corners .right,
 .application.dialog .box-corners .right {
   transform: scaleX(-1);
 }
-.application.sheet .drop-area,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .drop-area,
 .application.dialog .drop-area {
   display: flex;
   align-items: center;
@@ -4243,14 +4605,21 @@ app-item-drop-list .drop-area {
   font-weight: 600;
   color: var(--cosmere-color-faded);
   text-transform: uppercase;
-  filter: var(--cosmere-drop-shadow);
   opacity: 0.5;
 }
-.application.sheet .drop-area.dropping,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .drop-area.dropping,
 .application.dialog .drop-area.dropping {
   opacity: 1;
 }
-.application.sheet .icon-header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .icon-header,
 .application.dialog .icon-header {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-12);
@@ -4261,37 +4630,65 @@ app-item-drop-list .drop-area {
   align-items: center;
   justify-content: space-between;
 }
-.application.sheet .icon-header .title,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .icon-header .title,
 .application.dialog .icon-header .title {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.25rem;
 }
-.application.sheet .item-list,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list,
 .application.dialog .item-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-.application.sheet .item-list > li,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list > li,
 .application.dialog .item-list > li {
   margin: 0;
   list-style-type: none;
 }
-.application.sheet .item-list > li:not(.favorite):not(:first-child):not(:last-child),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list > li:not(.favorite):not(:first-child):not(:last-child),
 .application.dialog .item-list > li:not(.favorite):not(:first-child):not(:last-child) {
   border-bottom: 1px dotted var(--cosmere-color-faded);
 }
-.application.sheet .item-list > li:not(.favorite):last-child,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list > li:not(.favorite):last-child,
 .application.dialog .item-list > li:not(.favorite):last-child {
   border-radius: 0 0 6px 6px;
 }
-.application.sheet .item-list > li:not(.favorite):last-child:first-child,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list > li:not(.favorite):last-child:first-child,
 .application.dialog .item-list > li:not(.favorite):last-child:first-child {
   border-radius: 6px;
 }
-.application.sheet .item-list .item,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item,
 .application.dialog .item-list .item {
   display: flex;
   flex-direction: column;
@@ -4301,18 +4698,30 @@ app-item-drop-list .drop-area {
   padding: 0.375rem;
   background-color: var(--cosmere-color-base-3);
 }
-.application.sheet .item-list .item .details,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .details,
 .application.dialog .item-list .item .details {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
 }
-.application.sheet .item-list .item .description,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .description,
 .application.dialog .item-list .item .description {
   text-align: left;
 }
-.application.sheet .item-list .item .img,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .img,
 .application.dialog .item-list .item .img {
   width: 28px;
   height: 28px;
@@ -4323,24 +4732,40 @@ app-item-drop-list .drop-area {
   align-items: center;
   justify-content: center;
 }
-.application.sheet .item-list .item .img > img,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .img > img,
 .application.dialog .item-list .item .img > img {
   max-width: 100%;
   max-height: 100%;
   border: 0;
 }
-.application.sheet .item-list .item .img .roll-icon,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .img .roll-icon,
 .application.dialog .item-list .item .img .roll-icon {
   display: none;
   position: absolute;
   z-index: 1;
   border: none;
 }
-.application.sheet .item-list .item.usable .img,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item.usable .img,
 .application.dialog .item-list .item.usable .img {
   cursor: pointer;
 }
-.application.sheet .item-list .item.usable .img:hover .roll-icon,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item.usable .img:hover .roll-icon,
 .application.dialog .item-list .item.usable .img:hover .roll-icon {
   display: block;
   opacity: 0.6;
@@ -4348,8 +4773,16 @@ app-item-drop-list .drop-area {
   width: 22px;
   height: 22px;
 }
-.application.sheet .item-list .item .title,
-.application.sheet .item-list .item .name,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .title,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .name,
 .application.dialog .item-list .item .title,
 .application.dialog .item-list .item .name {
   font-family: var(--cosmere-font-normal);
@@ -4357,14 +4790,22 @@ app-item-drop-list .drop-area {
   text-align: left;
   flex: 1;
 }
-.application.sheet .item-list .item .title,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .title,
 .application.dialog .item-list .item .title {
   margin-left: 0.25rem;
-  font-size: var(--font-size-15);
+  font-size: var(--font-size-14);
   font-weight: 600;
   color: var(--cosmere-color-text-main);
 }
-.application.sheet .item-list .item .name,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .name,
 .application.dialog .item-list .item .name {
   font-size: var(--font-size-13);
   font-weight: 600;
@@ -4372,60 +4813,117 @@ app-item-drop-list .drop-area {
   display: flex;
   flex-direction: column;
 }
-.application.sheet .item-list .item .name .traits,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .name .traits,
 .application.dialog .item-list .item .name .traits {
   font-size: var(--font-size-10);
   font-weight: bold;
   font-variant: lining-nums;
   color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .name .traits .highlight,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .name .traits .highlight,
 .application.dialog .item-list .item .name .traits .highlight {
   color: var(--cosmere-color-text-accent);
 }
-.application.sheet .item-list .item .name.inline,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .name.inline,
 .application.dialog .item-list .item .name.inline {
   display: block;
 }
-.application.sheet .item-list .item .subtitle,
-.application.sheet .item-list .item .detail,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .subtitle,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .detail,
 .application.dialog .item-list .item .subtitle,
 .application.dialog .item-list .item .detail {
   width: 48px;
   color: var(--cosmere-color-text-sub);
   text-transform: uppercase;
 }
-.application.sheet .item-list .item .subtitle.wide,
-.application.sheet .item-list .item .detail.wide,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .subtitle.wide,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .detail.wide,
 .application.dialog .item-list .item .subtitle.wide,
 .application.dialog .item-list .item .detail.wide {
   width: 76px;
 }
-.application.sheet .item-list .item .subtitle.thin,
-.application.sheet .item-list .item .detail.thin,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .subtitle.thin,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .detail.thin,
 .application.dialog .item-list .item .subtitle.thin,
 .application.dialog .item-list .item .detail.thin {
   width: 16px;
 }
-.application.sheet .item-list .item .subtitle.flexible,
-.application.sheet .item-list .item .detail.flexible,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .subtitle.flexible,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .detail.flexible,
 .application.dialog .item-list .item .subtitle.flexible,
 .application.dialog .item-list .item .detail.flexible {
   flex: 1;
 }
-.application.sheet .item-list .item .subtitle,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .subtitle,
 .application.dialog .item-list .item .subtitle {
   font-family: var(--cosmere-font-header);
   font-size: var(--font-size-8);
+  margin-top: 4px;
 }
-.application.sheet .item-list .item .detail,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .detail,
 .application.dialog .item-list .item .detail {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-10);
   font-weight: 600;
   font-variant: lining-nums;
 }
-.application.sheet .item-list .item .controls,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .controls,
 .application.dialog .item-list .item .controls {
   width: 34px;
   text-align: center;
@@ -4433,110 +4931,218 @@ app-item-drop-list .drop-area {
   gap: 0.375rem;
   justify-content: flex-end;
 }
-.application.sheet .item-list .item .controls a,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .controls a,
 .application.dialog .item-list .item .controls a {
   width: 14px;
 }
-.application.sheet .item-list .item .action,
-.application.sheet .item-list .item .quantity,
-.application.sheet .item-list .item .level,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .action,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .quantity,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .level,
 .application.dialog .item-list .item .action,
 .application.dialog .item-list .item .quantity,
 .application.dialog .item-list .item .level {
   font-size: var(--font-size-12);
 }
-.application.sheet .item-list .item .quantity,
-.application.sheet .item-list .item .duration,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .quantity,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .duration,
 .application.dialog .item-list .item .quantity,
 .application.dialog .item-list .item .duration {
   display: flex;
   justify-content: space-evenly;
 }
-.application.sheet .item-list .item .quantity > a,
-.application.sheet .item-list .item .duration > a,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .quantity > a,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .duration > a,
 .application.dialog .item-list .item .quantity > a,
 .application.dialog .item-list .item .duration > a {
   color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .weight > i,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .weight > i,
 .application.dialog .item-list .item .weight > i {
   color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .none,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .none,
 .application.dialog .item-list .item .none {
   color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .equip > a,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip > a,
 .application.dialog .item-list .item .equip > a {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.application.sheet .item-list .item .equip > a > i,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip > a > i,
 .application.dialog .item-list .item .equip > a > i {
   font-size: var(--font-size-12);
   color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .equip > a > i.equipped,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip > a > i.equipped,
 .application.dialog .item-list .item .equip > a > i.equipped {
   color: var(--cosmere-color-text-sub);
 }
-.application.sheet .item-list .item .equip .hold-2h,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-2h,
 .application.dialog .item-list .item .equip .hold-2h {
   width: 48px;
   height: 20px;
   mask: var(--mask-equip-2h-svg) no-repeat center;
 }
-.application.sheet .item-list .item .equip .hold-1h,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-1h,
 .application.dialog .item-list .item .equip .hold-1h {
   width: 48px;
   height: 10px;
 }
-.application.sheet .item-list .item .equip .hold-1h.main-hand,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-1h.main-hand,
 .application.dialog .item-list .item .equip .hold-1h.main-hand {
   mask: var(--mask-equip-1h-top-svg) no-repeat center;
 }
-.application.sheet .item-list .item .equip .hold-1h.off-hand,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-1h.off-hand,
 .application.dialog .item-list .item .equip .hold-1h.off-hand {
   mask: var(--mask-equip-1h-bot-svg) no-repeat center;
 }
-.application.sheet .item-list .item .equip .hold-2h,
-.application.sheet .item-list .item .equip .hold-1h,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-2h,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-1h,
 .application.dialog .item-list .item .equip .hold-2h,
 .application.dialog .item-list .item .equip .hold-1h {
   background-color: var(--cosmere-color-faded);
 }
-.application.sheet .item-list .item .equip .hold-2h.equipped,
-.application.sheet .item-list .item .equip .hold-1h.equipped,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-2h.equipped,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .equip .hold-1h.equipped,
 .application.dialog .item-list .item .equip .hold-2h.equipped,
 .application.dialog .item-list .item .equip .hold-1h.equipped {
   background-color: var(--cosmere-color-text-sub);
 }
-.application.sheet .item-list .item .restriction,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .restriction,
 .application.dialog .item-list .item .restriction {
   font-size: var(--font-size-12);
   color: var(--cosmere-color-faded);
   text-transform: none;
 }
-.application.sheet .item-list .item .document-list,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .item .document-list,
 .application.dialog .item-list .item .document-list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0.25rem;
 }
-.application.sheet .item-list .header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .header,
 .application.dialog .item-list .header {
   min-height: 30px;
   background-color: var(--cosmere-color-base-1);
   border-radius: 6px 6px 0 0;
   padding: 0 0.375rem;
 }
-.application.sheet .item-list .header.basic,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .item-list .header.basic,
 .application.dialog .item-list .header.basic {
   background-color: var(--cosmere-color-dark-1);
 }
-.application.sheet .pills-list.collapsible-content > .wrapper, .application.sheet .pills-list:not(.collapsible-content),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pills-list.collapsible-content > .wrapper, .application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pills-list:not(.collapsible-content),
 .application.dialog .pills-list.collapsible-content > .wrapper,
 .application.dialog .pills-list:not(.collapsible-content) {
   display: flex;
@@ -4545,7 +5151,11 @@ app-item-drop-list .drop-area {
   gap: 0.25rem;
   margin: 0.375rem 0;
 }
-.application.sheet .pills-list .pill,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pills-list .pill,
 .application.dialog .pills-list .pill {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-10);
@@ -4561,25 +5171,53 @@ app-item-drop-list .drop-area {
   flex-direction: row;
   gap: 0.125rem;
 }
-.application.sheet .pills-list .pill > .separator,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .pills-list .pill > .separator,
 .application.dialog .pills-list .pill > .separator {
   line-height: 10px;
   opacity: 0.8;
 }
-.application.sheet app-actor-skills-group,
-.application.sheet app-adversary-skills-group,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skills-group,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-adversary-skills-group,
 .application.dialog app-actor-skills-group,
 .application.dialog app-adversary-skills-group {
   position: relative;
 }
-.application.sheet app-actor-skills-group:not(:has(*)),
-.application.sheet app-adversary-skills-group:not(:has(*)),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skills-group:not(:has(*)),
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-adversary-skills-group:not(:has(*)),
 .application.dialog app-actor-skills-group:not(:has(*)),
 .application.dialog app-adversary-skills-group:not(:has(*)) {
   display: none;
 }
-.application.sheet app-actor-skills-group .skill-list,
-.application.sheet app-adversary-skills-group .skill-list,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skills-group .skill-list,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-adversary-skills-group .skill-list,
 .application.dialog app-actor-skills-group .skill-list,
 .application.dialog app-adversary-skills-group .skill-list {
   display: flex;
@@ -4592,14 +5230,26 @@ app-item-drop-list .drop-area {
   mask: radial-gradient(8px at 8px 8px, transparent 98%, black) -8px -8px;
   list-style: none;
 }
-.application.sheet app-actor-skills-group .skill-list .skill,
-.application.sheet app-adversary-skills-group .skill-list .skill,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skills-group .skill-list .skill,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-adversary-skills-group .skill-list .skill,
 .application.dialog app-actor-skills-group .skill-list .skill,
 .application.dialog app-adversary-skills-group .skill-list .skill {
   list-style: none;
   margin-bottom: 0.125rem;
 }
-.application.sheet app-actor-skill,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill,
 .application.dialog app-actor-skill {
   display: flex;
   flex-direction: row;
@@ -4610,11 +5260,19 @@ app-item-drop-list .drop-area {
   font-weight: bold;
   text-transform: uppercase;
 }
-.application.sheet app-actor-skill [data-action],
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill [data-action],
 .application.dialog app-actor-skill [data-action] {
   cursor: pointer;
 }
-.application.sheet app-actor-skill .mod,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill .mod,
 .application.dialog app-actor-skill .mod {
   font-family: var(--cosmere-font-header);
   font-size: var(--font-size-12);
@@ -4623,27 +5281,47 @@ app-item-drop-list .drop-area {
   width: 24px;
   text-align: center;
 }
-.application.sheet app-actor-skill .mod .operator,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill .mod .operator,
 .application.dialog app-actor-skill .mod .operator {
   color: var(--cosmere-color-faded);
 }
-.application.sheet app-actor-skill .mod .val,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill .mod .val,
 .application.dialog app-actor-skill .mod .val {
   color: var(--cosmere-color-text-main);
 }
-.application.sheet app-actor-skill .name,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill .name,
 .application.dialog app-actor-skill .name {
   color: var(--cosmere-color-text-sub);
   text-align: left;
   flex: 1;
 }
-.application.sheet app-actor-skill .attribute,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-actor-skill .attribute,
 .application.dialog app-actor-skill .attribute {
   color: var(--cosmere-color-text-accent);
   width: 24px;
   text-align: center;
 }
-.application.sheet .enricher-link a,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .enricher-link a,
 .application.dialog .enricher-link a {
   border-radius: 4px;
   background: var(--cosmere-color-base-1);
@@ -4651,17 +5329,29 @@ app-item-drop-list .drop-area {
   padding: 0.125rem;
   font-weight: bold;
 }
-.application.sheet .enricher-link a:hover,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) .enricher-link a:hover,
 .application.dialog .enricher-link a:hover {
   border-color: var(--cosmere-color-accent);
   background: var(--cosmere-color-base-5);
   box-shadow: 0 0 5px var(--cosmere-color-faded);
 }
-.application.sheet app-expertises-list .icon-header,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-expertises-list .icon-header,
 .application.dialog app-expertises-list .icon-header {
   color: var(--cosmere-color-faded);
 }
-.application.sheet app-expertises-list .expertises,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-expertises-list .expertises,
 .application.dialog app-expertises-list .expertises {
   display: flex;
   flex-direction: row;
@@ -4669,7 +5359,11 @@ app-item-drop-list .drop-area {
   gap: 0.25rem;
   margin-top: 0.375rem;
 }
-.application.sheet app-expertises-list .expertise,
+.application.sheet:not(.scene-config,
+.active-effect-config,
+.journal-sheet,
+.roll-table-sheet,
+.token-config) app-expertises-list .expertise,
 .application.dialog app-expertises-list .expertise {
   font-family: var(--cosmere-font-normal);
   font-size: var(--font-size-11);
@@ -4732,8 +5426,6 @@ app-item-drop-list .drop-area {
   --cosmere-shadow-75: rgba(0, 0, 0, 0.75);
   --cosmere-shadow-85: rgba(0, 0, 0, 0.85);
   --cosmere-shadow-svg: drop-shadow(0 0 4px rgba(255, 0, 0, 0.6));
-  --cosmere-drop-shadow: drop-shadow(0px 0px 8px var(--cosmere-shadow-25));
-  --cosmere-sheet-shadow: drop-shadow(0px 0px 10px var(--cosmere-shadow-85));
   --cosmere-font-normal: "Laski Sans", sans-serif;
   --cosmere-font-header: "Penumbra Serif Std", serif;
   --cosmere-font-header-sc: "Penumbra Serif Std SC", serif;
@@ -4801,7 +5493,6 @@ span.document-name {
   font-family: var(--cosmere-font-normal);
   font-variant: lining-nums;
   box-shadow: none;
-  filter: var(--cosmere-sheet-shadow);
 }
 
 .application p {

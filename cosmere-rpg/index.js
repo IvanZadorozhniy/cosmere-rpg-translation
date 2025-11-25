@@ -208,7 +208,7 @@ const TEMPLATES = {
  * @private
  */
 function renderSystemTemplate(template, data) {
-    return renderTemplate(`systems/${SYSTEM_ID}/templates/${template}`, data);
+    return foundry.applications.handlebars.renderTemplate(`systems/${SYSTEM_ID}/templates/${template}`, data);
 }
 const THEME_TAG = 'cosmere-theme';
 /**
@@ -880,11 +880,6 @@ const COSMERE = {
                 labelPlural: 'COSMERE.Item.Type.Path.label_plural',
                 desc_placeholder: 'COSMERE.Item.Type.Path.desc_placeholder',
             },
-            ["specialty" /* ItemType.Specialty */]: {
-                label: 'COSMERE.Item.Type.Specialty.label',
-                labelPlural: 'COSMERE.Item.Type.Specialty.label_plural',
-                desc_placeholder: 'COSMERE.Item.Type.Specialty.desc_placeholder',
-            },
             ["talent" /* ItemType.Talent */]: {
                 label: 'COSMERE.Item.Type.Talent.label',
                 labelPlural: 'COSMERE.Item.Type.Talent.label_plural',
@@ -1310,6 +1305,7 @@ const COSMERE = {
             [AdvantageMode.Advantage]: 'DICE.AdvantageMode.Advantage',
         },
     },
+    rollData: {},
     sheet: {
         actor: {
             components: {
@@ -1466,7 +1462,7 @@ Hooks.once('diceSoNiceReady', (dice3d) => {
 
 const { ApplicationV2: ApplicationV2$h, HandlebarsApplicationMixin: HandlebarsApplicationMixin$b } = foundry.applications.api;
 class ReleaseNotesDialog extends HandlebarsApplicationMixin$b((ApplicationV2$h)) {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             resizable: true,
         },
@@ -1474,7 +1470,7 @@ class ReleaseNotesDialog extends HandlebarsApplicationMixin$b((ApplicationV2$h))
             width: 800,
         },
         classes: ['cosmere', 'dialog', 'release-notes'],
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         release: {
             template: 'systems/cosmere-rpg/release-notes.html',
@@ -1497,8 +1493,8 @@ class ReleaseNotesDialog extends HandlebarsApplicationMixin$b((ApplicationV2$h))
         await new this(options).render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).attr('open', 'true');
         if (this.patch) {
             $(this.element).find('[data-application-part="release"]').hide();
@@ -1611,7 +1607,11 @@ function registerSystemSettings() {
         hint: game.i18n.localize(`SETTINGS.${SETTINGS.APPLY_BUTTONS_TO}.hint`),
         scope: 'client',
         config: true,
+        // TODO: Resolve typing issue
+        // NOTE: Use any as workaround for foundry-vtt-types issues
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
         type: Number,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
         default: 0 /* TargetingOptions.SelectedOnly */,
         requiresReload: true,
         choices: {
@@ -1718,7 +1718,10 @@ function getSystemSetting(settingKey) {
  * @param value The value to set the setting to.
  */
 function setSystemSetting(settingKey, value) {
-    return game.settings.set(SYSTEM_ID, settingKey, value);
+    // TODO: Proper typing
+    // NOTE: Use any as workaround for foundry-vtt-types issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return game.settings.set(SYSTEM_ID, settingKey, value); // TEMP: Workaround
 }
 /**
  * Retrieves an array of keybinding values for the provided key.
@@ -1834,8 +1837,8 @@ function isFastForward() {
 }
 /**
  * Computes the constant value of a roll (i.e. total of numeric terms).
- * @param {Roll} roll The roll to calculate the constant total from.
- * @returns {number} The total constant value.
+ * @param roll The roll to calculate the constant total from.
+ * @returns The total constant value.
  */
 function getConstantFromRoll(roll) {
     let previous;
@@ -1928,7 +1931,12 @@ function getTargetDescriptors() {
         const cog = system?.defenses.cog.value ?? 10;
         const spi = system?.defenses.spi.value ?? 10;
         if (uuid) {
-            targets.set(uuid, { name, img, uuid, def: { phy, cog, spi } });
+            targets.set(uuid, {
+                name,
+                img: img,
+                uuid,
+                def: { phy, cog, spi },
+            });
         }
     }
     return Array.from(targets.values());
@@ -2709,7 +2717,8 @@ function registerComponent(selector, componentCls) {
         /* eslint-disable @typescript-eslint/no-unsafe-member-access */
         const options = args[args.length - 1];
         // Get from root data
-        const application = options.data.root.__application;
+        const application = options.data.root
+            .__application;
         const partId = options.data.root.partId.replace(`${application.id}-`, '');
         const parentRef = (options.data.root.__componentRef ??
             `${application.id}:${partId}`).split(':');
@@ -2814,7 +2823,9 @@ function initComponent(selector, componentRef) {
     // Get the class
     const ComponentClass = componentClsRegistry[selector];
     // Init component
-    const instance = new ComponentClass(componentId, selector, partId, componentRef, app);
+    const instance = new ComponentClass(componentId, selector, partId, componentRef, 
+    //@ts-expect-error App type is incorrect due to foundry-vtt-types issues
+    app);
     // Assign
     componentRegistry[componentRef] = {
         selector,
@@ -2843,12 +2854,12 @@ function registerApplicationInstance(application) {
 }
 function deregisterApplicationInstance(application) {
     console.log('Deregistering application instance:', application.id);
+    // Destroy all components that belonged to this application
     Object.keys(componentRegistry)
-        .filter((componentRef) => 
-            componentRef.startsWith(application.id) && 
-            !componentRegistry[componentRef]?.parentRef // no parent, only top level components
-        )
+        .filter((componentRef) => componentRef.startsWith(application.id) &&
+        !componentRegistry[componentRef]?.parentRef)
         .forEach((componentRef) => destroyComponent(componentRef));
+    // Remove application instance
     delete applicationInstances[application.id];
 }
 function destroyComponent(componentRef, recursive = true) {
@@ -3256,11 +3267,15 @@ function ComponentHandlebarsApplicationMixin(base) {
         async _preFirstRender(context, options) {
             await super._preFirstRender(context, options);
             // Register instance
+            // TODO: Resolve typing issues
+            // @ts-expect-error Use any as workaround for foundry-vtt-types issues
             ComponentSystem.registerApplicationInstance(this);
         }
         _onClose(options) {
             super._onClose(options);
             // Deregister instance
+            // TODO: Resolve typing issues
+            // @ts-expect-error Use any as workaround for foundry-vtt-types issues
             ComponentSystem.deregisterApplicationInstance(this);
         }
         _configureRenderOptions(options) {
@@ -3376,6 +3391,7 @@ function ComponentHandlebarsApplicationMixin(base) {
         _onRender(context, options) {
             // Trigger render events
             options.componentRefs.forEach((ref) => this.dispatchRenderEventRecursive(ref));
+            return Promise.resolve();
         }
         dispatchRenderEventRecursive(componentRef) {
             const component = this.components[componentRef];
@@ -3388,8 +3404,14 @@ function ComponentHandlebarsApplicationMixin(base) {
             // Recursive call for children
             component.childRefs.forEach((childRef) => this.dispatchRenderEventRecursive(childRef));
         }
+        _getHeaderControls() {
+            const controls = super._getHeaderControls();
+            console.log('Getting header controls for mixin', controls);
+            return controls;
+        }
     };
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const { ApplicationV2: ApplicationV2$g } = foundry.applications.api;
 class RollConfigurationDialog extends ComponentHandlebarsApplicationMixin((ApplicationV2$g)) {
@@ -3400,7 +3422,7 @@ class RollConfigurationDialog extends ComponentHandlebarsApplicationMixin((Appli
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             resizable: false,
@@ -3414,7 +3436,7 @@ class RollConfigurationDialog extends ComponentHandlebarsApplicationMixin((Appli
         actions: {
             submit: this.onSubmit,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ROLL_CONFIGURATION}`,
@@ -3482,7 +3504,7 @@ class RollConfigurationDialog extends ComponentHandlebarsApplicationMixin((Appli
         const form = this.element.querySelector('form');
         this.resolve({
             attribute: getNullableFromFormInput(form.attribute.value),
-            rollMode: form.rollMode?.value ?? 'roll',
+            rollMode: form.rollMode?.value ?? 'publicroll',
             temporaryModifiers: form.temporaryMod.value,
             plotDie: form.raiseStakes.checked,
             advantageMode: this.data.skillTest.advantageMode ?? AdvantageMode.None,
@@ -3514,8 +3536,8 @@ class RollConfigurationDialog extends ComponentHandlebarsApplicationMixin((Appli
         }
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
         $(this.element)
             .find('.roll-config.test .dice-tooltip .dice-rolls .roll.die')
@@ -3778,8 +3800,6 @@ class D20Roll extends foundry.dice.Roll {
     toMessage(messageData, options) {
         options ??= {};
         options.rollMode ??= this.options.rollMode;
-        if (options.rollMode === 'roll')
-            options.rollMode = undefined;
         options.rollMode ??= game.settings.get('core', 'rollMode');
         return super.toMessage(messageData, options);
     }
@@ -4202,24 +4222,18 @@ class CosmereChatMessage extends ChatMessage {
     totalDamageGraze = 0;
     /* --- Accessors --- */
     get actorSource() {
-        // NOTE: game.scenes resolves to any type
-        /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access */
         if (this.speaker.scene && this.speaker.token) {
             const scene = game.scenes.get(this.speaker.scene);
             const token = scene?.tokens?.get(this.speaker.token);
             if (token)
                 return token.actor;
         }
-        return game.actors?.get(this.speaker.actor);
-        /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-member-access */
+        return game.actors?.get(this.speaker.actor ?? '') ?? null;
     }
     get itemSource() {
-        /* eslint-disable @typescript-eslint/no-unsafe-member-access */
         return this.actorSource
-            ? (this.actorSource.items.get(this.flags[SYSTEM_ID].message.item) ??
-                null)
+            ? (this.actorSource.items.get(this.getFlag(SYSTEM_ID, 'message.item')) ?? null)
             : null;
-        /* eslint-enable @typescript-eslint/no-unsafe-member-access */
     }
     get d20Rolls() {
         return this.rolls.filter((r) => r instanceof D20Roll);
@@ -4342,7 +4356,7 @@ class CosmereChatMessage extends ChatMessage {
         });
         const section = $(sectionHTML);
         const tooltip = section.find('.dice-tooltip');
-        this.enrichD20Tooltip(d20Roll, tooltip[0]);
+        this.enrichD20Tooltip(d20Roll, tooltip[0]); // TEMP: Workaround
         tooltip.prepend(section.find('.dice-formula'));
         html.find('.chat-card').append(section);
     }
@@ -4469,7 +4483,7 @@ class CosmereChatMessage extends ChatMessage {
                 title = game.i18n.format('COSMERE.ChatMessage.InjuryDuration.Permanent', { actor });
                 break;
             default: {
-                title = game.i18n.format('COSMERE.ChatMessage.InjuryDuration.Temporary', { actor, days: durationRoll?.total ?? 0 });
+                title = game.i18n.format('COSMERE.ChatMessage.InjuryDuration.Temporary', { actor, days: (durationRoll?.total ?? 0).toFixed() });
                 break;
             }
         }
@@ -4484,7 +4498,7 @@ class CosmereChatMessage extends ChatMessage {
         });
         const section = $(sectionHTML);
         const tooltip = section.find('.dice-tooltip');
-        this.enrichD20Tooltip(injuryRoll, tooltip[0]);
+        this.enrichD20Tooltip(injuryRoll, tooltip[0]); // TEMP: Workaround
         tooltip.prepend(section.find('.dice-formula'));
         if (game.user.isGM || this.isAuthor) {
             section.find('.icon.clickable').on('click', async (event) => {
@@ -4564,7 +4578,10 @@ class CosmereChatMessage extends ChatMessage {
             img: isHealing
                 ? 'icons/magic/life/cross-beam-green.webp'
                 : 'icons/skills/wounds/injury-stitched-flesh-red.webp',
-            title: game.i18n.format(`COSMERE.ChatMessage.${isHealing ? 'ApplyHealing' : 'ApplyDamage'}`, { actor: actor.name, amount: Math.abs(damageTaken) }),
+            title: game.i18n.format(`COSMERE.ChatMessage.${isHealing ? 'ApplyHealing' : 'ApplyDamage'}`, {
+                actor: actor.name,
+                amount: Math.abs(damageTaken).toFixed(),
+            }),
             subtitle: isHealing
                 ? undefined
                 : game.i18n.format('COSMERE.ChatMessage.DamageCalculation', { calculation }),
@@ -4585,8 +4602,17 @@ class CosmereChatMessage extends ChatMessage {
                 const action = button.dataset.action;
                 if (action === 'undo') {
                     await actor.update({
-                        'system.resources.hea.value': actor.system.resources["hea" /* Resource.Health */].value +
-                            (health > damageTaken ? damageTaken : health),
+                        system: {
+                            resources: {
+                                hea: {
+                                    value: actor.system.resources["hea" /* Resource.Health */]
+                                        .value +
+                                        (health > damageTaken
+                                            ? damageTaken
+                                            : health),
+                                },
+                            },
+                        },
                     });
                     await this.setFlag(SYSTEM_ID, 'taken.undo', false);
                     void this.update({ flags: this.flags });
@@ -4626,7 +4652,7 @@ class CosmereChatMessage extends ChatMessage {
     enrichDamageTooltip(roll, type, icon, html) {
         html.find('.label').text(type);
         html.find('.label').parent().prepend(icon);
-        const constant = getConstantFromRoll(roll);
+        const constant = getConstantFromRoll(roll); // TEMP: Workaround
         if (constant === 0)
             return;
         const sign = constant < 0 ? '-' : '+';
@@ -4642,11 +4668,11 @@ class CosmereChatMessage extends ChatMessage {
     }
     /**
      * Augment d20 roll tooltips with some additional information and styling.
-     * @param {Roll} roll The roll instance.
-     * @param {HTMLElement} html The roll tooltip markup.
+     * @param roll The roll instance.
+     * @param html The roll tooltip markup.
      */
     enrichD20Tooltip(roll, html) {
-        const constant = getConstantFromRoll(roll);
+        const constant = getConstantFromRoll(roll); // TEMP: Workaround
         if (constant === 0)
             return;
         const sign = constant < 0 ? '-' : '+';
@@ -4840,7 +4866,7 @@ class CosmereChatMessage extends ChatMessage {
             return;
         const clone = await Promise.all(this.rolls.map(async (roll) => await roll.reroll()));
         void ChatMessage.create({
-            user: game.user.id,
+            author: game.user.id,
             speaker: this.speaker,
             flags: this.flags,
             rolls: clone,
@@ -4895,7 +4921,14 @@ class CosmereChatMessage extends ChatMessage {
             await Promise.all(Array.from(targets).map(async (t) => {
                 const target = t.actor;
                 return await target.update({
-                    'system.resources.foc.value': target.system.resources.foc.value - (1 + modifier),
+                    system: {
+                        resources: {
+                            foc: {
+                                value: target.system.resources.foc.value -
+                                    (1 + modifier),
+                            },
+                        },
+                    },
                 });
             }));
         }
@@ -4988,7 +5021,7 @@ class PickDiceResultDialog extends ComponentHandlebarsApplicationMixin((Applicat
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             resizable: false,
@@ -5003,7 +5036,7 @@ class PickDiceResultDialog extends ComponentHandlebarsApplicationMixin((Applicat
             'select-result': this.onSelectResult,
             submit: this.onSubmit,
         },
-    });
+    };
     /* eslint-enable @typescript-eslint/unbound-method */
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
@@ -5045,7 +5078,7 @@ class PickDiceResultDialog extends ComponentHandlebarsApplicationMixin((Applicat
         // Ensure the amount picked is less than the amount to pick
         if (this.picked.length >= this.data.amount && !!result.discarded) {
             return void ui.notifications.error(game.i18n.format('DIALOG.PickDiceResult.Error.TooManyPicked', {
-                max: this.data.amount,
+                max: this.data.amount.toFixed(),
             }));
         }
         // Toggle discarded
@@ -5068,8 +5101,8 @@ class PickDiceResultDialog extends ComponentHandlebarsApplicationMixin((Applicat
         void this.close();
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     _onClose() {
@@ -5131,7 +5164,7 @@ async function d20Roll(config) {
     /**
      * Hook: preRoll
      */
-    if (Hooks.call(HOOKS.PRE_ROLL(config.data.context), roll, // Roll object
+    if (Hooks.call(HOOKS.PRE_ROLL(config.data.context), roll, // Roll object | TEMP: Workaround
     config.data.source, // Source
     config) === false)
         return null;
@@ -5171,7 +5204,7 @@ async function d20Roll(config) {
     /**
      * Hook: roll
      */
-    Hooks.callAll(HOOKS.ROLL(config.data.context), roll, // Roll object
+    Hooks.callAll(HOOKS.ROLL(config.data.context), roll, // Roll object | TEMP: Workaround
     config.data.source, // Source
     config);
     if (roll && config.chatMessage !== false) {
@@ -5197,7 +5230,7 @@ async function damageRoll(config) {
     // Note: this setup doesn't allow for early exits from hook listeners,
     // in order to not modify the function signature and not jeopardize
     // the results with additional side effects.
-    Hooks.callAll(HOOKS.PRE_DAMAGE_ROLL, roll, // Roll object
+    Hooks.callAll(HOOKS.PRE_DAMAGE_ROLL, roll, // Roll object | TEMP: Workaround
     config.data.source, // Source
     config);
     // Evaluate the roll
@@ -5205,7 +5238,7 @@ async function damageRoll(config) {
     /**
      * Hook: damageRoll
      */
-    Hooks.callAll(HOOKS.DAMAGE_ROLL, roll, // Roll object
+    Hooks.callAll(HOOKS.DAMAGE_ROLL, roll, // Roll object | TEMP: Workaround
     config.data.source, // Source
     config);
     // Return result
@@ -5237,6 +5270,10 @@ async function buildEmbedHTML$4(item, config, options) {
             rolls: options?.rolls,
             secrets: options?.secrets,
         });
+    config.heading ??= true;
+    config.prependLabel = config.heading
+        ? false
+        : (config.prependLabel ?? true);
     const headingTag = config.values?.find((v) => HEADING_TAGS.includes(v)) ??
         DEFAULT_HEADING_TAG;
     // Get the template
@@ -5339,8 +5376,12 @@ var talentEmbed = {
 // Mixins
 // ApplicationV2
 const { ApplicationV2: ApplicationV2$e } = foundry.applications.api;
+// TEMP: Workaround
+// export class TalentTreeEmbed extends ComponentHandlebarsApplicationMixin(
+//     ApplicationV2,
+// )<TalentTreeEmbedRenderContext> {
 class TalentTreeEmbed extends ComponentHandlebarsApplicationMixin(ApplicationV2$e) {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'embed', 'talent-tree'],
         position: {
             width: 600,
@@ -5351,7 +5392,7 @@ class TalentTreeEmbed extends ComponentHandlebarsApplicationMixin(ApplicationV2$
             frame: false,
         },
         tag: 'div',
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         content: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_TALENT_TREE_EMBED}`,
@@ -5445,9 +5486,11 @@ async function getEmbedApp(item, page, config) {
     }
     return app;
 }
-Hooks.on('renderJournalPageSheet', (app, html) => {
+Hooks.on('renderJournalEntryPageSheet', (app, html) => {
     const page = app.document;
     const journalEntry = page.parent;
+    if (!journalEntry)
+        return;
     if (!EMBEDDED_APPS[journalEntry.uuid]?.[page.id])
         return;
     // Get all embedded applications for this page
@@ -5458,11 +5501,13 @@ Hooks.on('renderJournalPageSheet', (app, html) => {
             // Render the application
             await embedApp.render(true);
             // Find and replace the target element in the HTML
-            html.find(`.embed-talent-tree-target[data-id="${embedApp.id}"]`).replaceWith(embedApp.element);
+            $(html)
+                .find(`.embed-talent-tree-target[data-id="${embedApp.id}"]`)
+                .replaceWith(embedApp.element);
         });
     }, 10);
 });
-Hooks.on('closeJournalSheet', (app) => {
+Hooks.on('closeJournalEntrySheet', (app) => {
     const journalEntry = app.document;
     if (!EMBEDDED_APPS[journalEntry.uuid])
         return;
@@ -5556,7 +5601,6 @@ const EMBEDDERS = {
     ["ancestry" /* ItemType.Ancestry */]: ancestryEmbed,
     ["culture" /* ItemType.Culture */]: null,
     ["path" /* ItemType.Path */]: pathEmbed,
-    ["specialty" /* ItemType.Specialty */]: null,
     ["talent" /* ItemType.Talent */]: talentEmbed,
     ["trait" /* ItemType.Trait */]: null,
     ["action" /* ItemType.Action */]: null,
@@ -5586,105 +5630,61 @@ var ItemRelationshipType;
     ItemRelationshipType["Child"] = "child";
 })(ItemRelationshipType || (ItemRelationshipType = {}));
 
-class ItemRelationship extends foundry.abstract
-    .DataModel {
+const SCHEMA$y = () => ({
+    id: new foundry.data.fields.StringField({
+        initial: () => foundry.utils.randomID(),
+        required: true,
+        blank: false,
+    }),
+    type: new foundry.data.fields.StringField({
+        required: true,
+        blank: false,
+        choices: [
+            ItemRelationshipType.Parent,
+            ItemRelationshipType.Child,
+        ],
+    }),
+    uuid: new foundry.data.fields.DocumentUUIDField({
+        required: true,
+        nullable: false,
+        blank: false,
+    }),
+    itemType: new foundry.data.fields.StringField({
+        required: true,
+        blank: false,
+        choices: () => Object.keys(CONFIG.COSMERE.items.types),
+    }),
+    removalPolicy: new foundry.data.fields.StringField({
+        required: false,
+        initial: "keep" /* ItemRelationshipRemovalPolicy.Keep */,
+        blank: false,
+        choices: [
+            "remove" /* ItemRelationshipRemovalPolicy.Remove */,
+            "keep" /* ItemRelationshipRemovalPolicy.Keep */,
+        ],
+    }),
+});
+class ItemRelationship extends foundry.abstract.DataModel {
     static defineSchema() {
-        return {
-            id: new foundry.data.fields.StringField({
-                initial: () => foundry.utils.randomID(),
-                required: true,
-                blank: false,
-            }),
-            type: new foundry.data.fields.StringField({
-                required: true,
-                blank: false,
-                choices: [
-                    ItemRelationshipType.Parent,
-                    ItemRelationshipType.Child,
-                ],
-            }),
-            uuid: new foundry.data.fields.DocumentUUIDField({
-                required: true,
-                nullable: false,
-                blank: false,
-            }),
-            itemType: new foundry.data.fields.StringField({
-                required: true,
-                blank: false,
-                choices: () => Object.keys(CONFIG.COSMERE.items.types),
-            }),
-            removalPolicy: new foundry.data.fields.StringField({
-                required: false,
-                initial: "keep" /* ItemRelationshipRemovalPolicy.Keep */,
-                blank: false,
-                choices: [
-                    "remove" /* ItemRelationshipRemovalPolicy.Remove */,
-                    "keep" /* ItemRelationshipRemovalPolicy.Keep */,
-                ],
-            }),
-        };
+        return SCHEMA$y();
     }
 }
 (function (ItemRelationship) {
     ItemRelationship.Type = ItemRelationshipType;
 })(ItemRelationship || (ItemRelationship = {}));
 
-class ItemRelationshipField extends foundry.data.fields.ObjectField {
-    static getModelForType(type) {
-        switch (type) {
-            case ItemRelationshipType.Parent:
-                return ItemRelationship;
-            case ItemRelationshipType.Child:
-                return ItemRelationship;
-            default:
-                throw new Error(`Unknown item relationship type: ${type}`);
-        }
-    }
-    _cleanType(value, options) {
-        if (!value || !(typeof value === 'object'))
-            return {};
-        if (!('type' in value))
-            return {};
-        // Get type
-        const type = value.type;
-        // Clean value
-        return (ItemRelationshipField.getModelForType(type).cleanData(value, options) ?? value);
-    }
-    _validateType(value, options) {
-        if (!value || !(typeof value === 'object'))
-            throw new Error('must be an ItemRelationship object');
-        if (!('type' in value))
-            throw new Error('must have a type property');
-        if (typeof value.type !== 'string')
-            throw new Error('field "type" must be a string');
-        // Get model
-        const cls = ItemRelationshipField.getModelForType(value.type);
-        if (!cls)
-            throw new Error(`field "type" must be one of: ${Object.keys(ItemRelationshipType).join(', ')}`);
-        // Perform validation
-        return cls.schema.validate(value, options);
+class ItemRelationshipField extends foundry.data.fields.SchemaField {
+    constructor(options, context) {
+        super(ItemRelationship.defineSchema(), options, context);
     }
     _cast(value) {
         return typeof value === 'object' ? value : {};
     }
-    getInitialValue(data) {
-        // Get model
-        const cls = ItemRelationshipField.getModelForType(data.type);
-        // Get initial value
-        return cls.schema.getInitialValue(data);
-    }
     initialize(value, model, options) {
-        // Get model
-        const cls = ItemRelationshipField.getModelForType(value.type);
-        // Initialize value
-        return cls
-            ? value instanceof cls
-                ? value
-                : new cls(foundry.utils.deepClone(value), {
-                    parent: model,
-                    ...options,
-                })
-            : foundry.utils.deepClone(value);
+        return new ItemRelationship(foundry.utils.deepClone(value), {
+            parent: model,
+            ...options,
+        });
     }
 }
 
@@ -5699,7 +5699,7 @@ class RecordCollection {
      * to be backing record object itself. This ensures its stored
      * properly.
      */
-    /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
+    /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
     constructor(entries) {
         if (entries) {
             entries.forEach(([key, value]) => {
@@ -5799,7 +5799,7 @@ class RecordCollection {
 class CollectionField extends foundry.data.fields.ObjectField {
     model;
     CollectionClass;
-    constructor(model, options = {}, context, CollectionClass = RecordCollection) {
+    constructor(model, options = {}, context, CollectionClass = (RecordCollection)) {
         super(options, context);
         this.model = model;
         this.CollectionClass = CollectionClass;
@@ -5808,7 +5808,8 @@ class CollectionField extends foundry.data.fields.ObjectField {
         Array.from(Object.entries(value)).forEach(([key, v]) => {
             const cleaned = this.model.clean(v, options);
             if (key.startsWith('-=')) {
-                value[key] = cleaned;
+                value[key] =
+                    null;
             }
             else {
                 // Determine the key
@@ -5816,13 +5817,14 @@ class CollectionField extends foundry.data.fields.ObjectField {
                 key = this.getItemKey(cleaned) ?? key;
                 if (key !== prevKey)
                     delete value[prevKey];
-                value[key] = cleaned;
+                value[key] =
+                    cleaned;
             }
         });
         return value;
     }
     _validateType(value, options) {
-        if (foundry.utils.getType(value) !== 'Object')
+        if (!value || typeof value !== 'object')
             throw new Error('must be a RecordCollection object');
         const errors = this._validateValues(value, options);
         if (!foundry.utils.isEmpty(errors)) {
@@ -5837,6 +5839,8 @@ class CollectionField extends foundry.data.fields.ObjectField {
     _validateValues(value, options) {
         const errors = {};
         Object.entries(value).forEach(([id, v]) => {
+            if (id.startsWith('-=') && v === null)
+                return; // Skip deletions
             const error = this.model.validate(v, options);
             if (error) {
                 errors[id] = error;
@@ -5856,10 +5860,47 @@ class CollectionField extends foundry.data.fields.ObjectField {
                         ? value.map((v, i) => [this.getItemKey(v) ?? i, v])
                         : [];
         // Reduce entries to Record<string, unknown>
-        return entries.reduce((acc, [key, value]) => ({
+        const result = entries.reduce((acc, [key, value]) => ({
             ...acc,
             [key]: value,
         }), {});
+        return result;
+    }
+    _addTypes(source, changes) {
+        if (!source || !changes)
+            return super._addTypes(source, changes);
+        Object.entries(changes).forEach(([k, v]) => {
+            // @ts-expect-error foundry-vtt-types seem to be wrong here, _addTypes aren't used in a protected way within Foundry itself
+            this.model._addTypes(source[k], v);
+        });
+    }
+    _updateDiff(source, key, value, difference, options) {
+        const current = source[key];
+        if (!current)
+            return super._updateDiff(source, key, value, difference, options);
+        const schemaDiff = (difference[key] = {});
+        Object.entries(value).forEach(([k, v]) => {
+            let name = k;
+            const specialKey = foundry.utils.isDeletionKey(k);
+            if (specialKey)
+                name = k.slice(2);
+            if (specialKey) {
+                if (k.startsWith('-')) {
+                    if (v !== null)
+                        throw new Error('Removing a key using the -= deletion syntax requires the value of that deletion key to be null, for example {-=key: null}');
+                    if (name in current) {
+                        schemaDiff[k] = v;
+                        delete current[name];
+                    }
+                }
+                else if (k.startsWith('=')) {
+                    schemaDiff[k] = current[name] =
+                        foundry.utils.applySpecialKeys(v);
+                }
+                return;
+            }
+            this.model._updateDiff(current, name, v, schemaDiff, options);
+        });
     }
     getInitialValue() {
         return new this.CollectionClass();
@@ -5870,7 +5911,12 @@ class CollectionField extends foundry.data.fields.ObjectField {
         value = foundry.utils.deepClone(value);
         const collection = new this.CollectionClass(Object.entries(value));
         Array.from(collection.entries()).forEach(([id, v]) => {
-            collection.set(id, this.model.initialize(v, model, options));
+            const initialized = this.model.initialize(v, model, options);
+            const set = typeof initialized === 'function'
+                ? initialized()
+                : initialized;
+            if (set)
+                collection.set(id, set);
         });
         return collection;
     }
@@ -5890,15 +5936,28 @@ class CollectionField extends foundry.data.fields.ObjectField {
         return this.model._getField(path);
     }
     getItemKey(item) {
-        return typeof this.options.key === 'function'
-            ? this.options.key(item)
-            : (item[this.options.key ?? 'id'] ??
-                item._id ??
-                undefined);
+        if (typeof this.options.key === 'function')
+            return this.options.key(item);
+        if (!item || typeof item !== 'object')
+            return undefined;
+        const keyField = this.options.key;
+        const val = keyField
+            ? item[keyField]
+            : 'id' in item
+                ? item.id
+                : '_id' in item
+                    ? item._id
+                    : undefined;
+        return typeof val === 'string' ? val : undefined;
     }
 }
 
 // Fields
+const SCHEMA$x = () => ({
+    relationships: new CollectionField(new ItemRelationshipField(), {
+        required: true,
+    }),
+});
 /**
  * Mixin for items to track relationships with other items.
  * For example, a talent will have a relationship with its path.
@@ -5907,11 +5966,7 @@ function RelationshipsMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    relationships: new CollectionField(new ItemRelationshipField(), {
-                        required: true,
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$x());
             }
         };
     };
@@ -5966,9 +6021,7 @@ function removeRelationship(from, to, options = {}) {
         rel.uuid === to.uuid);
     if (relationship) {
         const changes = {
-            [`system.relationships.-=${relationship.id}`]: {
-                type: relationship.type,
-            },
+            [`system.relationships.-=${relationship.id}`]: null,
         };
         if (!options.source) {
             return from.update(changes).then(void 0);
@@ -5996,7 +6049,7 @@ class AttackConfigurationDialog extends ComponentHandlebarsApplicationMixin((App
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             resizable: false,
@@ -6010,7 +6063,7 @@ class AttackConfigurationDialog extends ComponentHandlebarsApplicationMixin((App
         actions: {
             submit: this.onSubmit,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ROLL_CONFIGURATION}`,
@@ -6095,7 +6148,7 @@ class AttackConfigurationDialog extends ComponentHandlebarsApplicationMixin((App
         const form = this.element.querySelector('form');
         this.resolve({
             attribute: getNullableFromFormInput(form.attribute.value),
-            rollMode: form.rollMode?.value ?? 'roll',
+            rollMode: form.rollMode?.value ?? 'publicroll',
             temporaryModifiers: form.temporaryMod.value,
             plotDie: form.raiseStakes.checked,
             advantageMode: this.data.skillTest.advantageMode ?? AdvantageMode.None,
@@ -6135,8 +6188,8 @@ class AttackConfigurationDialog extends ComponentHandlebarsApplicationMixin((App
         }
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
         $(this.element)
             .find('.roll-config.test .dice-tooltip .dice-rolls .roll.die')
@@ -6238,14 +6291,14 @@ class ItemConsumeDialog extends foundry.applications.api.DialogV2 {
                     // Static or optional consumption
                     if (option.amount.min === option.amount.max) {
                         label = game.i18n.format('DIALOG.ItemConsume.ShouldConsume.Static', {
-                            amount: option.amount.min,
+                            amount: option.amount.min.toFixed(),
                             resource,
                         });
                     }
                     // Uncapped consumption
                     else if (option.amount.max === -1) {
                         label = game.i18n.format('DIALOG.ItemConsume.ShouldConsume.RangeUncapped', {
-                            amount: option.amount.min,
+                            amount: option.amount.min.toFixed(),
                             resource,
                         });
                         isVariable = true;
@@ -6253,7 +6306,9 @@ class ItemConsumeDialog extends foundry.applications.api.DialogV2 {
                     // Capped consumption
                     else {
                         label = game.i18n.format('DIALOG.ItemConsume.ShouldConsume.RangeCapped', {
-                            ...option.amount,
+                            min: option.amount.min.toFixed(),
+                            max: option.amount.max.toFixed(),
+                            actual: option.amount.actual?.toFixed() ?? '',
                             resource,
                         });
                         isVariable = true;
@@ -6355,8 +6410,10 @@ class ItemConsumeDialog extends foundry.applications.api.DialogV2 {
                         key += `.${consumable.resource}`;
                         break;
                 }
-                const existing = acc[key];
-                if (!existing) {
+                if (!acc[key]) {
+                    // TODO: Resolve typing issues
+                    // NOTE: Use any as workaround for foundry-vtt-types issues
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
                     acc[key] = { ...consumable };
                 }
                 else {
@@ -6379,7 +6436,16 @@ class ItemConsumeDialog extends foundry.applications.api.DialogV2 {
     }
 }
 
-class CosmereItem extends Item {
+// export interface CosmereItemData<
+//     T extends foundry.abstract.DataSchema = foundry.abstract.DataSchema,
+// > {
+//     name: string;
+//     type: ItemType;
+//     system?: T;
+// }
+class _Item extends Item {
+}
+class CosmereItem extends _Item {
     /* --- ItemType type guards --- */
     isWeapon() {
         return this.type === "weapon" /* ItemType.Weapon */;
@@ -6395,9 +6461,6 @@ class CosmereItem extends Item {
     }
     isPath() {
         return this.type === "path" /* ItemType.Path */;
-    }
-    isSpecialty() {
-        return this.type === "specialty" /* ItemType.Specialty */;
     }
     isTalent() {
         return this.type === "talent" /* ItemType.Talent */;
@@ -6425,6 +6488,9 @@ class CosmereItem extends Item {
     }
     isTalentTree() {
         return this.type === "talent_tree" /* ItemType.TalentTree */;
+    }
+    isLoot() {
+        return this.type === "loot" /* ItemType.Loot */;
     }
     /* --- Mixin type guards --- */
     /**
@@ -6519,9 +6585,6 @@ class CosmereItem extends Item {
         return 'relationships' in this.system;
     }
     /* --- Accessors --- */
-    get isFavorite() {
-        return this.getFlag(SYSTEM_ID, 'favorites.isFavorite') ?? false;
-    }
     /**
      * Checks if the talent item mode is active.
      * Only relevant for talents that have a modality configured.
@@ -6543,13 +6606,14 @@ class CosmereItem extends Item {
         // Check if the actor has the mode active
         return activeMode === this.system.id;
     }
-    get sheet() {
-        return super.sheet;
-    }
     /* --- Lifecycle --- */
-    _onClickDocumentLink(event) {
+    async _onClickDocumentLink(event) {
+        if (!this.sheet)
+            return super._onClickDocumentLink(event);
         const target = event.currentTarget;
-        return this.sheet?.render(true, { tab: target.dataset.tab });
+        await this.sheet.render({ force: true, tab: target.dataset.tab });
+        return this
+            .sheet;
     }
     _buildEmbedHTML(config, options) {
         const embedHelpers = getEmbedHelpers(this);
@@ -6611,8 +6675,7 @@ class CosmereItem extends Item {
         }));
         if (roll && options.chatMessage !== false) {
             // Get the speaker
-            const speaker = options.speaker ??
-                ChatMessage.getSpeaker({ actor });
+            const speaker = options.speaker ?? ChatMessage.getSpeaker({ actor });
             // Create chat message
             await roll.toMessage({
                 speaker,
@@ -6683,6 +6746,7 @@ class CosmereItem extends Item {
         }
         // Get the graze formula
         const grazeFormula = 
+        // NOTE: Explicitly use logical OR here to also catch empty strings
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         this.system.damage.grazeOverrideFormula || '@damage.dice';
         const usesBaseDamage = grazeFormula.includes('@damage');
@@ -6697,8 +6761,7 @@ class CosmereItem extends Item {
         roll.graze = grazeRoll;
         if (roll && options.chatMessage !== false) {
             // Get the speaker
-            const speaker = options.speaker ??
-                ChatMessage.getSpeaker({ actor });
+            const speaker = options.speaker ?? ChatMessage.getSpeaker({ actor });
             // Create chat message
             await roll.toMessage({
                 speaker,
@@ -6740,6 +6803,7 @@ class CosmereItem extends Item {
             (damageSkillId
                 ? actor.system.skills[damageSkillId].attribute
                 : null);
+        options.rollMode ??= game.settings.get('core', 'rollMode');
         options.skillTest ??= {};
         options.skillTest.parts ??= this.system.activation.modifierFormula
             ? [this.system.activation.modifierFormula]
@@ -6845,18 +6909,19 @@ class CosmereItem extends Item {
         }));
         if (options.chatMessage !== false) {
             // Get the speaker
-            const speaker = options.speaker ??
-                ChatMessage.getSpeaker({ actor });
-            const flavor = game
-                .i18n.localize('COSMERE.Item.AttackFlavor')
+            const speaker = options.speaker ?? ChatMessage.getSpeaker({ actor });
+            const flavor = game.i18n
+                .localize('COSMERE.Item.AttackFlavor')
                 .replace('[actor]', actor.name)
                 .replace('[item]', this.name);
             // Create chat message
             (await ChatMessage.create({
-                user: game.user.id,
+                author: game.user.id,
                 speaker,
                 content: `<p>${flavor}</p>`,
                 rolls: [skillRoll, ...damageRolls],
+            }, {
+                rollMode: options.rollMode,
             }));
         }
         // Return the rolls
@@ -6880,6 +6945,7 @@ class CosmereItem extends Item {
             ui.notifications.warn(game.i18n.localize('GENERIC.Warning.NoActor'));
             return null;
         }
+        options.rollMode ??= game.settings.get('core', 'rollMode');
         const { fastForward, advantageMode, plotDie } = determineConfigurationMode(options);
         // Hook: preItemUse
         if (Hooks.call(HOOKS.PRE_USE_ITEM, this, // Source
@@ -6941,8 +7007,8 @@ class CosmereItem extends Item {
                     else if (consumption.type === "item" /* ItemConsumeType.Item */) {
                         // Handle item consumption
                         // TODO: Figure out how to handle item consumption
-                        ui.notifications.warn(game
-                            .i18n.localize('GENERIC.Warning.NotImplemented')
+                        ui.notifications.warn(game.i18n
+                            .localize('GENERIC.Warning.NotImplemented')
                             .replace('[action]', 'Item consumption'));
                     }
                 });
@@ -6961,7 +7027,13 @@ class CosmereItem extends Item {
             postRoll.push(() => {
                 // Handle use consumption
                 void this.update({
-                    'system.activation.uses.value': currentUses - 1,
+                    system: {
+                        activation: {
+                            uses: {
+                                value: currentUses - 1,
+                            },
+                        },
+                    },
                 });
             });
         }
@@ -6985,8 +7057,7 @@ class CosmereItem extends Item {
             hasDamage;
         const messageConfig = {
             user: game.user.id,
-            speaker: options.speaker ??
-                ChatMessage.getSpeaker({ actor }),
+            speaker: options.speaker ?? ChatMessage.getSpeaker({ actor }),
             rolls: [],
             flags: {},
         };
@@ -7072,7 +7143,9 @@ class CosmereItem extends Item {
             }
             messageConfig.rolls = rolls;
             // Create chat message
-            await ChatMessage.create(messageConfig);
+            await ChatMessage.create(messageConfig, {
+                rollMode: options.rollMode,
+            });
             // Perform post roll actions
             postRoll.forEach((action) => action());
             // Return the result
@@ -7083,11 +7156,11 @@ class CosmereItem extends Item {
         else {
             // NOTE: Use boolean or operator (`||`) here instead of nullish coalescing (`??`),
             // as flavor can also be an empty string, which we'd like to replace with the default flavor too
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             this.system.activation.flavor || undefined;
             // Create chat message
-            const message = (await ChatMessage.create(messageConfig));
-            message.applyRollMode('roll');
+            (await ChatMessage.create(messageConfig, {
+                rollMode: options.rollMode,
+            }));
             // Perform post roll actions
             postRoll.forEach((action) => action());
             return null;
@@ -7104,7 +7177,8 @@ class CosmereItem extends Item {
             const shouldConsume = options.shouldConsume ?? i === 0;
             const amount = consumptionData.value;
             const label = consumeType === "resource" /* ItemConsumeType.Resource */
-                ? game.i18n.localize(CONFIG.COSMERE.resources[consumptionData.resource].label)
+                ? game.i18n.localize(CONFIG.COSMERE.resources[consumptionData.resource]
+                    .label)
                 : consumeType === "item" /* ItemConsumeType.Item */
                     ? '[TODO ITEM]'
                     : game.i18n.localize('GENERIC.Unknown');
@@ -7126,7 +7200,13 @@ class CosmereItem extends Item {
             return;
         // Recharge resource
         await this.update({
-            'system.activation.uses.value': this.system.activation.uses.max,
+            system: {
+                activation: {
+                    uses: {
+                        value: this.system.activation.uses.max,
+                    },
+                },
+            },
         });
     }
     isRelatedTo(item, relType) {
@@ -7152,38 +7232,15 @@ class CosmereItem extends Item {
             return;
         return ItemRelationshipUtils.removeRelationship(this, item, options);
     }
-    async markFavorite(index, render = true) {
-        await this.update({
-            flags: {
-                [SYSTEM_ID]: {
-                    favorites: {
-                        isFavorite: true,
-                        sort: index,
-                    },
-                },
-            },
-        }, { render });
-    }
-    async clearFavorite() {
-        await Promise.all([
-            this.unsetFlag(SYSTEM_ID, 'favorites.isFavorite'),
-            this.unsetFlag(SYSTEM_ID, 'favorites.sort'),
-        ]);
-    }
     /* --- Helpers --- */
     async getDescriptionHTML() {
         if (!this.hasDescription())
             return undefined;
         // NOTE: We use logical OR's here to catch both nullish values and empty string
-        /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-        const descriptionData = this.system.description
-            ?.chat ||
-            this.system.description
-                ?.short ||
-            this.system.description
-                ?.value;
-        /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
-        const description = await TextEditor.enrichHTML(descriptionData ?? '', {
+        const descriptionData = this.system.description?.chat ||
+            this.system.description?.short ||
+            this.system.description?.value;
+        const description = await foundry.applications.ux.TextEditor.enrichHTML(descriptionData ?? '', {
             relativeTo: this.system.parent,
         });
         const traitsNormal = [];
@@ -7207,8 +7264,7 @@ class CosmereItem extends Item {
             traits.push(...traitsNormal.sort(), ...traitsExpert.sort());
         }
         let action;
-        if (this.hasActivation() &&
-            this.system.activation.cost.value !== undefined) {
+        if (this.hasActivation() && this.system.activation.cost.value) {
             switch (this.system.activation.cost.type) {
                 case "act" /* ActionCostType.Action */:
                     action = `action${Math.min(3, this.system.activation.cost.value)}`;
@@ -7304,8 +7360,10 @@ class CosmereItem extends Item {
                 name: this.name,
                 charges: this.hasActivation()
                     ? {
-                        value: this.system.activation.uses?.value ?? 0,
-                        max: this.system.activation.uses?.max ?? 0,
+                        value: this.system
+                            .activation.uses?.value ?? 0,
+                        max: this.system
+                            .activation.uses?.max ?? 0,
                     }
                     : undefined,
             },
@@ -7390,8 +7448,8 @@ class ShortRestDialog extends foundry.applications.api.DialogV2 {
         });
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         // Event handler for tended by selection
         $(this.element)
             .find('select[name="tendedBy"]')
@@ -7516,13 +7574,13 @@ function removeConnection(fromId, toId, tree, operation) {
     // Prepare node changes
     const nodeChanges = prereq
         ? Array.from(prereq.talents).length === 1
-            ? { [`prerequisites.-=${prereq.id}`]: {} }
+            ? { [`prerequisites.-=${prereq.id}`]: null }
             : {
                 [`prerequisites.${prereq.id}.talents`]: prereq.talents.filter((talent) => talent.id !== to.talentId),
             }
         : {};
     // Remove the connection
-    nodeChanges[`connections.-=${to.id}`] = {};
+    nodeChanges[`connections.-=${to.id}`] = null;
     // Update the tree
     return tree.update({
         [`system.nodes.${from.id}`]: nodeChanges,
@@ -7544,10 +7602,10 @@ function removePrerequisite(node, prereqId, tree, operation) {
     // Update the tree
     return tree.update({
         [`system.nodes.${node.id}`]: {
-            [`prerequisites.-=${prereqId}`]: {},
+            [`prerequisites.-=${prereqId}`]: null,
             ...connections.reduce((acc, id) => ({
                 ...acc,
-                [`connections.-=${id}`]: {},
+                [`connections.-=${id}`]: null,
             }), {}),
         },
     }, operation);
@@ -7628,7 +7686,7 @@ async function getTalents(tree, includeNested = true) {
     const talents = (await Promise.all(tree.system.nodes
         .filter((node) => node.type === "talent" /* TalentTree.Node.Type.Talent */)
         .map(async (node) => {
-        const talent = (await fromUuid(node.uuid));
+        const talent = await fromUuid(node.uuid);
         if (!talent?.isTalent())
             return null;
         return talent;
@@ -7638,7 +7696,7 @@ async function getTalents(tree, includeNested = true) {
         const nestedTalents = await Promise.all(tree.system.nodes
             .filter((node) => node.type === "tree" /* TalentTree.Node.Type.Tree */)
             .map(async (node) => {
-            const tree = (await fromUuid(node.uuid));
+            const tree = await fromUuid(node.uuid);
             if (!tree?.isTalentTree())
                 return [];
             return getTalents(tree, true);
@@ -7661,38 +7719,44 @@ var Derived;
         [Mode.Override]: 'GENERIC.DerivedValue.Mode.Override',
     };
 })(Derived || (Derived = {}));
+function SCHEMA$w(element, options) {
+    return {
+        ...options.additionalFields,
+        derived: element,
+        override: new (Object.getPrototypeOf(element).constructor)({
+            ...element.options,
+            initial: null,
+            required: false,
+            nullable: true,
+        }),
+        useOverride: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: false,
+        }),
+        ...(element instanceof foundry.data.fields.NumberField
+            ? {
+                bonus: new foundry.data.fields.NumberField({
+                    required: true,
+                    nullable: false,
+                    initial: 0,
+                }),
+            }
+            : {}),
+    };
+}
 class DerivedValueField extends foundry.data.fields.SchemaField {
     constructor(element, options, context) {
         // Update element options
         element.options.required = true;
-        super({
-            ...options?.additionalFields,
-            derived: element,
-            override: new (Object.getPrototypeOf(element)
-                .constructor)({
-                ...element.options,
-                initial: null,
-                required: false,
-                nullable: true,
-            }),
-            useOverride: new foundry.data.fields.BooleanField({
-                required: true,
-                nullable: false,
-                initial: false,
-            }),
-            ...(element instanceof foundry.data.fields.NumberField
-                ? {
-                    bonus: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                        initial: 0,
-                    }),
-                }
-                : {}),
-        }, options, context);
+        super(SCHEMA$w(element, options ?? {}), options, context);
     }
     initialize(value, model, options) {
-        value = super.initialize(value, model, options);
+        const superInitialized = super.initialize(value, model, options);
+        value =
+            typeof superInitialized === 'function'
+                ? (superInitialized() ?? value)
+                : superInitialized;
         if (!Object.hasOwn(value, 'value')) {
             Object.defineProperties(value, {
                 value: {
@@ -7728,57 +7792,34 @@ class DerivedValueField extends foundry.data.fields.SchemaField {
     }
 }
 
-class ExpertisesField extends CollectionField {
-    constructor(options) {
-        super(new ExpertiseDataField({
-            label: 'EXPERTISE',
-        }), {
-            ...options,
-            key: (item) => Expertise.getKey(item),
-        });
-    }
-}
-class ExpertiseDataField extends foundry.data.fields.SchemaField {
-    constructor(options, context) {
-        super(Expertise.defineSchema(), options, context);
-    }
-    _cast(value) {
-        return typeof value === 'object' ? value : {};
-    }
-    initialize(value, model, options) {
-        return new Expertise(foundry.utils.deepClone(value), {
-            parent: model,
-            ...options,
-        });
-    }
-}
+const SCHEMA$v = () => ({
+    id: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+    }),
+    type: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        initial: Object.keys(CONFIG.COSMERE.expertiseTypes)[0],
+        choices: Object.entries(CONFIG.COSMERE.expertiseTypes)
+            .map(([typeId, config]) => [typeId, config.label])
+            .reduce((acc, [key, value]) => ({
+            ...acc,
+            [key]: value,
+        }), {}),
+    }),
+    label: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        blank: false,
+    }),
+    locked: new foundry.data.fields.BooleanField(),
+});
 class Expertise extends foundry.abstract.DataModel {
     static defineSchema() {
-        return {
-            id: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-            }),
-            type: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-                initial: Object.keys(CONFIG.COSMERE.expertiseTypes)[0],
-                choices: Object.entries(CONFIG.COSMERE.expertiseTypes)
-                    .map(([typeId, config]) => [typeId, config.label])
-                    .reduce((acc, [key, value]) => ({
-                    ...acc,
-                    [key]: value,
-                }), {}),
-            }),
-            label: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                blank: false,
-            }),
-            locked: new foundry.data.fields.BooleanField(),
-        };
+        return SCHEMA$v();
     }
     static getKey(expertise) {
         if (!expertise.id || !expertise.type)
@@ -7826,367 +7867,404 @@ class Expertise extends foundry.abstract.DataModel {
         });
     }
 }
+class ExpertiseDataField extends foundry.data.fields.SchemaField {
+    constructor(options, context) {
+        super(Expertise.defineSchema(), {
+            ...options,
+            required: true,
+            nullable: false,
+        }, context);
+    }
+    _cast(value) {
+        return (value && typeof value === 'object' ? value : {});
+    }
+    initialize(value, model, options) {
+        return new Expertise(foundry.utils.deepClone(value), {
+            parent: model,
+            ...options,
+        });
+    }
+}
+class ExpertisesField extends CollectionField {
+    constructor(options) {
+        super(new ExpertiseDataField({
+            label: 'EXPERTISE',
+        }), {
+            ...options,
+            key: (item) => Expertise.getKey(item),
+        });
+    }
+}
 
 // Fields
+const SCHEMA$u = () => ({
+    size: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        initial: "medium" /* Size.Medium */,
+        choices: Object.keys(CONFIG.COSMERE.sizes),
+    }),
+    type: new foundry.data.fields.SchemaField({
+        id: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            blank: false,
+            initial: "humanoid" /* CreatureType.Humanoid */,
+            choices: Object.keys(CONFIG.COSMERE.creatureTypes),
+        }),
+        custom: new foundry.data.fields.StringField({ nullable: true }),
+        subtype: new foundry.data.fields.StringField({
+            nullable: true,
+        }),
+    }),
+    tier: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        min: 0,
+        integer: true,
+        initial: 1,
+    }),
+    senses: new foundry.data.fields.SchemaField({
+        range: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 5,
+        })),
+        obscuredAffected: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: true,
+        }),
+    }),
+    immunities: getImmunitiesSchema(),
+    attributes: getAttributesSchema(),
+    defenses: getDefensesSchema(),
+    resources: getResourcesSchema(),
+    skills: getSkillsSchema(),
+    currency: getCurrenciesSchema(),
+    deflect: new DerivedValueField(new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        min: 0,
+        initial: 0,
+    }), {
+        additionalFields: {
+            natural: new foundry.data.fields.NumberField({
+                required: false,
+                nullable: true,
+                integer: true,
+                initial: 0,
+                label: 'COSMERE.Deflect.Natural.Label',
+                hint: 'COSMERE.Deflect.Natural.Hint',
+            }),
+            source: new foundry.data.fields.StringField({
+                initial: "armor" /* DeflectSource.Armor */,
+                choices: Object.keys(CONFIG.COSMERE.deflect.sources),
+            }),
+            types: getDamageDeflectTypesSchema(),
+        },
+    }),
+    movement: getMovementSchema(),
+    injuries: new DerivedValueField(new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        min: 0,
+        initial: 0,
+    })),
+    injuryRollBonus: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        initial: 0,
+    }),
+    encumbrance: new foundry.data.fields.SchemaField({
+        lift: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        })),
+        carry: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        })),
+    }),
+    expertises: new ExpertisesField({
+        required: true,
+    }),
+    languages: new foundry.data.fields.ArrayField(new foundry.data.fields.StringField()),
+    /**
+     * HTML Fields
+     */
+    biography: new foundry.data.fields.HTMLField({
+        label: 'COSMERE.Actor.Biography.Label',
+        initial: '',
+    }),
+    appearance: new foundry.data.fields.HTMLField({
+        label: 'COSMERE.Actor.Appearance.Label',
+        initial: '',
+    }),
+    notes: new foundry.data.fields.HTMLField({
+        label: 'COSMERE.Actor.Notes.Label',
+        initial: '',
+    }),
+});
+function getAttributesSchema() {
+    const attributes = CONFIG.COSMERE.attributes;
+    const constructAttributeSchema = () => new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            max: 10,
+            initial: 0,
+        }),
+        bonus: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+        }),
+    });
+    return new foundry.data.fields.SchemaField(Object.keys(attributes).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: constructAttributeSchema(),
+    }), {}));
+}
+function getDefensesSchema() {
+    const defenses = CONFIG.COSMERE.attributeGroups;
+    const constructDefenseSchema = () => new DerivedValueField(new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        min: 0,
+        initial: 0,
+    }));
+    return new foundry.data.fields.SchemaField(Object.keys(defenses).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: constructDefenseSchema(),
+    }), {}));
+}
+function getResourcesSchema() {
+    const resources = CONFIG.COSMERE.resources;
+    const constructResourceSchema = () => new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        }),
+        max: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        })),
+        bonus: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+        }),
+    });
+    return new foundry.data.fields.SchemaField(Object.keys(resources).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: constructResourceSchema(),
+    }), {}));
+}
+function getSkillsSchema() {
+    const skills = CONFIG.COSMERE.skills;
+    const constructSkillSchema = (skill) => new foundry.data.fields.SchemaField({
+        rank: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            max: 5,
+            initial: 0,
+        }),
+        mod: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        })),
+        // Only present for non-core skills
+        ...(!skills[skill].core
+            ? {
+                unlocked: new foundry.data.fields.BooleanField({
+                    required: true,
+                    nullable: false,
+                    initial: false,
+                }),
+            }
+            : {}),
+    });
+    return new foundry.data.fields.SchemaField(Object.keys(skills).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: constructSkillSchema(key),
+    }), {}));
+}
+function getCurrenciesSchema() {
+    const currencies = CONFIG.COSMERE.currencies;
+    const constructCurrencySchema = (currencyId) => new foundry.data.fields.SchemaField({
+        denominations: new foundry.data.fields.ArrayField(getCurrencyDenominationSchema(currencyId)),
+        total: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: false,
+            min: 0,
+            initial: 0,
+        })),
+    });
+    const fields = Object.keys(currencies).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: constructCurrencySchema(key),
+    }), {});
+    return new foundry.data.fields.SchemaField(fields);
+}
+function getCurrencyDenominationSchema(currency) {
+    const denominations = CONFIG.COSMERE.currencies[currency].denominations;
+    return new foundry.data.fields.SchemaField({
+        id: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            choices: denominations.primary.map((d) => d.id),
+        }),
+        secondaryId: new foundry.data.fields.StringField({
+            required: false,
+            nullable: false,
+            choices: denominations.secondary?.map((d) => d.id) ?? [],
+        }),
+        amount: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        }),
+        conversionRate: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: false, // Support subdenominations of the "base", e.g. 1 chip = 0.2 marks
+            min: 0,
+            initial: 0,
+        })),
+        convertedValue: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: false,
+            min: 0,
+            initial: 0,
+        })),
+    });
+}
+function getDamageDeflectTypesSchema() {
+    const damageTypes = Object.keys(CONFIG.COSMERE.damageTypes);
+    const constructDamageTypeDeflectSchema = (type) => new foundry.data.fields.BooleanField({
+        required: true,
+        nullable: false,
+        initial: !CONFIG.COSMERE.damageTypes[type].ignoreDeflect,
+    });
+    return new foundry.data.fields.SchemaField(damageTypes.reduce((schema, type) => ({
+        ...schema,
+        [type]: constructDamageTypeDeflectSchema(type),
+    }), {}), {
+        required: true,
+    });
+}
+function getImmunitiesSchema() {
+    return new foundry.data.fields.SchemaField({
+        damage: getDamageImmunitiesSchema(),
+        condition: getConditionImmunitiesSchema(),
+    }, {
+        required: true,
+    });
+}
+function getDamageImmunitiesSchema() {
+    const damageTypes = Object.keys(CONFIG.COSMERE.damageTypes);
+    const constructDamageTypeSchema = () => new foundry.data.fields.BooleanField({
+        required: true,
+        nullable: false,
+        initial: false,
+    });
+    return new foundry.data.fields.SchemaField(damageTypes.reduce((schema, type) => ({
+        ...schema,
+        [type]: constructDamageTypeSchema(),
+    }), {}), {
+        required: true,
+    });
+}
+function getConditionImmunitiesSchema() {
+    const conditions = Object.keys(CONFIG.COSMERE.statuses);
+    const constructConditionSchema = () => new foundry.data.fields.BooleanField({
+        required: true,
+        nullable: false,
+        initial: false,
+    });
+    return new foundry.data.fields.SchemaField(conditions.reduce((schema, condition) => ({
+        ...schema,
+        [condition]: constructConditionSchema(),
+    }), {}), {
+        required: true,
+    });
+}
+function getMovementSchema() {
+    const movementTypeConfigs = CONFIG.COSMERE.movement.types;
+    const constructMovementTypeSchema = () => new foundry.data.fields.SchemaField({
+        rate: new DerivedValueField(new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            min: 0,
+            initial: 0,
+        })),
+    });
+    return new foundry.data.fields.SchemaField(Object.entries(movementTypeConfigs).reduce((schema, [type, config]) => ({
+        ...schema,
+        [type]: constructMovementTypeSchema(),
+    }), {}));
+}
 class CommonActorDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
-        return {
-            size: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-                initial: "medium" /* Size.Medium */,
-                choices: Object.keys(CONFIG.COSMERE.sizes),
-            }),
-            type: new foundry.data.fields.SchemaField({
-                id: new foundry.data.fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                    initial: "humanoid" /* CreatureType.Humanoid */,
-                    choices: Object.keys(CONFIG.COSMERE.creatureTypes),
-                }),
-                custom: new foundry.data.fields.StringField({ nullable: true }),
-                subtype: new foundry.data.fields.StringField({
-                    nullable: true,
-                }),
-            }),
-            tier: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                min: 0,
-                integer: true,
-                initial: 1,
-            }),
-            senses: new foundry.data.fields.SchemaField({
-                range: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 5,
-                })),
-                obscuredAffected: new foundry.data.fields.BooleanField({
-                    required: true,
-                    nullable: false,
-                    initial: true,
-                }),
-            }),
-            immunities: this.getImmunitiesSchema(),
-            attributes: this.getAttributesSchema(),
-            defenses: this.getDefensesSchema(),
-            resources: this.getResourcesSchema(),
-            skills: this.getSkillsSchema(),
-            currency: this.getCurrencySchema(),
-            deflect: new DerivedValueField(new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 0,
-                initial: 0,
-            }), {
-                additionalFields: {
-                    natural: new foundry.data.fields.NumberField({
-                        required: false,
-                        nullable: true,
-                        integer: true,
-                        initial: 0,
-                        label: 'COSMERE.Deflect.Natural.Label',
-                        hint: 'COSMERE.Deflect.Natural.Hint',
-                    }),
-                    source: new foundry.data.fields.StringField({
-                        initial: "armor" /* DeflectSource.Armor */,
-                        choices: Object.keys(CONFIG.COSMERE.deflect.sources),
-                    }),
-                    types: this.getDamageDeflectTypesSchema(),
-                },
-            }),
-            movement: this.getMovementSchema(),
-            injuries: new DerivedValueField(new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 0,
-                initial: 0,
-            })),
-            injuryRollBonus: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                initial: 0,
-            }),
-            encumbrance: new foundry.data.fields.SchemaField({
-                lift: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                })),
-                carry: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                })),
-            }),
-            expertises: new ExpertisesField({
-                required: true,
-            }),
-            languages: new foundry.data.fields.ArrayField(new foundry.data.fields.StringField()),
-            /**
-             * HTML Fields
-             */
-            biography: new foundry.data.fields.HTMLField({
-                label: 'COSMERE.Actor.Biography.Label',
-                initial: '',
-            }),
-            appearance: new foundry.data.fields.HTMLField({
-                label: 'COSMERE.Actor.Appearance.Label',
-                initial: '',
-            }),
-            notes: new foundry.data.fields.HTMLField({
-                label: 'COSMERE.Actor.Notes.Label',
-                initial: '',
-            }),
-        };
-    }
-    static getAttributesSchema() {
-        const attributes = CONFIG.COSMERE.attributes;
-        return new foundry.data.fields.SchemaField(Object.keys(attributes).reduce((schemas, key) => {
-            schemas[key] = new foundry.data.fields.SchemaField({
-                value: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    max: 10,
-                    initial: 0,
-                }),
-                bonus: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                }),
-            });
-            return schemas;
-        }, {}));
-    }
-    static getDefensesSchema() {
-        const defenses = CONFIG.COSMERE.attributeGroups;
-        return new foundry.data.fields.SchemaField(Object.keys(defenses).reduce((schemas, key) => {
-            schemas[key] = new DerivedValueField(new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 0,
-                initial: 0,
-            }));
-            return schemas;
-        }, {}));
-    }
-    static getResourcesSchema() {
-        const resources = CONFIG.COSMERE.resources;
-        return new foundry.data.fields.SchemaField(Object.keys(resources).reduce((schemas, key) => {
-            schemas[key] = new foundry.data.fields.SchemaField({
-                value: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                }),
-                max: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                })),
-                bonus: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                }),
-            });
-            return schemas;
-        }, {}));
-    }
-    static getSkillsSchema() {
-        const skills = CONFIG.COSMERE.skills;
-        return new foundry.data.fields.SchemaField(Object.keys(skills).reduce((schemas, key) => {
-            schemas[key] = new foundry.data.fields.SchemaField({
-                attribute: new foundry.data.fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                    initial: skills[key].attribute,
-                }),
-                rank: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    max: 5,
-                    initial: 0,
-                }),
-                mod: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                })),
-                // Only present for non-core skills
-                ...(!skills[key].core
-                    ? {
-                        unlocked: new foundry.data.fields.BooleanField({
-                            required: true,
-                            nullable: false,
-                            initial: false,
-                        }),
-                    }
-                    : {}),
-            });
-            return schemas;
-        }, {}));
-    }
-    static getCurrencySchema() {
-        const currencies = CONFIG.COSMERE.currencies;
-        return new foundry.data.fields.SchemaField(Object.keys(currencies).reduce((schemas, key) => {
-            schemas[key] = new foundry.data.fields.SchemaField({
-                denominations: new foundry.data.fields.ArrayField(this.getCurrencyDenominationSchema(key)),
-                total: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: false,
-                    min: 0,
-                    initial: 0,
-                })),
-            });
-            return schemas;
-        }, {}));
-    }
-    static getCurrencyDenominationSchema(currency) {
-        const denominations = CONFIG.COSMERE.currencies[currency].denominations;
-        return new foundry.data.fields.SchemaField({
-            id: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                choices: denominations.primary.map((d) => d.id),
-            }),
-            secondaryId: new foundry.data.fields.StringField({
-                required: false,
-                nullable: false,
-                choices: denominations.secondary?.map((d) => d.id) ?? [],
-            }),
-            amount: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 0,
-                initial: 0,
-            }),
-            conversionRate: new DerivedValueField(new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: false, // Support subdenominations of the "base", e.g. 1 chip = 0.2 marks
-                min: 0,
-                initial: 0,
-            })),
-            convertedValue: new DerivedValueField(new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: false,
-                min: 0,
-                initial: 0,
-            })),
-        });
-    }
-    static getDamageDeflectTypesSchema() {
-        const damageTypes = Object.keys(CONFIG.COSMERE.damageTypes);
-        return new foundry.data.fields.SchemaField(damageTypes.reduce((schema, type) => ({
-            ...schema,
-            [type]: new foundry.data.fields.BooleanField({
-                required: true,
-                nullable: false,
-                initial: !CONFIG.COSMERE.damageTypes[type].ignoreDeflect,
-            }),
-        }), {}), {
-            required: true,
-        });
-    }
-    static getImmunitiesSchema() {
-        return new foundry.data.fields.SchemaField({
-            damage: this.getDamageImmunitiesSchema(),
-            condition: this.getConditionImmunitiesSchema(),
-        }, {
-            required: true,
-        });
-    }
-    static getDamageImmunitiesSchema() {
-        const damageTypes = Object.keys(CONFIG.COSMERE.damageTypes);
-        return new foundry.data.fields.SchemaField(damageTypes.reduce((schema, type) => ({
-            ...schema,
-            [type]: new foundry.data.fields.BooleanField({
-                required: true,
-                nullable: false,
-                initial: false,
-            }),
-        }), {}), {
-            required: true,
-        });
-    }
-    static getConditionImmunitiesSchema() {
-        const conditions = Object.keys(CONFIG.COSMERE.statuses);
-        return new foundry.data.fields.SchemaField(conditions.reduce((schema, condition) => ({
-            ...schema,
-            [condition]: new foundry.data.fields.BooleanField({
-                required: true,
-                nullable: false,
-                initial: false,
-            }),
-        }), {}), {
-            required: true,
-        });
-    }
-    static getMovementSchema() {
-        const movementTypeConfigs = CONFIG.COSMERE.movement.types;
-        return new foundry.data.fields.SchemaField(Object.entries(movementTypeConfigs).reduce((schema, [type, config]) => ({
-            ...schema,
-            [type]: new foundry.data.fields.SchemaField({
-                rate: new DerivedValueField(new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    min: 0,
-                    initial: 0,
-                })),
-            }),
-        }), {}));
+        return SCHEMA$u();
     }
     prepareDerivedData() {
         super.prepareDerivedData();
-        // Derive non-core skill unlocks
+        const actor = this.parent;
+        // Skill derivations
         Object.keys(this.skills).forEach((skill) => {
-            if (CONFIG.COSMERE.skills[skill].core)
-                return;
-            // Check if the actor has a power that unlocks this skill
-            const unlocked = this.parent.powers.some((power) => power.system.skill === skill);
-            // Set unlocked status
-            this.skills[skill].unlocked = unlocked;
+            // Set attribute
+            this.skills[skill].attribute =
+                CONFIG.COSMERE.skills[skill].attribute;
+            // Derive unlocked status for non-core skills
+            if (!CONFIG.COSMERE.skills[skill].core) {
+                // Check if the actor has a power that unlocks this skill
+                const unlocked = this.parent.powers.some((power) => power.system.skill === skill);
+                // Set unlocked status
+                this.skills[skill].unlocked = unlocked;
+            }
         });
         // Lock other movement types to always use override
         Object.keys(CONFIG.COSMERE.movement.types)
             .filter((type) => type !== "walk" /* MovementType.Walk */)
             .forEach((type) => (this.movement[type].rate.useOverride = true));
         // Injury count
-        this.injuries.derived = this.parent.items.filter((item) => item.type === "injury" /* ItemType.Injury */).length;
-        const money = this.parent.items.filter((item) => item.type === "loot" /* ItemType.Loot */ &&
-            item.system.isMoney);
+        this.injuries.derived = actor.items.filter((item) => item.type === "injury" /* ItemType.Injury */).length;
+        const money = this.parent.items.filter((item) => item.isLoot() && item.system.isMoney);
         // Derive currency conversion values
         Object.keys(this.currency).forEach((currency) => {
             // Get currency data
@@ -8240,11 +8318,12 @@ class CommonActorDataModel extends foundry.abstract.TypeDataModel {
             this.skills[skill].mod.derived = attrValue + rank;
         });
         // Get deflect source, defaulting to armor
-        const source = this.deflect.source ?? "armor" /* DeflectSource.Armor */;
+        const source = (this.deflect.source ??
+            "armor" /* DeflectSource.Armor */);
         // Derive deflect value
         if (source === "armor" /* DeflectSource.Armor */) {
             // Get natural deflect value
-            const natural = this.deflect.natural ?? 0;
+            const natural = (this.deflect.natural ?? 0);
             this.deflect.types = Object.keys(CONFIG.COSMERE.damageTypes).reduce((obj, type) => {
                 obj[type] = false;
                 return obj;
@@ -8329,7 +8408,8 @@ async function getActor(uuid) {
 }
 function containsExpertise(collection, ...rest) {
     const [type, id] = rest.length === 1 ? [rest[0].type, rest[0].id] : rest;
-    return collection.has(Expertise.getKey({ type, id }));
+    const key = Expertise.getKey({ type, id });
+    return !key || collection.has(key);
 }
 
 // Constants
@@ -8338,7 +8418,9 @@ function containsExpertise(collection, ...rest) {
  * embedded in an actor.
  */
 const SINGLETON_ITEM_TYPES = ["ancestry" /* ItemType.Ancestry */];
-class CosmereActor extends Actor {
+class _Actor extends Actor {
+}
+class CosmereActor extends _Actor {
     /* --- Accessors --- */
     get conditions() {
         return this.statuses;
@@ -8349,14 +8431,6 @@ class CosmereActor extends Actor {
             effects.push(effect);
         }
         return effects;
-    }
-    get favorites() {
-        return this.items
-            .filter((i) => i.isFavorite)
-            .sort((a, b) => (a.getFlag(SYSTEM_ID, 'favorites.sort') ??
-            Number.MAX_VALUE) -
-            (b.getFlag(SYSTEM_ID, 'favorites.sort') ??
-                Number.MAX_VALUE));
     }
     get deflect() {
         return this.system.deflect.value;
@@ -8418,10 +8492,11 @@ class CosmereActor extends Actor {
          * us unable to access derived values in ActiveEffects.
          */
         /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
-        // Grab the Actor's parent class' prepareEmbeddedDocuments method
+        // Grab the Base Actor class' prepareEmbeddedDocuments method
         const parentProto = Object.getPrototypeOf(Object.getPrototypeOf(this));
         const grandparentProto = Object.getPrototypeOf(parentProto);
-        const f = grandparentProto.prepareEmbeddedDocuments;
+        const greatGrandparentProto = Object.getPrototypeOf(grandparentProto);
+        const f = greatGrandparentProto.prepareEmbeddedDocuments;
         /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
         // Call the parent class' prepareEmbeddedDocuments method
         f.call(this);
@@ -8430,11 +8505,6 @@ class CosmereActor extends Actor {
         super.prepareDerivedData();
         this.applyActiveEffects();
         this.system.prepareSecondaryDerivedData();
-    }
-    _initialize(options) {
-        super._initialize(options);
-        // Migrate goals
-        void this.migrateGoals();
     }
     async _preCreate(data, options, user) {
         if ((await super._preCreate(data, options, user)) === false)
@@ -8452,13 +8522,13 @@ class CosmereActor extends Actor {
         }
         this.updateSource({ prototypeToken });
     }
-    async createEmbeddedDocuments(embeddedName, data, opertion) {
+    async createEmbeddedDocuments(embeddedName, data, operation) {
         // Pre create actions
-        if (this.preCreateEmbeddedDocuments(embeddedName, data, opertion) ===
+        if (this.preCreateEmbeddedDocuments(embeddedName, data, operation) ===
             false)
             return [];
         // Perform create
-        const result = await super.createEmbeddedDocuments(embeddedName, data, opertion);
+        const result = await super.createEmbeddedDocuments(embeddedName, data, operation);
         // Post create actions
         this.postCreateEmbeddedDocuments(embeddedName, result);
         // Return result
@@ -8479,9 +8549,7 @@ class CosmereActor extends Actor {
             };
             // Allow a hook to override these changes
             const allowed = Hooks.call('modifyTokenAttribute', { attribute, value, isDelta, isBar }, updates);
-            return allowed !== false
-                ? (await this.update(updates))
-                : this;
+            return allowed !== false ? (await this.update(updates)) : this;
         }
         else {
             await super.modifyTokenAttribute(attribute, value, isDelta, isBar);
@@ -8502,7 +8570,9 @@ class CosmereActor extends Actor {
         return super.toggleStatusEffect(statusId, options);
     }
     /* --- Handlers --- */
-    preCreateEmbeddedDocuments(embeddedName, data, opertion) {
+    preCreateEmbeddedDocuments(embeddedName, data, operation) {
+        if (!data)
+            return;
         if (embeddedName === 'Item') {
             const itemData = data;
             // Check for singleton items
@@ -8510,9 +8580,9 @@ class CosmereActor extends Actor {
                 // Get the first item of this type
                 const item = itemData.find((d) => d.type === type);
                 // Filter out any other items of this type
-                data = item
+                data = (item
                     ? itemData.filter((d) => d.type !== type || d === item)
-                    : itemData;
+                    : itemData);
             });
             // Pre add powers
             itemData.forEach((d, i) => {
@@ -8660,7 +8730,7 @@ class CosmereActor extends Actor {
         };
         // Chat message
         await ChatMessage.create({
-            user: game.user.id,
+            author: game.user.id,
             speaker: ChatMessage.getSpeaker({
                 actor: this,
             }),
@@ -8735,7 +8805,13 @@ class CosmereActor extends Actor {
         // Apply damage
         const newHealth = Math.max(0, health - damage.calculated);
         await this.update({
-            'system.resources.hea.value': newHealth,
+            system: {
+                resources: {
+                    hea: {
+                        value: newHealth,
+                    },
+                },
+            },
         });
         // Actual damage that was applied
         damage.dealt = health - newHealth;
@@ -8745,7 +8821,7 @@ class CosmereActor extends Actor {
         Hooks.callAll(HOOKS.APPLY_DAMAGE, this, damage);
         if (options.chatMessage ?? true) {
             const messageConfig = {
-                user: game.user.id,
+                author: game.user.id,
                 speaker: ChatMessage.getSpeaker({
                     actor: this,
                 }),
@@ -8918,12 +8994,12 @@ class CosmereActor extends Actor {
         this, // Source
         {});
         // Set up flavor
-        let flavor = game
-            .i18n.localize('ROLLS.Recovery')
+        let flavor = game.i18n
+            .localize('ROLLS.Recovery')
             .replace('[character]', this.name);
         if (options.tendedBy) {
-            flavor += ` ${game
-                .i18n.localize('ROLLS.RecoveryTend')
+            flavor += ` ${game.i18n
+                .localize('ROLLS.RecoveryTend')
                 .replace('[tender]', options.tendedBy.name)}`;
         }
         // Chat message
@@ -8980,8 +9056,16 @@ class CosmereActor extends Actor {
             return;
         // Update the actor
         await this.update({
-            'system.resources.hea.value': this.system.resources.hea.max.value,
-            'system.resources.foc.value': this.system.resources.foc.max.value,
+            system: {
+                resources: {
+                    hea: {
+                        value: this.system.resources.hea.max.value,
+                    },
+                    foc: {
+                        value: this.system.resources.foc.max.value,
+                    },
+                },
+            },
         });
         /**
          * Hook: rest
@@ -8990,7 +9074,7 @@ class CosmereActor extends Actor {
     }
     getRollData() {
         const tokens = this.getActiveTokens();
-        return {
+        const data = {
             ...super.getRollData(),
             name: this.name,
             // Attributes shorthand
@@ -9031,12 +9115,17 @@ class CosmereActor extends Actor {
                     }, {}),
                 },
             },
-            token: tokens.length > 0
-                ? { name: tokens[0]?.name }
-                : undefined,
+            token: tokens.length > 0 ? { name: tokens[0]?.name } : undefined,
             // Hook data
             source: this,
         };
+        const registeredData = this.getRegisteredRollData(data);
+        return foundry.utils.mergeObject(data, registeredData, {
+            insertKeys: true,
+            insertValues: true,
+            overwrite: true,
+            recursive: true,
+        });
     }
     getEnricherData() {
         const actor = this.getRollData();
@@ -9076,8 +9165,78 @@ class CosmereActor extends Actor {
         // Default to the first (assumed lowest) formula
         return scale[0].formula;
     }
+    /**
+     * Utility Function to parse the formula of config roll data.
+     */
+    parseRollData(dataList) {
+        let value = 0;
+        let operator = '+';
+        dataList.forEach((data) => {
+            switch (data) {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%': {
+                    operator = data;
+                    break;
+                }
+                default: {
+                    let val = data;
+                    if (typeof data === 'string') {
+                        const property = foundry.utils.getProperty(this, data);
+                        if (typeof property === 'number') {
+                            val = property;
+                        }
+                    }
+                    switch (operator) {
+                        case '+': {
+                            value += val;
+                            break;
+                        }
+                        case '-': {
+                            value -= val;
+                            break;
+                        }
+                        case '*': {
+                            value *= val;
+                            break;
+                        }
+                        case '/': {
+                            value /= val;
+                            break;
+                        }
+                        case '%': {
+                            value %= val;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        return value;
+    }
+    /**
+     * Utility Function to determine a formula value based on a scalar plot of an attribute value
+     */
+    getRegisteredRollData(initialRollData) {
+        const registeredData = {};
+        for (const key in CONFIG.COSMERE.rollData) {
+            const rollData = CONFIG.COSMERE.rollData[key];
+            if (!rollData.types.includes(this.type)) {
+                continue;
+            }
+            const originalData = foundry.utils.getProperty(initialRollData, key);
+            if (!rollData.override && originalData && originalData !== 0) {
+                continue;
+            }
+            const value = this.parseRollData(rollData.data);
+            foundry.utils.setProperty(registeredData, key, value);
+        }
+        return registeredData;
+    }
     hasExpertise(...args) {
-        return containsExpertise(this.system.expertises, ...args);
+        return containsExpertise(this.system.expertises, ...args); // TEMP: Workaround
     }
     /**
      * Utility function to determine if an actor has a given immunity
@@ -9115,30 +9274,6 @@ class CosmereActor extends Actor {
     hasCompletedGoal(id) {
         return this.goals.some((goal) => goal.system.id === id && goal.system.level === 3);
     }
-    /* --- Helpers --- */
-    /**
-     * Migrate goals from the system object to individual items.
-     *
-     */
-    async migrateGoals() {
-        if (!this.isCharacter() || !this.system.goals)
-            return;
-        const goals = this.system.goals;
-        // Remove goals from data
-        await this.update({
-            'system.goals': null,
-        });
-        // Create goal items
-        goals.forEach((goalData) => {
-            void Item.create({
-                type: "goal" /* ItemType.Goal */,
-                name: goalData.text,
-                system: {
-                    level: goalData.level,
-                },
-            }, { parent: this });
-        });
-    }
 }
 
 // Constants
@@ -9174,7 +9309,7 @@ class CosmereCombat extends Combat {
                 return c;
             }
         })
-            .sort(this._sortCombatants);
+            .sort(this._sortCombatants.bind(this));
         if (this.turn !== null)
             this.turn = Math.clamp(this.turn, 0, turns.length - 1);
         // Update state tracking
@@ -9183,8 +9318,10 @@ class CosmereCombat extends Combat {
         // One-time initialization of the previous state
         if (!this.previous)
             this.previous = this.current;
+        // Assign turns
+        this.turns = turns;
         // Return the array of prepared turns
-        return (this.turns = turns);
+        return this.turns;
     }
 }
 
@@ -9214,7 +9351,7 @@ class CosmereCombatant extends Combatant {
     get initiative() {
         const spd = this.actor.system.attributes.spd;
         let initiative = spd.value + spd.bonus;
-        if (this.actor.type === "character" /* ActorType.Character */)
+        if (this.actor.isCharacter())
             initiative += 500;
         if (this.turnSpeed === "fast" /* TurnSpeed.Fast */)
             initiative += 1000;
@@ -9253,9 +9390,11 @@ class CosmereCombatant extends Combatant {
     }
     async resetActivation() {
         await this.update({
-            [`flags.${SYSTEM_ID}`]: {
-                activated: false,
-                bossFastActivated: false,
+            flags: {
+                [SYSTEM_ID]: {
+                    activated: false,
+                    bossFastActivated: false,
+                },
             },
         });
     }
@@ -9416,8 +9555,8 @@ class CosmereActiveEffect extends ActiveEffect {
         }
         return await super._preUpdate(data, options, user);
     }
-    async _onUpdate(changed, options, userId) {
-        await super._onUpdate(changed, options, userId);
+    _onUpdate(changed, options, userId) {
+        super._onUpdate(changed, options, userId);
         if (foundry.utils.hasProperty(changed, 'system.stacks') &&
             this.isCondition &&
             this.isStackable) {
@@ -9437,6 +9576,7 @@ class CosmereActiveEffect extends ActiveEffect {
 
 // Constant to improve UI consistency
 const NONE = 'none';
+/* eslint-enable @typescript-eslint/no-explicit-any */
 var MouseButton;
 (function (MouseButton) {
     /**
@@ -9524,10 +9664,7 @@ function getObjectChanges(original, updated) {
     });
     // Add removed keys
     removedKeys.forEach((key) => {
-        let keyParts = key.split('.');
-        keyParts = [...keyParts.slice(0, -1), keyParts.at(-1).slice(2)];
-        // Add the removal operator
-        changes[key] = foundry.utils.getProperty(original, keyParts.join('.'));
+        changes[key] = null;
     });
     return foundry.utils.expandObject(changes);
 }
@@ -9548,7 +9685,7 @@ async function getRawDocumentSources(documentType, packID) {
     if (packID)
         operation.pack = packID;
     // NOTE: Use any type here as it keeps resolving to ManageCompendiumRequest instead of DocumentSocketRequest
-    const { result } = await SocketInterface.dispatch('modifyDocument', {
+    const { result } = await foundry.helpers.SocketInterface.dispatch('modifyDocument', {
         type: documentType,
         operation,
         action: 'get',
@@ -9592,7 +9729,11 @@ function addDocumentToCollection(documentType, id, document, compendium) {
     // Build from source; cast to CosmereDocument because the static
     // method declarations in Actor, Item, etc. must return `this`.
     // We want an instance of the actual class we're calling from.
-    const documentToAdd = documentClass.fromSource(document._source);
+    const documentToAdd = documentClass.fromSource(
+    // TODO: Resolve typing issues
+    // NOTE: Use any as workaround for foundry-vtt-types issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    document._source);
     // Manually update collection with document.
     const collection = compendium ?? getCollectionForDocumentType(documentType);
     collection.set(id, documentToAdd);
@@ -9712,7 +9853,7 @@ async function migrateTalentTrees(items, compendium) {
             // Retrieve document
             const document = await getPossiblyInvalidDocument('Item', treeItem._id, compendium);
             // Apply changes
-            document.updateSource(changes, { diff: false });
+            document.updateSource(changes);
             await document.update(changes, { diff: false });
             // Ensure invalid documents are properly instantiated
             fixInvalidDocument('Item', document, compendium);
@@ -9759,7 +9900,7 @@ async function migrateActors(actors, compendium) {
             // Retrieve document
             const document = await getPossiblyInvalidDocument('Actor', actor._id, compendium);
             // Apply changes
-            document.updateSource(changes, { diff: false });
+            document.updateSource(changes);
             await document.update(changes, { diff: false });
             // Ensure invalid documents are properly instantiated
             fixInvalidDocument('Actor', document, compendium);
@@ -9824,7 +9965,7 @@ async function migrateItems(items, compendium) {
             // Retrieve document
             const document = await getPossiblyInvalidDocument('Item', item._id, compendium);
             // Apply changes
-            document.updateSource(changes, { diff: false });
+            document.updateSource(changes);
             await document.update(changes, { diff: false });
             // Ensure invalid documents are properly instantiated
             fixInvalidDocument('Item', document, compendium);
@@ -10083,7 +10224,7 @@ class PickDialog extends ComponentHandlebarsApplicationMixin((foundry.applicatio
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             resizable: false,
@@ -10094,7 +10235,7 @@ class PickDialog extends ComponentHandlebarsApplicationMixin((foundry.applicatio
         position: {
             width: 300,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_PICK}`,
@@ -10137,8 +10278,8 @@ class PickDialog extends ComponentHandlebarsApplicationMixin((foundry.applicatio
         void this.close();
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     _onClose() {
@@ -10606,7 +10747,7 @@ function register$e() {
 
 const { ApplicationV2: ApplicationV2$c, HandlebarsApplicationMixin: HandlebarsApplicationMixin$9 } = foundry.applications.api;
 class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c)) {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -10628,7 +10769,7 @@ class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c
             'update-expertises': this.onSave,
         },
         /* eslint-enable @typescript-eslint/unbound-method */
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_EDIT_EXPERTISES}`,
@@ -10689,7 +10830,8 @@ class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c
         }
         // Get data
         const data = 'actor' in config
-            ? config.actor.system.expertises
+            ? config.actor.system
+                .expertises // TEMP: Workaround
             : 'document' in config
                 ? foundry.utils.getProperty(config.document, config.fieldPath)
                 : config.data;
@@ -10754,7 +10896,7 @@ class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c
         if (this.maxExpertises !== undefined &&
             this.data.size >= this.maxExpertises) {
             return void ui.notifications.warn(game.i18n.format('DIALOG.EditExpertise.Warning.MaxExpertises', {
-                max: this.maxExpertises,
+                max: this.maxExpertises.toFixed(),
             }));
         }
         // Look up the category
@@ -10842,7 +10984,7 @@ class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c
             this.data.size + addedExpertises.length - removedExpertises.length >
                 this.maxExpertises) {
             ui.notifications.warn(game.i18n.format('DIALOG.EditExpertise.Warning.MaxExpertises', {
-                max: this.maxExpertises,
+                max: this.maxExpertises.toFixed(),
             }));
             // Re-render
             return void this.render();
@@ -10884,8 +11026,8 @@ class EditExpertisesDialog extends HandlebarsApplicationMixin$9((ApplicationV2$c
         });
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
         $(this.element)
             .find('input')
@@ -10982,7 +11124,7 @@ function register$d() {
                         : undefined,
                     maxExpertises: this.pickAmount ?? 1,
                     title: game.i18n.format(`COSMERE.Item.EventSystem.Event.Handler.Types.${"grant-expertises" /* HandlerType.GrantExpertises */}.PickDialog.Title`, {
-                        amount: this.pickAmount ?? 1,
+                        amount: (this.pickAmount ?? 1).toFixed(),
                     }),
                     submitButtonLabel: `COSMERE.Item.EventSystem.Event.Handler.Types.${"grant-expertises" /* HandlerType.GrantExpertises */}.PickDialog.Button`,
                 });
@@ -11023,10 +11165,12 @@ function register$d() {
                 return;
             // Grant the expertises
             await actor.update({
-                'system.expertises': expertises.reduce((acc, expertise) => ({
-                    ...acc,
-                    [expertise.key]: expertise.toObject(),
-                }), {}),
+                system: {
+                    expertises: expertises.reduce((acc, expertise) => ({
+                        ...acc,
+                        [expertise.key]: expertise.toObject(),
+                    }), {}),
+                },
             }, event.op);
         },
     });
@@ -11058,10 +11202,12 @@ function register$c() {
             const expertises = this.expertises.filter((expertise) => actor.hasExpertise(expertise));
             // Remove the expertises
             await actor.update({
-                'system.expertises': expertises.reduce((acc, expertise) => ({
-                    ...acc,
-                    [`-=${expertise.key}`]: expertise.toObject(),
-                }), {}),
+                system: {
+                    expertises: expertises.reduce((acc, expertise) => ({
+                        ...acc,
+                        [`-=${expertise.key}`]: null,
+                    }), {}),
+                }
             }, event.op);
         },
     });
@@ -11073,7 +11219,7 @@ async function matchItems(item, target, uuid, matchMode, matchAll) {
     }
     else if (target === "sibling" /* ItemTarget.Sibling */ && item.actor && uuid) {
         // Look up the reference item from uuid
-        const referenceItem = (await fromUuid(uuid));
+        const referenceItem = await fromUuid(uuid);
         if (!referenceItem)
             return [];
         const siblings = item.actor.items;
@@ -11111,14 +11257,16 @@ async function matchItems(item, target, uuid, matchMode, matchAll) {
     }
     else if (target === "global" /* ItemTarget.Global */ && uuid) {
         // Look up the target item from uuid
-        return [(await fromUuid(uuid))].filter((item) => !!item);
+        return [await fromUuid(uuid)].filter((item) => !!item);
     }
     else {
         throw new Error('Invalid target');
     }
 }
 function getIdentifierMatcher(referenceItem) {
-    return (item) => item.hasId() && item.system.id === referenceItem.system.id;
+    return (item) => item.hasId() &&
+        referenceItem.hasId() &&
+        item.system.id === referenceItem.system.id;
 }
 function getNameMatcher(referenceItem) {
     return (item) => item.name === referenceItem.name;
@@ -11259,32 +11407,76 @@ function register$b() {
     });
 }
 
+const SCHEMA$t = () => ({
+    key: new foundry.data.fields.StringField({
+        required: true,
+        blank: true,
+        initial: '',
+    }),
+    value: new foundry.data.fields.StringField({
+        required: true,
+        blank: true,
+        initial: '',
+    }),
+    mode: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        initial: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        choices: Object.entries(CONST.ACTIVE_EFFECT_MODES).reduce((acc, [key, value]) => ({
+            ...acc,
+            [value]: `EFFECT.MODE_${key}`,
+        }), {}),
+    }),
+});
 class ChangeDataModel extends foundry.abstract.DataModel {
     static defineSchema() {
-        return {
-            key: new foundry.data.fields.StringField({
-                required: true,
-                blank: true,
-                initial: '',
-            }),
-            value: new foundry.data.fields.StringField({
-                required: true,
-                blank: true,
-                initial: '',
-            }),
-            mode: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                initial: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-                choices: Object.entries(CONST.ACTIVE_EFFECT_MODES).reduce((acc, [key, value]) => ({
-                    ...acc,
-                    [value]: `EFFECT.MODE_${key}`,
-                }), {}),
-            }),
-        };
+        return SCHEMA$t();
     }
 }
 
+const SCHEMA$s = {
+    target: new foundry.data.fields.StringField({
+        choices: {
+            ["self" /* ItemTarget.Self */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"self" /* ItemTarget.Self */}`,
+            ["sibling" /* ItemTarget.Sibling */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"sibling" /* ItemTarget.Sibling */}`,
+            ["equipped-weapon" /* ItemTarget.EquippedWeapon */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"equipped-weapon" /* ItemTarget.EquippedWeapon */}`,
+            ["equipped-armor" /* ItemTarget.EquippedArmor */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"equipped-armor" /* ItemTarget.EquippedArmor */}`,
+            ["global" /* ItemTarget.Global */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"global" /* ItemTarget.Global */}`,
+        },
+        initial: "self" /* ItemTarget.Self */,
+        required: true,
+        blank: false,
+        label: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Label`,
+    }),
+    uuid: new foundry.data.fields.DocumentUUIDField({
+        type: 'Item',
+        initial: null,
+        nullable: true,
+        label: 'Item',
+    }),
+    matchMode: new foundry.data.fields.StringField({
+        nullable: true,
+        initial: "identifier" /* MatchMode.Identifier */,
+        choices: {
+            ["identifier" /* MatchMode.Identifier */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"identifier" /* MatchMode.Identifier */}`,
+            ["name" /* MatchMode.Name */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"name" /* MatchMode.Name */}`,
+            ["uuid" /* MatchMode.UUID */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"uuid" /* MatchMode.UUID */}`,
+        },
+        label: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Label`,
+        hint: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Hint`,
+    }),
+    matchAll: new foundry.data.fields.BooleanField({
+        initial: false,
+        nullable: true,
+        label: `COSMERE.Item.EventSystem.Event.Handler.General.MatchAll.Label`,
+        hint: `COSMERE.Item.EventSystem.Event.Handler.General.MatchAll.Hint`,
+    }),
+    changes: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField(ChangeDataModel.defineSchema()), {
+        required: true,
+        initial: [],
+        label: `COSMERE.Item.EventSystem.Event.Handler.Types.${"update-item" /* HandlerType.UpdateItem */}.Changes.Label`,
+    }),
+};
 function register$a() {
     cosmereRPG.api.registerItemEventHandlerType({
         source: SYSTEM_ID,
@@ -11292,57 +11484,13 @@ function register$a() {
         label: `COSMERE.Item.EventSystem.Event.Handler.Types.${"update-item" /* HandlerType.UpdateItem */}.Title`,
         description: `COSMERE.Item.EventSystem.Event.Handler.Types.${"update-item" /* HandlerType.UpdateItem */}.Description`,
         config: {
-            schema: {
-                target: new foundry.data.fields.StringField({
-                    choices: {
-                        ["self" /* ItemTarget.Self */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"self" /* ItemTarget.Self */}`,
-                        ["sibling" /* ItemTarget.Sibling */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"sibling" /* ItemTarget.Sibling */}`,
-                        ["equipped-weapon" /* ItemTarget.EquippedWeapon */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"equipped-weapon" /* ItemTarget.EquippedWeapon */}`,
-                        ["equipped-armor" /* ItemTarget.EquippedArmor */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"equipped-armor" /* ItemTarget.EquippedArmor */}`,
-                        ["global" /* ItemTarget.Global */]: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Choices.${"global" /* ItemTarget.Global */}`,
-                    },
-                    initial: "self" /* ItemTarget.Self */,
-                    required: true,
-                    blank: false,
-                    label: `COSMERE.Item.EventSystem.Event.Handler.General.Target.Label`,
-                }),
-                uuid: new foundry.data.fields.DocumentUUIDField({
-                    type: 'Item',
-                    initial: null,
-                    nullable: true,
-                    label: 'Item',
-                }),
-                matchMode: new foundry.data.fields.StringField({
-                    nullable: true,
-                    initial: "identifier" /* MatchMode.Identifier */,
-                    choices: {
-                        ["identifier" /* MatchMode.Identifier */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"identifier" /* MatchMode.Identifier */}`,
-                        ["name" /* MatchMode.Name */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"name" /* MatchMode.Name */}`,
-                        ["uuid" /* MatchMode.UUID */]: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Choices.${"uuid" /* MatchMode.UUID */}`,
-                    },
-                    label: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Label`,
-                    hint: `COSMERE.Item.EventSystem.Event.Handler.General.MatchMode.Hint`,
-                }),
-                matchAll: new foundry.data.fields.BooleanField({
-                    initial: false,
-                    nullable: true,
-                    label: `COSMERE.Item.EventSystem.Event.Handler.General.MatchAll.Label`,
-                    hint: `COSMERE.Item.EventSystem.Event.Handler.General.MatchAll.Hint`,
-                }),
-                changes: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField(ChangeDataModel.defineSchema()), {
-                    required: true,
-                    initial: [],
-                    label: `COSMERE.Item.EventSystem.Event.Handler.Types.${"update-item" /* HandlerType.UpdateItem */}.Changes.Label`,
-                }),
-            },
+            schema: SCHEMA$s,
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.IES_HANDLER_UPDATE_ITEM}`,
         },
         executor: async function (event) {
             if (this.changes.length === 0)
                 return;
-            if (this.target === "sibling" /* ItemTarget.Sibling */ && !event.item.actor)
-                return;
-            if (this.target !== "self" /* ItemTarget.Self */ && !this.uuid)
+            if (!hasValidMatchConfig(event, this))
                 return;
             // Get the item(s) to update
             const itemsToUpdate = await matchItems(event.item, this.target, this.uuid ?? null, this.matchMode ?? "identifier" /* MatchMode.Identifier */, this.matchAll ?? false);
@@ -11364,6 +11512,17 @@ function register$a() {
             }));
         },
     });
+}
+/* --- Helpers --- */
+const MATCH_RULES = {
+    ["self" /* ItemTarget.Self */]: () => true,
+    ["sibling" /* ItemTarget.Sibling */]: (event, config) => !!event.item.actor && !!config.uuid,
+    ["equipped-weapon" /* ItemTarget.EquippedWeapon */]: (event) => !!event.item.actor,
+    ["equipped-armor" /* ItemTarget.EquippedArmor */]: (event) => !!event.item.actor,
+    ["global" /* ItemTarget.Global */]: (_, config) => !!config.uuid,
+};
+function hasValidMatchConfig(event, config) {
+    return MATCH_RULES[config.target](event, config);
 }
 
 function register$9() {
@@ -11407,7 +11566,7 @@ function register$9() {
                 return;
             // Get the actor
             const actor = this.target === "global" /* UpdateActorTarget.Global */
-                ? (await fromUuid(this.uuid))
+                ? await fromUuid(this.uuid)
                 : event.item.actor;
             if (!actor)
                 return;
@@ -11467,7 +11626,7 @@ function register$8() {
             // Get the macro to execute
             const macro = !this.inline
                 ? this.uuid // Not inline, so we need to get the macro from the UUID
-                    ? (await fromUuid(this.uuid))
+                    ? ((await fromUuid(this.uuid)))
                     : null
                 : this.macro // Inline, so we need to create a new ephemeral macro document from the macro data
                     ? new CONFIG.Macro
@@ -11511,6 +11670,7 @@ class InvalidHookError extends Error {
     }
 }
 
+// TEMP: Workaround
 const VALID_DOCUMENT_TYPES$1 = [
     CONFIG.Item.documentClass.metadata.name,
     CONFIG.Actor.documentClass.metadata.name,
@@ -11599,7 +11759,8 @@ Hooks.once('ready', () => {
                 // Increase depth
                 trace._d++;
                 if (document.documentName ===
-                    CONFIG.Actor.documentClass.metadata.name) {
+                    CONFIG.Actor.documentClass
+                        .metadata.name) {
                     // Document is an actor
                     const actor = document;
                     // Handle the hook for all items
@@ -11611,7 +11772,8 @@ Hooks.once('ready', () => {
                     }, Promise.resolve());
                 }
                 else if (document.documentName ===
-                    CONFIG.Item.documentClass.metadata.name) {
+                    CONFIG.Item.documentClass
+                        .metadata.name) {
                     // Document is an item
                     const item = document;
                     // Handle the hook
@@ -11709,7 +11871,9 @@ async function fireEvent(event) {
             return false;
         try {
             // Execute the rule
-            return await rule.handler.execute(foundry.utils.deepClone(event));
+            // NOTE: Await is used here as the handler is potentially async
+            // eslint-disable-next-line @typescript-eslint/await-thenable
+            return (await rule.handler).execute(foundry.utils.deepClone(event));
         }
         catch (e) {
             console.error(`[${SYSTEM_ID}] Error executing event rule ${rule.id} for item ${item.name} ${item.uuid}`, e);
@@ -11889,7 +12053,11 @@ Hooks.on('ready', async () => {
         },
     });
     // Mark the setting so the message doesn't appear again
-    await game.settings.set(SYSTEM_ID, 'firstTimeWorldCreation', false);
+    await setSystemSetting(SETTINGS.INTERNAL_FIRST_CREATION, false);
+    // Disable turn marker by default
+    const combatTrackerConfig = game.settings.get('core', 'combatTrackerConfig');
+    foundry.utils.setProperty(combatTrackerConfig, 'turnMarker.enabled', false);
+    await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
 });
 Hooks.on('ready', async () => {
     // Ensure user is a GM
@@ -11922,17 +12090,67 @@ Hooks.on('ready', async () => {
     }
 });
 
+// NOTE: Using `any` in the below types as the resulting types don't rely on the `any`s
+/* eslint-disable @typescript-eslint/no-explicit-any */
+class ConcreteTypeDataModel extends foundry.abstract.TypeDataModel {
+}
+// TODO: Figure out a way to combine the base class data schema with the mixin data schema
+// type ExtractMixedClasses<
+//     TArray extends Array<MixinFunc>,
+// > = TArray extends [infer First, ...infer Rest]
+//     ? First extends MixinFunc
+//     ? Rest extends Array<MixinFunc>
+//     ? [ReturnType<First>, ...ExtractMixedClasses<Rest>]
+//     : never
+//     : never
+//     : [];
+// type MixArrayClasses<
+//     TBase extends AnyTypeDataModelClass,
+//     TArray extends Array<AnyTypeDataModelClass>
+// > = TArray extends [infer First, ...infer Rest]
+//     ? First extends AnyTypeDataModelClass
+//     ? Rest extends Array<AnyTypeDataModelClass>
+//     ? Mixin<TBase, MixArrayClasses<First, Rest>>
+//     : never
+//     : never
+//     : (
+//         TArray extends []
+//         ? TBase
+//         : never
+//     );
 function DataModelMixin(...mixins) {
     return mixins.reduce((base, mixin) => {
         return mixin(base);
-    }, BaseDataModel);
+    }, class extends foundry.abstract.TypeDataModel {
+        static defineSchema() {
+            return {};
+        }
+    });
 }
-class BaseDataModel extends foundry.abstract.TypeDataModel {
-    static defineSchema() {
-        return {};
-    }
-}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
+function SCHEMA$r(options = {}) {
+    const choices = typeof options.choices === 'function'
+        ? options.choices()
+        : options.choices;
+    const initial = typeof options.initial === 'function'
+        ? options.initial()
+        : options.initial;
+    return {
+        id: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            blank: false,
+            initial: initial ??
+                (options.initialFromName ? '<id>' : undefined),
+            choices,
+            label: options.label ??
+                'COSMERE.Item.Sheet.Identifier.Label',
+            hint: options.hint ??
+                'COSMERE.Item.Sheet.Identifier.Hint',
+        }),
+    };
+}
 function IdItemMixin(options = {}) {
     if (options.initialFromName && options.initial)
         throw new Error('Cannot specify both initialFromName and initial options');
@@ -11941,26 +12159,7 @@ function IdItemMixin(options = {}) {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                const choices = typeof options.choices === 'function'
-                    ? options.choices()
-                    : options.choices;
-                const initial = typeof options.initial === 'function'
-                    ? options.initial()
-                    : options.initial;
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    id: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                        initial: initial ??
-                            (options.initialFromName ? '<id>' : undefined),
-                        choices,
-                        label: options.label ??
-                            'COSMERE.Item.Sheet.Identifier.Label',
-                        hint: options.hint ??
-                            'COSMERE.Item.Sheet.Identifier.Hint',
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$r(options));
             }
             prepareDerivedData() {
                 super.prepareDerivedData();
@@ -11978,35 +12177,62 @@ function IdItemMixin(options = {}) {
     };
 }
 
+/**
+ * NOTE: Define own localization helpers because using
+ * game.i18n directly from data schema definition causes circular
+ * type references.
+ */
+function localize(stringId) {
+    return game.i18n.localize(stringId);
+}
+
+// import { CosmereItem } from '@system/documents';
+const SCHEMA$q = (params) => ({
+    description: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.HTMLField({
+            label: 'Description',
+            initial: params?.value
+                ? `<p>${localize(params.value)}</p>`
+                : '',
+        }),
+        chat: new foundry.data.fields.HTMLField({
+            label: 'Chat description',
+            initial: params?.chat
+                ? `<p>${localize(params.chat)}</p>`
+                : '',
+        }),
+        short: new foundry.data.fields.StringField({
+            initial: params?.short
+                ? `<p>${localize(params.short)}</p>`
+                : '',
+        }),
+    }),
+});
 function DescriptionItemMixin(params) {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    description: new foundry.data.fields.SchemaField({
-                        value: new foundry.data.fields.HTMLField({
-                            label: 'Description',
-                            initial: params?.value
-                                ? `<p>${game.i18n.localize(params.value)}</p>`
-                                : '',
-                        }),
-                        chat: new foundry.data.fields.HTMLField({
-                            label: 'Chat description',
-                            initial: params?.chat
-                                ? `<p>${game.i18n.localize(params.chat)}</p>`
-                                : '',
-                        }),
-                        short: new foundry.data.fields.StringField({
-                            initial: params?.short
-                                ? `<p>${game.i18n.localize(params.short)}</p>`
-                                : '',
-                        }),
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$q(params));
             }
         };
     };
 }
+
+const BASE_SCHEMA = (type) => ({
+    type: new foundry.data.fields.StringField({
+        required: true,
+        initial: type,
+        blank: false,
+        choices: () => ({
+            none: 'None',
+            ...Object.entries(CONFIG.COSMERE.items.events.handlers).reduce((choices, [id, config]) => ({
+                ...choices,
+                [id]: config.label,
+            }), {}),
+        }),
+        label: 'Type',
+    }),
+});
 
 function constructHandlerClass(type, executor, config) {
     return class Handler extends foundry.abstract.DataModel {
@@ -12042,21 +12268,7 @@ function constructHandlerClass(type, executor, config) {
                     : null;
         }
         static defineSchema() {
-            return foundry.utils.mergeObject(foundry.utils.deepClone(config.schema), {
-                type: new foundry.data.fields.StringField({
-                    required: true,
-                    initial: type,
-                    blank: false,
-                    choices: () => ({
-                        none: 'None',
-                        ...Object.entries(CONFIG.COSMERE.items.events.handlers).reduce((choices, [id, config]) => ({
-                            ...choices,
-                            [id]: config.label,
-                        }), {}),
-                    }),
-                    label: 'Type',
-                }),
-            });
+            return foundry.utils.mergeObject(foundry.utils.deepClone(config.schema), BASE_SCHEMA(type));
         }
         execute(event) {
             // Execute the handler
@@ -12080,13 +12292,10 @@ class HandlerField extends foundry.data.fields.ObjectField {
             : NONE_HANDLER_CLASS;
     }
     _cleanType(value, options) {
-        if (!value || !(typeof value === 'object'))
-            return {};
         // Get type
         const type = 'type' in value ? value.type : 'none';
         // Clean value
-        return (HandlerField.getModelForType(type)?.cleanData(value, options) ??
-            value);
+        return (HandlerField.getModelForType(type)?.cleanData(value, options) ?? value);
     }
     _validateType(value, options) {
         if (!value || !(typeof value === 'object'))
@@ -12103,11 +12312,27 @@ class HandlerField extends foundry.data.fields.ObjectField {
         return cls.schema.validate(value, options);
     }
     _cast(value) {
-        return typeof value === 'object' ? value : {};
+        return (typeof value === 'object' ? value : {});
+    }
+    _addTypes(source, changes) {
+        if (!source || !changes)
+            return super._addTypes(source, changes);
+        changes.type ??= source.type;
+    }
+    _updateDiff(source, key, value, difference, options) {
+        const fieldSource = source[key];
+        const type = ('type' in value ? value.type : undefined) ?? fieldSource.type;
+        // Get model schema
+        const schema = HandlerField.getModelForType(type).schema;
+        // Update diff for schema fields
+        schema._updateDiff(source, key, value, difference, options);
+        // Ensure type is always included in the diff
+        difference[key] ??= {};
+        difference[key].type = type;
     }
     getInitialValue(data) {
         // Get model
-        const cls = HandlerField.getModelForType(data.type);
+        const cls = HandlerField.getModelForType(data.type ?? 'none');
         // Get initial value
         return cls.schema.getInitialValue(data);
     }
@@ -12115,52 +12340,59 @@ class HandlerField extends foundry.data.fields.ObjectField {
         // Get model
         const cls = HandlerField.getModelForType(value.type);
         // Initialize value
-        return cls
+        return (cls
             ? value instanceof cls
                 ? value
                 : new cls(foundry.utils.deepClone(value), {
                     parent: model,
                     ...options,
                 })
-            : foundry.utils.deepClone(value);
+            : foundry.utils.deepClone(value));
     }
 }
 
 // Fields
+const SCHEMA$p = () => ({
+    id: new foundry.data.fields.DocumentIdField({
+        initial: () => foundry.utils.randomID(),
+        readonly: false,
+        nullable: false,
+        required: true,
+    }),
+    description: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        initial: '',
+        label: 'COSMERE.Item.EventSystem.Event.Rule.Description.Label',
+    }),
+    order: new foundry.data.fields.NumberField({
+        initial: 0,
+        integer: true,
+        nullable: false,
+        min: 0,
+    }),
+    event: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        initial: 'none',
+        choices: () => ({
+            none: 'None',
+            ...Object.entries(CONFIG.COSMERE.items.events.types).reduce((choices, [id, config]) => ({
+                ...choices,
+                [id]: config.label,
+            }), {}),
+        }),
+        label: 'COSMERE.Item.EventSystem.Event.Rule.Event.Label',
+    }),
+    handler: new HandlerField({
+        required: true,
+        nullable: false,
+    }),
+});
 class Rule extends foundry.abstract.DataModel {
     static defineSchema() {
-        return {
-            id: new foundry.data.fields.DocumentIdField({
-                initial: () => foundry.utils.randomID(),
-                readonly: false,
-            }),
-            description: new foundry.data.fields.StringField({
-                required: true,
-                initial: '',
-                label: 'COSMERE.Item.EventSystem.Event.Rule.Description.Label',
-            }),
-            order: new foundry.data.fields.NumberField({
-                initial: 0,
-                integer: true,
-                min: 0,
-            }),
-            event: new foundry.data.fields.StringField({
-                required: true,
-                blank: false,
-                initial: 'none',
-                choices: () => ({
-                    none: 'None',
-                    ...Object.entries(CONFIG.COSMERE.items.events.types).reduce((choices, [id, config]) => ({
-                        ...choices,
-                        [id]: config.label,
-                    }), {}),
-                }),
-                label: 'COSMERE.Item.EventSystem.Event.Rule.Event.Label',
-            }),
-            handler: new HandlerField({
-                required: true,
-            }),
-        };
+        return SCHEMA$p();
     }
     /* --- Accessors --- */
     get eventTypeLabel() {
@@ -12197,6 +12429,8 @@ class MappingField extends foundry.data.fields.ObjectField {
         this.model = model;
     }
     _cleanType(value, options) {
+        if (!value)
+            return value;
         Object.entries(value).forEach(([key, v]) => {
             value[key] = this.model.clean(v, options);
         });
@@ -12217,6 +12451,8 @@ class MappingField extends foundry.data.fields.ObjectField {
     }
     _validateValues(value, options) {
         const errors = {};
+        if (!value)
+            return errors;
         Object.entries(value).forEach(([key, v]) => {
             const error = this.model.validate(v, options);
             if (error)
@@ -12227,11 +12463,16 @@ class MappingField extends foundry.data.fields.ObjectField {
     getInitialValue() {
         return {};
     }
+    // TODO: Resolve typing issues
+    // NOTE: Use any as workaround for foundry-vtt-types issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initialize(value) {
+        // TEMP: Workaround
         if (!value)
             return value;
         return value;
     }
+    // public initialize(value: MappingField.InitializedType<ElementField, TOptions>) {
     _getField(path) {
         if (path.length === 0)
             return this;
@@ -12242,38 +12483,41 @@ class MappingField extends foundry.data.fields.ObjectField {
     }
 }
 
+// Item event system
+const SCHEMA$o = () => ({
+    events: new CollectionField(new RuleField(), {
+        required: true,
+    }),
+});
 function EventsItemMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    events: new CollectionField(new RuleField(), {
-                        required: true,
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$o());
             }
         };
     };
 }
 
 // Mixins
+const SCHEMA$n = () => ({
+    level: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        min: 0,
+        max: 3,
+        initial: 0,
+        label: 'COSMERE.Item.Goal.Level.Label',
+    }),
+});
 class GoalItemDataModel extends DataModelMixin(IdItemMixin({
     initialFromName: true,
 }), DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Goal.desc_placeholder',
 }), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            level: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 0,
-                max: 3,
-                initial: 0,
-                label: 'COSMERE.Item.Goal.Level.Label',
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$n());
     }
 }
 
@@ -12294,13 +12538,13 @@ Hooks.on('preUpdateItem', (item, update) => {
                     /**
                      * Hook: preProgressGoal
                      */
-                    if (Hooks.call(HOOKS.PRE_PROGRESS_GOAL, item, newLevel) === false) {
+                    if (Hooks.call(HOOKS.PRE_PROGRESS_GOAL, item, newLevel) ===
+                        false) {
                         return false;
                     }
                 }
                 if (newLevel ===
-                    GoalItemDataModel.schema.fields
-                        .level.options.max) {
+                    GoalItemDataModel.schema.fields.level.options.max) {
                     /**
                      * Hook: preCompleteGoal
                      */
@@ -12334,8 +12578,7 @@ Hooks.on('updateItem', (item, update) => {
                 Hooks.callAll(HOOKS.PROGRESS_GOAL, item);
             }
             if (newLevel ===
-                GoalItemDataModel.schema.fields
-                    .level.options.max) {
+                GoalItemDataModel.schema.fields.level.options.max) {
                 /**
                  * Hook: completeGoal
                  */
@@ -12376,10 +12619,8 @@ Hooks.on('createItem', async (item, _, userId) => {
         // If the item has a parent relationship, we need to update the parent item
         const parentRelationship = item.system.relationships.find((relationship) => relationship.type === ItemRelationship.Type.Parent);
         // Get the parent item
-        const parentItem = (await fromUuid(parentRelationship.uuid));
-        if (parentItem &&
-            parentItem.hasRelationships() &&
-            parentItem.hasId()) {
+        const parentItem = await fromUuid(parentRelationship.uuid);
+        if (parentItem?.hasRelationships() && parentItem.hasId()) {
             // Set the origin flag on the item
             await item.setFlag(SYSTEM_ID, 'meta.origin', {
                 id: parentItem.system.id,
@@ -12423,7 +12664,7 @@ Hooks.on('deleteItem', async (item, _, userId) => {
     await Promise.all(item.system.relationships.map(async (relationship) => {
         if (relationship.type === ItemRelationship.Type.Child) {
             // Get the related item
-            const relatedItem = (await fromUuid(relationship.uuid));
+            const relatedItem = await fromUuid(relationship.uuid);
             if (!relatedItem?.hasRelationships())
                 return;
             if (relationship.removalPolicy ===
@@ -12445,7 +12686,7 @@ Hooks.on('deleteItem', async (item, _, userId) => {
 /* --- Helpers --- */
 async function connectRelationship(item, relationShip) {
     // Get the related item
-    const relatedItem = (await fromUuid(relationShip.uuid));
+    const relatedItem = await fromUuid(relationShip.uuid);
     if (!relatedItem?.hasRelationships())
         return;
     const contraType = relationShip.type === ItemRelationship.Type.Parent
@@ -12459,19 +12700,17 @@ async function connectRelationship(item, relationShip) {
 }
 async function disconnectRelationship(item, relationShip) {
     // Get the related item
-    const relatedItem = (await fromUuid(relationShip.uuid));
+    const relatedItem = await fromUuid(relationShip.uuid);
     if (!relatedItem?.hasRelationships())
         return;
     // Remove the relationship from the related item
     await relatedItem.update({
-        [`system.relationships.-=${relationShip.id}`]: {
-            type: relationShip.type,
-        },
+        [`system.relationships.-=${relationShip.id}`]: null,
     });
 }
 
 /* --- Resource Max --- */
-Hooks.on('preUpdateActor', (actor, update, options, userId) => {
+Hooks.on('preUpdateActor', (actor, changed, options, userId) => {
     if (game.user.id !== userId)
         return;
     Object.keys(actor.system.resources).forEach((key) => {
@@ -12479,7 +12718,7 @@ Hooks.on('preUpdateActor', (actor, update, options, userId) => {
         foundry.utils.setProperty(options, `${SYSTEM_ID}.resource.${key}.max`, resource.max.value);
     });
 });
-Hooks.on('updateActor', (actor, update, options, userId) => {
+Hooks.on('updateActor', (actor, change, options, userId) => {
     if (game.user.id !== userId)
         return;
     const changes = {};
@@ -12502,9 +12741,9 @@ Hooks.on('updateActor', (actor, update, options, userId) => {
     }
 });
 /* --- Modality --- */
-Hooks.on('preUpdateActor', (actor, update) => {
-    if (foundry.utils.hasProperty(update, `flags.${SYSTEM_ID}.mode`)) {
-        const modalityChanges = foundry.utils.getProperty(update, `flags.${SYSTEM_ID}.mode`);
+Hooks.on('preUpdateActor', (actor, changed) => {
+    if (foundry.utils.hasProperty(changed, `flags.${SYSTEM_ID}.mode`)) {
+        const modalityChanges = foundry.utils.getProperty(changed, `flags.${SYSTEM_ID}.mode`);
         for (const [modality, newMode] of Object.entries(modalityChanges)) {
             // Get current mode
             const currentMode = actor.getMode(modality);
@@ -12535,13 +12774,13 @@ Hooks.on('preUpdateActor', (actor, update) => {
                 }
             }
             // Store the current mode in flags for later use
-            foundry.utils.setProperty(update, `flags.${SYSTEM_ID}.meta.update.mode.${modality}`, currentMode);
+            foundry.utils.setProperty(changed, `flags.${SYSTEM_ID}.meta.update.mode.${modality}`, currentMode);
         }
     }
 });
-Hooks.on('updateActor', (actor, update) => {
-    if (foundry.utils.hasProperty(update, `flags.${SYSTEM_ID}.mode`)) {
-        const modalityChanges = foundry.utils.getProperty(update, `flags.${SYSTEM_ID}.mode`);
+Hooks.on('updateActor', (actor, changed) => {
+    if (foundry.utils.hasProperty(changed, `flags.${SYSTEM_ID}.mode`)) {
+        const modalityChanges = foundry.utils.getProperty(changed, `flags.${SYSTEM_ID}.mode`);
         for (const [modality, newMode] of Object.entries(modalityChanges)) {
             // Get previous mode
             const prevMode = actor.getFlag(SYSTEM_ID, `meta.update.mode.${modality}`);
@@ -12570,7 +12809,7 @@ Hooks.on('updateActor', (actor, update) => {
         }
     }
 });
-Hooks.on('createItem', async (item, options, userId) => {
+Hooks.on('createItem', async (item, _, userId) => {
     if (game.user.id !== userId)
         return;
     if (!item.actor)
@@ -12623,8 +12862,8 @@ Hooks.on(HOOKS.TRIGGER_DAMAGE_ENRICHER, async (actorId, source, data) => {
         const roll = new DamageRoll(String(data.formula), actor.getRollData(), { damageType: data.damageType });
         await roll.evaluate();
         // Create chat message
-        const messageConfig = {
-            user: game.user.id,
+        await ChatMessage.create({
+            author: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor }),
             rolls: [roll],
             flags: {
@@ -12634,21 +12873,19 @@ Hooks.on(HOOKS.TRIGGER_DAMAGE_ENRICHER, async (actorId, source, data) => {
                     },
                 },
             },
-        };
-        await ChatMessage.create(messageConfig);
+        });
     }
 });
 
 /* --- Starter rule styling --- */
-Hooks.on('renderJournalSheet', (app, html) => {
-    // Get journal entry
+Hooks.on('renderJournalEntrySheet', (app, html) => {
     const entry = app.document;
     if (entry.pack === COMPENDIUMS.STARTER_RULES ||
         ('compendiumSource' in entry._stats &&
             entry._stats.compendiumSource &&(
-            entry._stats.compendiumSource.startsWith(`Compendium.${COMPENDIUMS.STARTER_RULES}`) || entry._stats.compendiumSource.startsWith(`Compendium.devyatyj-most`) )) ) {
-        html[0].classList.add('sljsr');
-        const header_node = html[0].getElementsByClassName('journal-header')[0];
+            entry._stats.compendiumSource.startsWith(`Compendium.${COMPENDIUMS.STARTER_RULES}`) || entry._stats.compendiumSource.startsWith(`Compendium.devyatyj-most`) )) )  {
+        html.classList.add('sljsr');
+        const header_node = html.getElementsByClassName('journal-header')[0];
         header_node.removeChild(header_node.children[0]);
         header_node.insertAdjacentHTML('beforeend', '<div class="sl-chapter-header"><div><p></p><p>' +
             entry.name.toUpperCase() +
@@ -12656,10 +12893,11 @@ Hooks.on('renderJournalSheet', (app, html) => {
     }
 });
 /* --- @Link blocks --- */
-Hooks.on('renderJournalPageSheet', (app, html) => {
-    const page = app.document;
-    page.parent;
-    html.find('section[data-link].content-link-anchor').each(function () {
+Hooks.on('renderJournalEntryPageSheet', (app, html) => {
+    app.document;
+    $(html)
+        .find('section[data-link].content-link-anchor')
+        .each(function () {
         const section = $(this);
         // Find matching closing section
         const closingSection = section
@@ -12707,40 +12945,48 @@ Hooks.on('renderJournalPageSheet', (app, html) => {
 });
 
 // Constants
+// TODO: Resolve typing issue
+// @ts-expect-error Due to foundry-vtt-types issue
 Hooks.on('renderCompendium', async (compendium) => {
     if (!foundry.utils.hasProperty(compendium.collection.metadata.flags ?? {}, `${SYSTEM_ID}.defaultSortingMode`))
         return;
     const sortingModes = game.settings.get('core', 'collectionSortingModes');
-    if (sortingModes[compendium.metadata.id])
+    if (sortingModes[compendium.collection.id])
         return;
     // Get the default sorting mode from the compendium metadata
     const defaultSortingMode = foundry.utils.getProperty(compendium.collection.metadata.flags, `${SYSTEM_ID}.defaultSortingMode`);
     // Set the sorting mode for the compendium
     await game.settings.set('core', 'collectionSortingModes', {
         ...sortingModes,
-        [compendium.metadata.id]: defaultSortingMode,
+        [compendium.collection.id]: defaultSortingMode,
     });
     // Initialize the compendium collection tree
     compendium.collection.initializeTree();
     // Re-render
-    compendium.render();
+    void compendium.render();
 });
 
-const VALID_DOCUMENT_TYPES = [CONFIG.Item.documentClass.metadata.name];
-Hooks.on('hotbarDrop', (bar, data, slot) => {
+const VALID_DOCUMENT_TYPES = [
+    CONFIG.Item.documentClass.metadata.name,
+];
+Hooks.on('hotbarDrop', ((_, data, slot) => {
     if (VALID_DOCUMENT_TYPES.includes(data.type)) {
         void createCosmereMacro(data, slot);
         // We block the default drop behaviour if the type is supported
         return false;
     }
-});
+    // TODO: Resolve typing issue
+    // NOTE: Use any as workaround for foundry-vtt-types issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}));
 /* --- Helpers --- */
 async function createCosmereMacro(data, slot) {
     const macroData = { type: 'script', scope: 'actor' };
     let itemData;
     switch (data.type) {
-        case CONFIG.Item.documentClass.metadata.name:
-            itemData = (await Item.fromDropData(data));
+        case CONFIG.Item.documentClass.metadata
+            .name:
+            itemData = await Item.fromDropData(data);
             if (!itemData)
                 return;
             foundry.utils.mergeObject(macroData, {
@@ -12752,70 +12998,65 @@ async function createCosmereMacro(data, slot) {
         default:
             return;
     }
-    // TODO: Clean up this linter mess with v13 types.
     // Assign the macro to the hotbar
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const macro = game.macros.find((m) => m.name === macroData.name && m.command === macroData.command)
-        ??
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            (await Macro.create(macroData));
+    const macro = game.macros.find((m) => m.name === macroData.name && m.command === macroData.command) ?? (await Macro.create(macroData));
     await game.user?.assignHotbarMacro(macro, slot);
 }
 
 const WEAPONS = [
     {
         id: 'axe',
-        label: 'Топор',
+        label: 'Axe',
         reference: 'Compendium.cosmere-rpg.items.Item.C4o8jIXuVulD9qS9',
     },
     {
         id: 'hammer',
-        label: 'Молот',
+        label: 'Hammer',
         reference: 'Compendium.cosmere-rpg.items.Item.OBPoBfwLrZg0Unz6',
     },
     {
         id: 'knife',
-        label: 'Нож',
+        label: 'Knife',
         reference: 'Compendium.cosmere-rpg.items.Item.k0aKCdFJU0m2lZbv',
     },
     {
         id: 'longsword',
-        label: 'Длинный меч',
+        label: 'Longsword',
         reference: 'Compendium.cosmere-rpg.items.Item.yzR4gLjOV6njxdde',
     },
     {
         id: 'longspear',
-        label: 'Длинное копьё',
+        label: 'Longspear',
         reference: 'Compendium.cosmere-rpg.items.Item.ex4dg2bXFpC5HTv6',
     },
     {
         id: 'mace',
-        label: 'Булава',
+        label: 'Mace',
         reference: 'Compendium.cosmere-rpg.items.Item.5sH5poLPx75U008u',
     },
     {
         id: 'shield',
-        label: 'Щит',
+        label: 'Shield',
         reference: 'Compendium.cosmere-rpg.items.Item.fV3Adif5imyAc5m5',
     },
     {
         id: 'shortbow',
-        label: 'Короткий лук',
+        label: 'Shortbow',
         reference: 'Compendium.cosmere-rpg.items.Item.VuNjyCtkobEQKdOx',
     },
     {
         id: 'shortspear',
-        label: 'Короткое копьё',
+        label: 'Shortspear',
         reference: 'Compendium.cosmere-rpg.items.Item.5CvSwkwuSRArPTM2',
     },
     {
         id: 'sidesword',
-        label: 'Боковой меч',
+        label: 'Sidesword',
         reference: 'Compendium.cosmere-rpg.items.Item.0mE1SpjOuNtgR0eq',
     },
     {
         id: 'staff',
-        label: 'Посох',
+        label: 'Staff',
         reference: 'Compendium.cosmere-rpg.items.Item.zyDACVYDa0N9N31r',
     },
 ];
@@ -12830,32 +13071,32 @@ function register$6() {
 const ARMOR = [
     {
         id: 'breastplate',
-        label: 'Кираса',
+        label: 'Breastplate',
         reference: 'Compendium.cosmere-rpg.items.Item.xLer8raOT6EkLfWN',
     },
     {
         id: 'chain',
-        label: 'Кольчужная броня',
+        label: 'Chain',
         reference: 'Compendium.cosmere-rpg.items.Item.6y5hONLMQa4O2wnU',
     },
     {
         id: 'full-plate',
-        label: 'Латы',
+        label: 'Full Plate',
         reference: 'Compendium.cosmere-rpg.items.Item.t97DN6FAh7BMNvcP',
     },
     {
         id: 'half-plate',
-        label: 'Полулаты',
+        label: 'Half Plate',
         reference: 'Compendium.cosmere-rpg.items.Item.GlrRu1goky9ifKCl',
     },
     {
         id: 'leather',
-        label: 'Кожанная броня',
+        label: 'Leather',
         reference: 'Compendium.cosmere-rpg.items.Item.dxty96So3kGZVhv5',
     },
     {
         id: 'uniform',
-        label: 'Униформа',
+        label: 'Uniform',
         reference: 'Compendium.cosmere-rpg.items.Item.SRLLAWCE7rwS40Pv',
     },
 ];
@@ -12877,53 +13118,53 @@ function register$3() {
     const secondary = [
         {
             id: 'diamond',
-            label: 'Бриллиант',
+            label: 'Diamond',
             conversionRate: 1,
             base: true,
         },
         {
             id: 'garnet',
-            label: 'Гранат',
+            label: 'Garnet',
             conversionRate: 5,
         },
         {
             id: 'heliodor',
-            label: 'Гелиодор',
+            label: 'Heliodor',
             conversionRate: 5,
         },
         {
             id: 'topaz',
-            label: 'Топаз',
+            label: 'Topaz',
             conversionRate: 5,
         },
         {
             id: 'ruby',
-            label: 'Рубин',
+            label: 'Ruby',
             conversionRate: 10,
         },
         {
             id: 'smokestone',
-            label: 'Дымчатный кварц',
+            label: 'Smokestone',
             conversionRate: 10,
         },
         {
             id: 'zircon',
-            label: 'Циркон',
+            label: 'Zircon',
             conversionRate: 10,
         },
         {
             id: 'amethyst',
-            label: 'Аметист',
+            label: 'Amethyst',
             conversionRate: 25,
         },
         {
             id: 'sapphire',
-            label: 'Cапфир',
+            label: 'Sapphire',
             conversionRate: 25,
         },
         {
             id: 'emerald',
-            label: 'Изумруд',
+            label: 'Emerald',
             conversionRate: 50,
         },
     ];
@@ -12936,19 +13177,19 @@ function register$3() {
             primary: [
                 {
                     id: 'mark',
-                    label: 'Марка',
-                    unit: 'мк ●',
+                    label: 'Mark',
+                    unit: 'mk ●',
                     conversionRate: 1,
                     base: true,
                 },
                 {
                     id: 'chip',
-                    label: 'Светосколок',
+                    label: 'Chip',
                     conversionRate: 0.2,
                 },
                 {
                     id: 'broam',
-                    label: 'Броум',
+                    label: 'Broam',
                     conversionRate: 4,
                 },
             ],
@@ -12961,7 +13202,7 @@ function register$3() {
 const ANCESTRIES = [
     {
         id: 'human',
-        label: 'Человек',
+        label: 'Human',
         reference: 'Compendium.cosmere-rpg.ancestries.Item.q7t6vnxXBXDvsfhc',
     },
 ];
@@ -12976,38 +13217,33 @@ function register$2() {
 const CULTURES = [
     {
         id: 'alethi',
-        label: 'Алети',
+        label: 'Alethi',
         reference: 'Compendium.cosmere-rpg.cultures.Item.oWJSlmauhHG57LrO',
     },
     {
         id: 'azish',
-        label: 'Азирцы',
+        label: 'Azish',
         reference: 'Compendium.cosmere-rpg.cultures.Item.PbkgODW2av4tBPdW',
     },
     {
         id: 'herdazian',
-        label: 'Гердазийцы',
+        label: 'Herdazian',
         reference: 'Compendium.cosmere-rpg.cultures.Item.nIOHtV8KoTdKH4FQ',
     },
     {
         id: 'thaylen',
-        label: 'Тайленцы',
+        label: 'Thaylen',
         reference: 'Compendium.cosmere-rpg.cultures.Item.yuZdO7YSfydUAdhu',
     },
     {
         id: 'unkalaki',
-        label: 'Ункалаки',
+        label: 'Unkalaki',
         reference: 'Compendium.cosmere-rpg.cultures.Item.RDD4CJzcnb2mjXXC',
     },
     {
         id: 'veden',
-        label: 'Веденцы',
+        label: 'Veden',
         reference: 'Compendium.cosmere-rpg.cultures.Item.ZVXjqw4l30mNjAdq',
-    },
-    {
-        id: 'reshi',
-        label: 'Реши',
-        reference: '',
     },
 ];
 function register$1() {
@@ -13140,9 +13376,7 @@ Handlebars.registerHelper('effect-duration', (effect) => {
         return `${seconds}s`;
     else {
         return [
-            rounds
-                ? `${rounds} ${game.i18n.localize('GENERIC.Rounds')}`
-                : null,
+            rounds ? `${rounds} ${game.i18n.localize('GENERIC.Rounds')}` : null,
             turns ? `${turns} ${game.i18n.localize('GENERIC.Turns')}` : null,
         ]
             .filter((v) => !!v)
@@ -13204,15 +13438,15 @@ Handlebars.registerHelper('itemContext', (item, options) => {
             context.equip = {
                 type,
                 typeLabel: CONFIG.COSMERE.items.equip.types[type].label,
-                hold,
                 ...(hold
                     ? {
+                        hold,
                         holdLabel: CONFIG.COSMERE.items.equip.hold[hold].label,
                     }
                     : {}),
-                hand,
                 ...(hand
                     ? {
+                        hand,
                         handLabel: CONFIG.COSMERE.items.equip.hand[hand].label,
                     }
                     : {}),
@@ -13247,7 +13481,8 @@ Handlebars.registerHelper('itemContext', (item, options) => {
         if (item.hasActivation()) {
             context.hasActivation = true;
             context.activation = {};
-            if (item.system.activation.cost?.type) {
+            if (item.system.activation.cost?.type &&
+                item.system.activation.cost?.type !== 'none') {
                 context.activation.hasCost = true;
                 context.activation.cost = {
                     type: item.system.activation.cost.type,
@@ -13405,22 +13640,22 @@ Handlebars.registerHelper('resourceCostLabel', (consume) => {
     // Static range
     if (adjustedMin === value.max) {
         label = game.i18n.format('COSMERE.Actor.Sheet.Actions.Consume.Static', {
-            amount: adjustedMin,
+            amount: adjustedMin.toFixed(),
             resource,
         });
     }
     // Uncapped range
     else if (value.max === -1) {
         label = game.i18n.format('COSMERE.Actor.Sheet.Actions.Consume.RangeUncapped', {
-            amount: adjustedMin,
+            amount: adjustedMin.toFixed(),
             resource,
         });
     }
     // Capped range
     else {
         label = game.i18n.format('COSMERE.Actor.Sheet.Actions.Consume.RangeCapped', {
-            min: adjustedMin,
-            max: value.max,
+            min: adjustedMin.toFixed(),
+            max: value.max.toFixed(),
             resource,
         });
     }
@@ -13839,14 +14074,13 @@ async function enrichDamage(config, label, options) {
     };
     // get values for localize
     if (type.toLowerCase() in CONFIG.COSMERE.damageTypes){
-      type = game.i18n.localize(CONFIG.COSMERE.damageTypes[type.toLowerCase()].label)
-    }
-    if (type.toLowerCase() == "healing"){
-      type = game.i18n.localize("GENERIC.Healing")     
-    }
-      
+        type = game.i18n.localize(CONFIG.COSMERE.damageTypes[type.toLowerCase()].label)
+      }
+      if (type.toLowerCase() == "healing"){
+        type = game.i18n.localize("GENERIC.Healing")     
+      }
+        
     const damage_localize = " " + game.i18n.localize("DICE.Damage.Label") 
-
     // If there is a set value given, we'll need a pair of links
     const container = document.createElement('span');
     if (setValue) {
@@ -13854,10 +14088,10 @@ async function enrichDamage(config, label, options) {
         container.insertAdjacentElement('afterbegin', valueLink);
     }
     linkOptions.data.formula = formula;
+    console.log(label, type)
     const labelText = label
         ? label
         : `${setValue ? `(` : ''}${formula}${setValue ? ')' : ''} ${type}`;
-    
     const poolLink = createRollLink(labelText, !healing && !label ? damage_localize : '', 'damage', linkOptions);
     container.insertAdjacentElement('beforeend', poolLink);
     return container;
@@ -13987,6 +14221,12 @@ class MultiStateToggleComponent extends HandlebarsApplicationComponent {
 // Register the component
 MultiStateToggleComponent.register('app-multi-state-toggle');
 
+// TEMP: Workaround
+// export function DragDropApplicationMixin<
+//     // Config extends foundry.applications.api.ApplicationV2.Configuration &
+//     //     DragDropApplicationConfiguration,
+//     BaseClass extends AnyConcreteApplicationV2Constructor,
+// >(base: BaseClass) {
 function DragDropApplicationMixin(base) {
     return class mixin extends base {
         _dragDrop;
@@ -13997,7 +14237,7 @@ function DragDropApplicationMixin(base) {
             this._dragDrop = this.createDragDropHandlers();
         }
         createDragDropHandlers() {
-            return (this.options.dragDrop ?? []).map((d) => new DragDrop({
+            return (this.options.dragDrop ?? []).map((d) => new foundry.applications.ux.DragDrop({
                 ...d,
                 permissions: {
                     dragstart: this._canDragStart.bind(this),
@@ -14017,8 +14257,8 @@ function DragDropApplicationMixin(base) {
         /* --- Lifecycle --- */
         // See note above
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        _onRender(context, options) {
-            super._onRender(context, options);
+        async _onRender(context, options) {
+            await super._onRender(context, options);
             // Bind handlers
             this._dragDrop.forEach((d) => d.bind(this.element));
         }
@@ -14196,7 +14436,7 @@ class DocumentReferenceInputComponent extends DragDropComponentMixin((Handlebars
     async _prepareContext(params) {
         // Look up the document
         const doc = this.value
-            ? (await fromUuid(this.value))
+            ? await fromUuid(this.value)
             : undefined;
         // Generate content link
         const contentLink = doc
@@ -14509,9 +14749,12 @@ var AppUtils = {
 
 // Constants
 const PRIMARY_TAB_GROUP = 'primary';
-/**
- * Mixin that adds standardized tabs to an ApplicationV2
- */
+// /**
+//  * Mixin that adds standardized tabs to an ApplicationV2
+//  */
+// export function TabsApplicationMixin<
+//     T extends AnyConcreteApplicationV2Constructor
+// >(base: T) {
 function TabsApplicationMixin(base) {
     return class mixin extends base {
         /**
@@ -14536,8 +14779,8 @@ function TabsApplicationMixin(base) {
         /* --- Lifecycle --- */
         onTabChange(tab, group) { }
         /* --- Context --- */
-        _onFirstRender(context, options) {
-            super._onFirstRender(context, options);
+        async _onFirstRender(context, options) {
+            await super._onFirstRender(context, options);
             // Set the initial tab for the primary tab group
             if (options.tab &&
                 this.tabGroups[PRIMARY_TAB_GROUP] !== options.tab &&
@@ -14592,19 +14835,27 @@ function TabsApplicationMixin(base) {
                 tabsMap,
                 tabGroups: this.tabGroups,
                 activeTab: this.tabGroups.primary,
-            };
+            }; // TEMP: Workaround
         }
     };
 }
 
-/**
- * Mixin that adds an edit mode to an ApplicationV2
- */
+// TEMP: Workaround
+// /**
+//  * Mixin that adds an edit mode to an ApplicationV2
+//  */
+// export function EditModeApplicationMixin<
+//     T extends ConstructorOf<
+//         // NOTE: Use of any as the mixin doesn't care about the types
+//         // and we don't want to interfere with the final type
+//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//         foundry.applications.api.DocumentSheetV2<any, any, any, any>
+//     >,
+// >(base: T) {
 function EditModeApplicationMixin(base) {
     return class mixin extends base {
         /* --- Accessors --- */
         get mode() {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             return this.document.getFlag(SYSTEM_ID, 'sheet.mode') ?? 'view';
         }
         get isEditMode() {
@@ -14612,7 +14863,6 @@ function EditModeApplicationMixin(base) {
         }
         /* --- Public Functions --- */
         async setMode(mode) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
             await this.document.setFlag(SYSTEM_ID, 'sheet.mode', mode);
             // Get toggle
             const toggle = $(this.element).find('#mode-toggle');
@@ -14666,9 +14916,15 @@ function EditModeApplicationMixin(base) {
 }
 
 const { ActorSheetV2 } = foundry.applications.sheets;
+// TEMP: Workaround
+// export class BaseActorSheet<
+//     T extends BaseActorSheetRenderContext = BaseActorSheetRenderContext,
+// > extends TabsApplicationMixin(
+//     DragDropApplicationMixin(ComponentHandlebarsApplicationMixin(ActorSheetV2)),
+// )<T> {
 class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(ComponentHandlebarsApplicationMixin(ActorSheetV2))) {
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.mergeObject({}, super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         actions: {
             'toggle-mode': this.onToggleMode,
             'edit-html-field': this.editHtmlField,
@@ -14684,7 +14940,7 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
                 dropSelector: '*',
             },
         ],
-    });
+    };
     /* eslint-enable @typescript-eslint/unbound-method */
     static PARTS = foundry.utils.mergeObject(super.PARTS, {
         navigation: {
@@ -14715,9 +14971,6 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
     expanded = false;
     get isUpdatingHtmlField() {
         return this.updatingHtmlField;
-    }
-    get actor() {
-        return super.document;
     }
     actionsSearchText = '';
     actionsSearchSort = "alphabetic" /* SortMode.Alphabetic */;
@@ -14773,11 +15026,17 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
             // Get the document
             const packDocument = (await pack.getDocument(index._id));
             // Embed document
-            void this.actor.createEmbeddedDocuments(data.type, [packDocument]);
+            // TODO: Resolve typing issues
+            void this.actor.createEmbeddedDocuments(data.type, 
+            // @ts-expect-error packDocument is not typed correctly due to foundry-vtt-types issues
+            [packDocument]);
         }
         else if (document.parent !== this.actor) {
             // Document not yet on this actor, create it
-            void this.actor.createEmbeddedDocuments(data.type, [document]);
+            // TODO: Resolve typing issues
+            void this.actor.createEmbeddedDocuments(data.type, 
+            // @ts-expect-error document is not typed correctly due to foundry-vtt-types issues
+            [document]);
         }
     }
     /* --- Actions --- */
@@ -14788,9 +15047,7 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
         event.preventDefault();
         event.stopPropagation();
         // Update the actor and re-render
-        await this.actor.update({
-            'flags.cosmere-rpg.sheet.mode': this.mode === 'view' ? 'edit' : 'view',
-        }, { render: true });
+        await this.actor.setFlag(SYSTEM_ID, 'sheet.mode', this.mode === 'view' ? 'edit' : 'view');
         // Get toggle
         const toggle = $(this.element).find('#mode-toggle');
         // Update checked status
@@ -14828,18 +15085,18 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
     }
     /* --- Form --- */
     static async onFormEvent(event, form, formData) {
-        // Handle notes fields separately
-        if (event.target.className.includes('prosemirror')) {
-            await this.saveHtmlField();
-            void this.actor.update(formData.object);
-            return;
-        }
         if (!(event.target instanceof HTMLInputElement) &&
             !(event.target instanceof HTMLTextAreaElement) &&
-            !(event.target instanceof HTMLSelectElement))
+            !(event.target instanceof HTMLSelectElement) &&
+            !(event.target instanceof
+                foundry.applications.elements.HTMLProseMirrorElement))
             return;
         if (!event.target.name)
             return;
+        // Handle prose-mirror fields separately
+        if (event.target instanceof
+            foundry.applications.elements.HTMLProseMirrorElement)
+            await this.saveHtmlField();
         Object.keys(this.actor.system.resources).forEach((resourceId) => {
             let resourceValue = formData.object[`system.resources.${resourceId}.value`];
             // Clean the value
@@ -14890,8 +15147,8 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
         return frame;
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         if (options.parts.includes('content')) {
             this.element
                 .querySelector('#actions-search')
@@ -15012,7 +15269,6 @@ class BaseActorSheet extends TabsApplicationMixin(DragDropApplicationMixin(Compo
      * Helper to update the prose mirror edit state
      */
     async saveHtmlField() {
-        console.log('Saving HTML Field');
         // Switches back from prose mirror
         this.updatingHtmlField = false;
         await this.render(true);
@@ -15069,7 +15325,7 @@ class ExpertisesListComponent extends HandlebarsApplicationComponent {
     }
     get expertises() {
         return this.application instanceof BaseActorSheet
-            ? this.application.actor.system.expertises
+            ? this.application.actor.system.expertises // TEMP: Workaround
             : this._value;
     }
     /* --- Actions --- */
@@ -15128,9 +15384,7 @@ class ExpertisesListComponent extends HandlebarsApplicationComponent {
         if (this.application instanceof BaseActorSheet) {
             if (!this.application.isEditable)
                 return;
-            void this.application.actor.update({
-                'flags.cosmere-rpg.sheet.expertisesCollapsed': this._collapsed,
-            }, { render: false });
+            void this.application.actor.setFlag('cosmere-rpg', 'sheet.expertisesCollapsed', this._collapsed);
         }
     }
     /* --- Context --- */
@@ -15440,9 +15694,32 @@ ItemDropListComponent.register('app-item-drop-list');
 
 // Constants
 const TEMPLATE = `systems/${SYSTEM_ID}/templates/${TEMPLATES.GENERAL_CONTEXT_MENU}`;
+const applicationContextMenus = new WeakMap();
+document.addEventListener('scroll', debounce((event) => {
+    if (!(event.target instanceof HTMLElement))
+        return;
+    const target = event.target;
+    const app = Array.from(foundry.applications.instances.values()).find((app) => app.element.contains(target));
+    if (!app)
+        return;
+    applicationContextMenus
+        .get(app)
+        ?.filter((menu) => target.contains(menu.parent.element))
+        ?.forEach((menu) => {
+        if (menu.expanded) {
+            menu.hide();
+        }
+    });
+}, 50, true), true);
 class AppContextMenu {
     parent;
     anchor;
+    /**
+     * The application that owns this context menu.
+     * This is set either explicitly when the parent is an Application,
+     * or implicitly when the parent is an Application Component.
+     */
+    application;
     /**
      * The root element of the context menu.
      */
@@ -15451,14 +15728,26 @@ class AppContextMenu {
      * The element that was clicked to open the context menu.
      */
     contextElement;
-    expanded = false;
+    mutationObserver;
     rendered = false;
+    _expanded = false;
     _active = true;
     items;
     itemsFn;
     constructor(parent, anchor, items) {
         this.parent = parent;
         this.anchor = anchor;
+        // Set application
+        // @ts-expect-error Foundry Due to foundry-vtt-types issue. TODO: Resolve typing issues
+        this.application =
+            parent instanceof foundry.applications.api.ApplicationV2
+                ? parent
+                : parent.application;
+        // Register this context menu with the application
+        if (!applicationContextMenus.has(this.application)) {
+            applicationContextMenus.set(this.application, new Set());
+        }
+        applicationContextMenus.get(this.application).add(this);
         if (typeof items === 'function') {
             this.itemsFn = items;
         }
@@ -15471,6 +15760,12 @@ class AppContextMenu {
     }
     get active() {
         return this._active;
+    }
+    get expanded() {
+        return this._expanded;
+    }
+    set expanded(value) {
+        this._expanded = value;
     }
     /**
      * Utility function to create a context menu
@@ -15499,7 +15794,9 @@ class AppContextMenu {
         const elements = [];
         if (typeof param1[0] === 'string') {
             elements.push(...param1
-                .map((selector) => $(this.parent.element).find(selector).toArray())
+                .map((selector) => $(this.parent.element)
+                .find(selector)
+                .toArray())
                 .flat());
         }
         else {
@@ -15514,7 +15811,7 @@ class AppContextMenu {
                 if (this.expanded)
                     this.hide();
                 if (shouldShow && this._active) {
-                    const rootBounds = this.parent.element.getBoundingClientRect();
+                    const rootBounds = this.application.element.getBoundingClientRect();
                     const positioning = this.anchor === 'cursor'
                         ? {
                             top: event.clientY - rootBounds.top,
@@ -15538,6 +15835,11 @@ class AppContextMenu {
             : args.length === 3
                 ? args[2]
                 : undefined;
+        // Hide other context menus for this application
+        applicationContextMenus
+            .get(this.application)
+            ?.filter((menu) => menu !== this && menu.expanded)
+            .forEach((menu) => menu.hide());
         // Set items
         this.items = !firstArgIsElement
             ? args[0]
@@ -15558,7 +15860,7 @@ class AppContextMenu {
         if (firstArgIsElement) {
             // Get element bounds
             const elementBounds = element.getBoundingClientRect();
-            const rootBounds = (this.parent.element.closest('.tab-body') ?? this.parent.element).getBoundingClientRect();
+            const rootBounds = this.application.element.getBoundingClientRect();
             // Figure out positioning with anchor
             positioning = {
                 top: elementBounds.top - rootBounds.top,
@@ -15606,6 +15908,8 @@ class AppContextMenu {
         }
     }
     async render() {
+        // Observe visibility changes
+        this.observeVisibilityChanges();
         // Clean up old element
         if (this._element)
             this.destroy();
@@ -15628,7 +15932,9 @@ class AppContextMenu {
             this.hide();
         });
         // Add element to parent
-        this.parent.element.appendChild(this._element);
+        this.application.element.appendChild(this._element);
+        // Set rendered flag
+        this.rendered = true;
     }
     destroy() {
         if (this._element) {
@@ -15637,7 +15943,7 @@ class AppContextMenu {
         }
     }
     async renderElement() {
-        const htmlStr = await renderTemplate(TEMPLATE, {
+        const htmlStr = await foundry.applications.handlebars.renderTemplate(TEMPLATE, {
             items: this.items.map((item) => ({
                 ...item,
                 cssClasses: item.classes?.join(' ') ?? '',
@@ -15646,6 +15952,32 @@ class AppContextMenu {
         const t = document.createElement('template');
         t.innerHTML = htmlStr;
         return t.content.children[0];
+    }
+    /**
+     * Observe visibility changes to the parent application / component.
+     * If the parent becomes hidden while the context menu is expanded, hide the context menu.
+     */
+    observeVisibilityChanges() {
+        if (this.mutationObserver)
+            return;
+        this.mutationObserver = new MutationObserver((mutations) => {
+            const hasRelevantMutation = mutations
+                .filter((mutation) => mutation.type === 'attributes')
+                .filter((mutation) => mutation.target.contains(this.parent.element))
+                .some(() => true); // Check if any mutation affects the parent element
+            if (!hasRelevantMutation)
+                return;
+            // Check if parent is visible
+            const parentVisible = this.parent.element.checkVisibility();
+            // If parent is not visible and context menu is expanded, hide it
+            if (!parentVisible && this.expanded) {
+                this.hide();
+            }
+        });
+        this.mutationObserver.observe(this.application.element, {
+            attributes: true,
+            subtree: true,
+        });
     }
 }
 
@@ -15720,7 +16052,7 @@ const STATIC_SECTIONS = {
         id: 'basic-actions',
         sortOrder: 600,
         label: 'COSMERE.Item.Action.Type.Basic.label_plural',
-        itemTypeLabel: 'COSMERE.Item.Action.Type.Basic.label_action',
+        itemTypeLabel: 'COSMERE.Item.Action.Type.Basic.label',
         default: true,
         filter: (item) => item.isAction() && item.system.type === "basic" /* ActionType.Basic */,
         new: (parent) => CosmereItem.create({
@@ -15771,7 +16103,9 @@ const DYNAMIC_SECTIONS = {
                             consume: {
                                 type: "resource" /* ItemConsumeType.Resource */,
                                 resource: "inv" /* Resource.Investiture */,
-                                value: 1,
+                                value: {
+                                    actual: 1,
+                                },
                             },
                         },
                     },
@@ -16011,10 +16345,6 @@ class ActorActionsListComponent extends HandlebarsApplicationComponent {
                         .data('item-id');
                     // Get item
                     const item = this.application.actor.items.get(itemId);
-                    // Check if actor is character
-                    const isCharacter = this.application.actor.isCharacter();
-                    // Check if item is favorited
-                    const isFavorite = item.isFavorite;
                     return [
                         /**
                          * NOTE: This is a TEMPORARY context menu option
@@ -16027,25 +16357,6 @@ class ActorActionsListComponent extends HandlebarsApplicationComponent {
                                 void item.recharge();
                             },
                         },
-                        // Favorite (only for characters)
-                        isCharacter
-                            ? isFavorite
-                                ? {
-                                    name: 'GENERIC.Button.RemoveFavorite',
-                                    icon: 'fa-solid fa-star',
-                                    callback: () => {
-                                        void item.clearFavorite();
-                                    },
-                                }
-                                : {
-                                    name: 'GENERIC.Button.Favorite',
-                                    icon: 'fa-solid fa-star',
-                                    callback: () => {
-                                        void item.markFavorite(this.application.actor.favorites
-                                            .length);
-                                    },
-                                }
-                            : null,
                         {
                             name: 'GENERIC.Button.Edit',
                             icon: 'fa-solid fa-pen-to-square',
@@ -16098,7 +16409,7 @@ class ConfigureDefenseDialog extends HandlebarsApplicationMixin$8((ApplicationV2
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -16111,7 +16422,7 @@ class ConfigureDefenseDialog extends HandlebarsApplicationMixin$8((ApplicationV2
         actions: {
             'update-defense': this.onUpdateDefense,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_DEFENSE}`,
@@ -16130,8 +16441,8 @@ class ConfigureDefenseDialog extends HandlebarsApplicationMixin$8((ApplicationV2
         super({
             id: `${actor.uuid}.AttributeGroup.${group}.Defense`,
             window: {
-                title: game
-                    .i18n.localize('DIALOG.ConfigureDefense.Title')
+                title: game.i18n
+                    .localize('DIALOG.ConfigureDefense.Title')
                     .replace('{attribute-group}', game.i18n.localize(CONFIG.COSMERE.attributeGroups[group].label))
                     .replace('{actor}', actor.name),
             },
@@ -16170,8 +16481,8 @@ class ConfigureDefenseDialog extends HandlebarsApplicationMixin$8((ApplicationV2
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -16301,8 +16612,8 @@ async function journalEntryPageTextFromUuid(uuid, options = {}) {
         : text;
 }
 function getPageTextContent(page, target, includeHeading = true) {
-    if (!target)
-        return page.text.content;
+    if (!target || !page.text.content)
+        return page.text.content ?? null;
     const renderTarget = document.createElement('template');
     renderTarget.innerHTML = page.text.content;
     const toc = JournalEntryPage.buildTOC(Array.from(renderTarget.content.children));
@@ -16362,7 +16673,9 @@ class ActorConditionsComponent extends HandlebarsApplicationComponent {
             if (newStacks > 0) {
                 // Update the effect
                 await effect.update({
-                    'system.stacks': newStacks,
+                    system: {
+                        stacks: newStacks,
+                    },
                 });
             }
             else {
@@ -16428,7 +16741,7 @@ class ConfigureMovementRateDialog extends HandlebarsApplicationMixin$7((Applicat
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -16441,7 +16754,7 @@ class ConfigureMovementRateDialog extends HandlebarsApplicationMixin$7((Applicat
         actions: {
             'update-movement': this.onUpdateMovementRate,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_MOVEMENT}`,
@@ -16459,8 +16772,8 @@ class ConfigureMovementRateDialog extends HandlebarsApplicationMixin$7((Applicat
         super({
             id: `${actor.uuid}.MovementRate`,
             window: {
-                title: game
-                    .i18n.localize('DIALOG.ConfigureMovementRate.Title')
+                title: game.i18n
+                    .localize('DIALOG.ConfigureMovementRate.Title')
                     .replace('{actor}', actor.name),
             },
         });
@@ -16478,7 +16791,9 @@ class ConfigureMovementRateDialog extends HandlebarsApplicationMixin$7((Applicat
     /* --- Actions --- */
     static onUpdateMovementRate() {
         void this.actor.update({
-            'system.movement': this.movementData,
+            system: {
+                movement: this.movementData,
+            },
         });
         void this.close();
     }
@@ -16504,8 +16819,8 @@ class ConfigureMovementRateDialog extends HandlebarsApplicationMixin$7((Applicat
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -16532,7 +16847,7 @@ class ConfigureSensesRangeDialog extends HandlebarsApplicationMixin$6((Applicati
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -16545,7 +16860,7 @@ class ConfigureSensesRangeDialog extends HandlebarsApplicationMixin$6((Applicati
         actions: {
             'update-sense': this.onUpdateSensesRange,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_SENSES}`,
@@ -16564,8 +16879,8 @@ class ConfigureSensesRangeDialog extends HandlebarsApplicationMixin$6((Applicati
         super({
             id: `${actor.uuid}.SensesRange`,
             window: {
-                title: game
-                    .i18n.localize('DIALOG.ConfigureSensesRange.Title')
+                title: game.i18n
+                    .localize('DIALOG.ConfigureSensesRange.Title')
                     .replace('{actor}', actor.name),
             },
         });
@@ -16581,7 +16896,9 @@ class ConfigureSensesRangeDialog extends HandlebarsApplicationMixin$6((Applicati
     /* --- Actions --- */
     static onUpdateSensesRange() {
         void this.actor.update({
-            'system.senses': this.sensesData,
+            system: {
+                senses: this.sensesData,
+            },
         });
         void this.close();
     }
@@ -16609,8 +16926,8 @@ class ConfigureSensesRangeDialog extends HandlebarsApplicationMixin$6((Applicati
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -16665,72 +16982,39 @@ function deriveMaxHealth(levelOrRules, strength) {
         (rule.healthIncludeStrength ? strength : 0), 0);
 }
 
+const SCHEMA$m = () => ({
+    /* --- Advancement --- */
+    level: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        integer: true,
+        min: 1,
+        initial: 1,
+        label: 'COSMERE.Actor.Level.Label',
+    }),
+    /* --- Derived statistics --- */
+    recovery: new foundry.data.fields.SchemaField({
+        die: new DerivedValueField(new foundry.data.fields.StringField({
+            required: true,
+            blank: false,
+            initial: 'd4',
+            choices: () => RECOVERY_DICE,
+            nullable: false,
+        })),
+    }),
+    /* --- Purpose and Obstacle --- */
+    purpose: new foundry.data.fields.HTMLField({
+        required: true,
+        initial: '',
+    }),
+    obstacle: new foundry.data.fields.HTMLField({
+        required: true,
+        initial: '',
+    }),
+});
 class CharacterActorDataModel extends CommonActorDataModel {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            /* --- Advancement --- */
-            level: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                min: 1,
-                initial: 1,
-                label: 'COSMERE.Actor.Level.Label',
-            }),
-            maxSkillRank: new foundry.data.fields.NumberField({
-                required: true,
-                nullable: false,
-                integer: true,
-                initial: 2,
-                max: 5,
-            }),
-            /* --- Derived statistics --- */
-            recovery: new foundry.data.fields.SchemaField({
-                die: new DerivedValueField(new foundry.data.fields.StringField({
-                    required: true,
-                    blank: false,
-                    initial: 'd4',
-                    choices: RECOVERY_DICE,
-                })),
-            }),
-            /* --- Goals, Connections, Purpose, and Obstacle --- */
-            goals: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                text: new foundry.data.fields.StringField({
-                    required: true,
-                }),
-                level: new foundry.data.fields.NumberField({
-                    required: true,
-                    integer: true,
-                    initial: 0,
-                    min: 0,
-                    max: 3,
-                }),
-            }), {
-                required: true,
-                nullable: true,
-                initial: null,
-            }),
-            connections: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                name: new foundry.data.fields.StringField({
-                    required: true,
-                }),
-                description: new foundry.data.fields.HTMLField({
-                    required: true,
-                }),
-            }), {
-                required: true,
-                nullable: false,
-                initial: [],
-            }),
-            purpose: new foundry.data.fields.HTMLField({
-                required: true,
-                initial: '',
-            }),
-            obstacle: new foundry.data.fields.HTMLField({
-                required: true,
-                initial: '',
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$m());
     }
     prepareDerivedData() {
         super.prepareDerivedData();
@@ -16778,7 +17062,7 @@ class ConfigureRecoveryDieDialog extends HandlebarsApplicationMixin$5((Applicati
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -16791,7 +17075,7 @@ class ConfigureRecoveryDieDialog extends HandlebarsApplicationMixin$5((Applicati
         actions: {
             'update-recovery': this.onUpdateRecoveryDie,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_RECOVERY}`,
@@ -16810,8 +17094,8 @@ class ConfigureRecoveryDieDialog extends HandlebarsApplicationMixin$5((Applicati
         super({
             id: `${actor.uuid}.RecoveryDie`,
             window: {
-                title: game
-                    .i18n.localize('DIALOG.ConfigureRecoveryDie.Title')
+                title: game.i18n
+                    .localize('DIALOG.ConfigureRecoveryDie.Title')
                     .replace('{actor}', actor.name),
             },
         });
@@ -16828,7 +17112,9 @@ class ConfigureRecoveryDieDialog extends HandlebarsApplicationMixin$5((Applicati
     /* --- Actions --- */
     static onUpdateRecoveryDie() {
         void this.actor.update({
-            'system.recovery': this.recoveryData,
+            system: {
+                recovery: this.recoveryData,
+            },
         });
         void this.close();
     }
@@ -16849,8 +17135,8 @@ class ConfigureRecoveryDieDialog extends HandlebarsApplicationMixin$5((Applicati
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -16878,7 +17164,7 @@ class ConfigureDeflectDialog extends HandlebarsApplicationMixin$4((ApplicationV2
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -16891,7 +17177,7 @@ class ConfigureDeflectDialog extends HandlebarsApplicationMixin$4((ApplicationV2
         actions: {
             'update-deflect': this.onUpdateDeflect,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_DEFLECT}`,
@@ -16929,7 +17215,9 @@ class ConfigureDeflectDialog extends HandlebarsApplicationMixin$4((ApplicationV2
     /* --- Actions --- */
     static onUpdateDeflect() {
         void this.actor.update({
-            'system.deflect': this.data,
+            system: {
+                deflect: this.data,
+            },
         });
         void this.close();
     }
@@ -16960,8 +17248,8 @@ class ConfigureDeflectDialog extends HandlebarsApplicationMixin$4((ApplicationV2
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -17018,12 +17306,10 @@ class ActorDetailsComponent extends HandlebarsApplicationComponent {
         if (this.application.mode !== 'edit')
             return;
         const { img: defaultImg } = CosmereActor.getDefaultArtwork(this.application.actor.toObject());
-        void new FilePicker({
-            current: this.application.actor.img,
+        void new foundry.applications.apps.FilePicker({
+            current: this.application.actor.img ?? undefined,
             type: 'image',
             redirectToRoot: [defaultImg],
-            top: this.application.position.top + 40,
-            left: this.application.position.left + 10,
             callback: (path) => {
                 void this.application.actor.update({
                     img: path,
@@ -17156,7 +17442,7 @@ class ActorEffectsListComponent extends HandlebarsApplicationComponent {
                             const effect = this.getEffectFromElement(element);
                             if (!effect)
                                 return;
-                            void effect.parent?.deleteEmbeddedDocuments('ActiveEffect', [effect.id]);
+                            void effect.delete();
                         },
                     },
                 ],
@@ -17182,11 +17468,11 @@ class ActorEffectsListComponent extends HandlebarsApplicationComponent {
     }
     getEffect(effectId, parentId) {
         if (!parentId)
-            return this.application.actor.getEmbeddedDocument('ActiveEffect', effectId);
+            return this.application.actor.getEmbeddedDocument('ActiveEffect', effectId, {});
         else {
             // Get item
-            const item = this.application.actor.getEmbeddedDocument('Item', parentId);
-            return item?.getEmbeddedDocument('ActiveEffect', effectId);
+            const item = this.application.actor.getEmbeddedDocument('Item', parentId, {});
+            return item?.getEmbeddedDocument('ActiveEffect', effectId, {});
         }
     }
 }
@@ -17267,7 +17553,9 @@ class ActorEquipmentListComponent extends HandlebarsApplicationComponent {
         if (!item.isEquippable())
             return;
         void item.update({
-            'system.equipped': !item.system.equipped,
+            system: {
+                equipped: !item.system.equipped,
+            },
         });
     }
     static onCycleEquip(event) {
@@ -17289,8 +17577,12 @@ class ActorEquipmentListComponent extends HandlebarsApplicationComponent {
         const newIndex = shouldEquip ? 0 : shouldUnequip ? index : index + 1;
         // Update item
         void item.update({
-            'system.equipped': newEquip,
-            'system.equip.hand': handTypes[newIndex],
+            system: {
+                equipped: newEquip,
+                equip: {
+                    hand: handTypes[newIndex],
+                },
+            },
         });
     }
     static async onDecreaseQuantity(event) {
@@ -17322,7 +17614,9 @@ class ActorEquipmentListComponent extends HandlebarsApplicationComponent {
             modifier *= 50;
         }
         await item.update({
-            'system.quantity': item.system.quantity + modifier,
+            system: {
+                quantity: item.system.quantity + modifier,
+            },
         }, { render: false });
         await this.render();
         this.triggerCurrencyChange();
@@ -17407,30 +17701,7 @@ class ActorEquipmentListComponent extends HandlebarsApplicationComponent {
                         .data('item-id');
                     // Get item
                     const item = this.application.actor.items.get(itemId);
-                    // Check if actor is character
-                    const isCharacter = this.application.actor.isCharacter();
-                    // Check if item is favorited
-                    const isFavorite = item.isFavorite;
                     return [
-                        // Favorite (only for characters)
-                        isCharacter
-                            ? isFavorite
-                                ? {
-                                    name: 'GENERIC.Button.RemoveFavorite',
-                                    icon: 'fa-solid fa-star',
-                                    callback: () => {
-                                        void item.clearFavorite();
-                                    },
-                                }
-                                : {
-                                    name: 'GENERIC.Button.Favorite',
-                                    icon: 'fa-solid fa-star',
-                                    callback: () => {
-                                        void item.markFavorite(this.application.actor.favorites
-                                            .length);
-                                    },
-                                }
-                            : null,
                         {
                             name: 'GENERIC.Button.Edit',
                             icon: 'fa-solid fa-pen-to-square',
@@ -17465,46 +17736,12 @@ class ActorInjuriesListComponent extends HandlebarsApplicationComponent {
      */
     /* eslint-disable @typescript-eslint/unbound-method */
     static ACTIONS = {
-        'toggle-injury-controls': this.onToggleInjuryControls,
         'reduce-injury-duration': this.onDecreaseInjuryDuration,
         'increase-injury-duration': this.onIncreaseInjuryDuration,
-        'edit-injury': this.onEditInjury,
-        'remove-injury': this.onRemoveInjury,
         'create-injury': this.onCreateInjury,
     };
     /* eslint-enable @typescript-eslint/unbound-method */
-    contextInjuryId = null;
-    controlsDropdownExpanded = false;
     /* --- Actions --- */
-    static onToggleInjuryControls(event) {
-        // Get connection id
-        const injuryId = $(event.currentTarget)
-            .closest('[data-item-id]')
-            .data('item-id');
-        const target = event.currentTarget;
-        const root = $(target).closest('.tab-body');
-        const dropdown = $(target)
-            .closest('.item-list')
-            .siblings('.controls-dropdown');
-        const targetRect = target.getBoundingClientRect();
-        const rootRect = root[0].getBoundingClientRect();
-        if (this.contextInjuryId !== injuryId) {
-            dropdown.css({
-                top: `${Math.round(targetRect.top - rootRect.top)}px`,
-                right: `${Math.round(rootRect.right - targetRect.right + targetRect.width)}px`,
-            });
-            if (!this.controlsDropdownExpanded) {
-                dropdown.addClass('expanded');
-                this.controlsDropdownExpanded = true;
-            }
-            this.contextInjuryId = injuryId;
-        }
-        else if (this.controlsDropdownExpanded) {
-            dropdown.removeClass('expanded');
-            this.controlsDropdownExpanded = false;
-            this.contextInjuryId = null;
-        }
-    }
     static onDecreaseInjuryDuration(event) {
         // Get injury item
         const injuryItem = AppUtils.getItemFromEvent(event, this.application.actor);
@@ -17512,7 +17749,11 @@ class ActorInjuriesListComponent extends HandlebarsApplicationComponent {
             return;
         // Reduce duration by one
         void injuryItem.update({
-            'system.duration.remaining': injuryItem.system.duration.remaining - 1,
+            system: {
+                duration: {
+                    remaining: injuryItem.system.duration.remaining - 1,
+                },
+            },
         });
     }
     static onIncreaseInjuryDuration(event) {
@@ -17522,35 +17763,36 @@ class ActorInjuriesListComponent extends HandlebarsApplicationComponent {
             return;
         // Increase duration by one
         void injuryItem.update({
-            'system.duration.remaining': injuryItem.system.duration.remaining + 1,
+            system: {
+                duration: {
+                    remaining: injuryItem.system.duration.remaining + 1,
+                },
+            },
         });
     }
-    static async onRemoveInjury() {
-        this.controlsDropdownExpanded = false;
-        // Ensure context goal id is set
-        if (this.contextInjuryId !== null) {
-            // Remove the connection
-            await this.application.actor.deleteEmbeddedDocuments('Item', [this.contextInjuryId], { render: false });
-            this.contextInjuryId = null;
-        }
-        // Render
-        await this.render();
+    static onRemoveInjury(element) {
+        const injuryId = element.closest('[data-item-id]')?.getAttribute('data-item-id');
+        if (!injuryId)
+            return;
+        // Get the injury
+        const injuryItem = this.application.actor.items.get(injuryId);
+        if (!injuryItem?.isInjury())
+            return;
+        // Delete the injury
+        void injuryItem.delete();
     }
-    static onEditInjury() {
-        this.controlsDropdownExpanded = false;
-        // Ensure context goal id is set
-        if (this.contextInjuryId !== null) {
-            // Get the injur
-            const injury = this.application.actor.items.find((i) => i.id === this.contextInjuryId);
-            // Show injury sheet
-            void injury.sheet?.render(true);
-            this.contextInjuryId = null;
-        }
-        // Render
-        void this.render();
+    static onEditInjury(element) {
+        const injuryId = element.closest('[data-item-id]')?.getAttribute('data-item-id');
+        if (!injuryId)
+            return;
+        // Get the injury
+        const injuryItem = this.application.actor.items.get(injuryId);
+        if (!injuryItem?.isInjury())
+            return;
+        // Show item sheet
+        void injuryItem.sheet?.render(true);
     }
     static async onCreateInjury() {
-        this.controlsDropdownExpanded = false;
         // Create new injury
         const item = (await Item.create({
             type: "injury" /* ItemType.Injury */,
@@ -17588,6 +17830,29 @@ class ActorInjuriesListComponent extends HandlebarsApplicationComponent {
                 return remainingB - remainingA;
             }),
         });
+    }
+    /* --- Lifecycle --- */
+    _onInitialize() {
+        if (this.application.isEditable) {
+            // Create context menu
+            AppContextMenu.create({
+                parent: this,
+                items: [
+                    {
+                        name: 'GENERIC.Button.Edit',
+                        icon: 'fa-solid fa-pen-to-square',
+                        callback: ActorInjuriesListComponent.onEditInjury.bind(this),
+                    },
+                    {
+                        name: 'GENERIC.Button.Remove',
+                        icon: 'fa-solid fa-trash',
+                        callback: ActorInjuriesListComponent.onRemoveInjury.bind(this),
+                    },
+                ],
+                selectors: ['a[data-action="toggle-controls"]'],
+                anchor: 'right',
+            });
+        }
     }
 }
 // Register
@@ -17643,7 +17908,7 @@ class ConfigureResourceDialog extends HandlebarsApplicationMixin$3((ApplicationV
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             minimizable: false,
             positioned: true,
@@ -17656,7 +17921,7 @@ class ConfigureResourceDialog extends HandlebarsApplicationMixin$3((ApplicationV
         actions: {
             'update-resource': this.onUpdateResource,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_CONFIGURE_RESOURCE}`,
@@ -17675,15 +17940,17 @@ class ConfigureResourceDialog extends HandlebarsApplicationMixin$3((ApplicationV
         super({
             id: `${actor.uuid}.Resource.${resourceId}`,
             window: {
-                title: game
-                    .i18n.localize('DIALOG.ConfigureResource.Title')
+                title: game.i18n
+                    .localize('DIALOG.ConfigureResource.Title')
                     .replace('{resource}', game.i18n.localize(CONFIG.COSMERE.resources[resourceId].label))
                     .replace('{actor}', actor.name),
             },
         });
         this.actor = actor;
         this.resourceId = resourceId;
-        this.resourceData = this.actor.system.schema.getField(`resources.${resourceId}`).initialize(foundry.utils.deepClone(this.actor.system.resources[resourceId]), this.actor);
+        this.resourceData = this.actor.system.schema
+            .getField(`resources.${resourceId}`)
+            .initialize(foundry.utils.deepClone(this.actor.system.resources[resourceId]), this.actor);
         this.resourceData.max.override ??= this.resourceData.max.value ?? 0;
         this.mode = this.resourceData.max.mode;
     }
@@ -17720,8 +17987,8 @@ class ConfigureResourceDialog extends HandlebarsApplicationMixin$3((ApplicationV
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -18007,11 +18274,9 @@ class ActorSkillComponent extends HandlebarsApplicationComponent {
         const skill = this.application.actor.system.skills[params.skill];
         // Get skill config
         const config = CONFIG.COSMERE.skills[params.skill];
-        let maxSkillRank = 5;
-        if (this.application.actor.type === "character" /* ActorType.Character */) {
-            const actor = this.application.actor;
-            maxSkillRank = actor.system.maxSkillRank;
-        }
+        const maxSkillRank = this.application.actor.isCharacter()
+            ? this.application.actor.system.maxSkillRank
+            : 5;
         // Get attribute config
         const attributeConfig = CONFIG.COSMERE.attributes[config.attribute];
         return Promise.resolve({
@@ -18036,7 +18301,7 @@ ActorSkillComponent.register('app-actor-skill');
 const { ApplicationV2: ApplicationV2$5, HandlebarsApplicationMixin: HandlebarsApplicationMixin$2 } = foundry.applications.api;
 class EditImmunitiesDialog extends HandlebarsApplicationMixin$2((ApplicationV2$5)) {
     actor;
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'COSMERE.Actor.Sheet.EditImmunities',
             minimizable: false,
@@ -18048,7 +18313,7 @@ class EditImmunitiesDialog extends HandlebarsApplicationMixin$2((ApplicationV2$5
             width: 300,
             height: 800,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ACTOR_EDIT_IMMUNITIES}`,
@@ -18114,7 +18379,9 @@ class EditImmunitiesDialog extends HandlebarsApplicationMixin$2((ApplicationV2$5
         conditionAdditions.forEach(([name]) => (currentImmunities.condition[name] = true));
         // Update actor
         void this.actor.update({
-            'system.immunities': currentImmunities,
+            system: {
+                immunities: currentImmunities,
+            },
         });
     }
     /* --- Context --- */
@@ -18135,8 +18402,8 @@ class EditImmunitiesDialog extends HandlebarsApplicationMixin$2((ApplicationV2$5
         });
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
         $(this.element)
             .find('input')
@@ -18227,7 +18494,10 @@ class ActorImmunitiesComponent extends HandlebarsApplicationComponent {
     /* --- Lifecycle --- */
     _onInitialize(params) {
         super._onInitialize(params);
-        this.sectionCollapsed = this.application.areImmunitiesCollapsed;
+        // TODO: Resolve typing issues
+        this.sectionCollapsed =
+            // @ts-expect-error ActorImmunitiesComponent is not typed to have application of type BaseActorSheet due to foundry-vtt-types issues
+            this.application.areImmunitiesCollapsed;
     }
     _onRender(params) {
         super._onRender(params);
@@ -18243,141 +18513,16 @@ class ActorImmunitiesComponent extends HandlebarsApplicationComponent {
         if (!this.application.isEditable)
             return;
         void this.application.actor.update({
-            'flags.cosmere-rpg.sheet.immunitiesCollapsed': this.sectionCollapsed,
+            flags: {
+                'cosmere-rpg': {
+                    'sheet.immunitiesCollapsed': this.sectionCollapsed,
+                },
+            },
         }, { render: false });
     }
 }
 // Register
 ActorImmunitiesComponent.register('app-actor-immunities');
-
-class CharacterFavoritesComponent extends DragDropComponentMixin(HandlebarsApplicationComponent) {
-    static TEMPLATE = `systems/${SYSTEM_ID}/templates/${TEMPLATES.ACTOR_CHARACTER_FAVORITES}`;
-    static DRAG_DROP = [
-        {
-            dropSelector: '*',
-        },
-    ];
-    /**
-     * NOTE: Unbound methods is the standard for defining actions
-     * within ApplicationV2
-     */
-    /* eslint-disable @typescript-eslint/unbound-method */
-    static ACTIONS = {
-        'use-item': this.onUseItem,
-        'remove-favorite': this.onRemoveFavorite,
-    };
-    /* eslint-enable @typescript-eslint/unbound-method */
-    /* --- Actions --- */
-    static onUseItem(event) {
-        // Get item
-        const item = AppUtils.getItemFromEvent(event, this.application.actor);
-        if (!item)
-            return;
-        // Use the item
-        void this.application.actor.useItem(item);
-    }
-    static onRemoveFavorite(event) {
-        // Get item
-        const item = AppUtils.getItemFromEvent(event, this.application.actor);
-        if (!item)
-            return;
-        // Remove favorite
-        void item.clearFavorite();
-    }
-    /* --- Drag drop --- */
-    _canDragDrop() {
-        return this.application.isEditable;
-    }
-    _onDragOver(event) {
-        if (!event.dataTransfer?.types.includes('document/item'))
-            return;
-        // Clean up
-        $(this.element).find('.drop-area').removeClass('dropping');
-        $(this.element).find('.drop-indicator').remove();
-        if ($(event.target).closest('.drop-area').length) {
-            $(event.target).closest('.drop-area').addClass('dropping');
-        }
-        else if ($(event.target).closest('.favorite.item').length) {
-            const el = $(event.target)
-                .closest('.favorite.item')
-                .get(0);
-            // Get bounding rect
-            const bounds = el.getBoundingClientRect();
-            if (event.clientY < bounds.top + bounds.height / 2) {
-                $(el).before(`<li class="drop-indicator"></li>`);
-            }
-            else {
-                $(el).after(`<li class="drop-indicator"></li>`);
-            }
-        }
-    }
-    async _onDrop(event) {
-        const data = TextEditor.getDragEventData(event);
-        // Ensure document type can be embedded on actor
-        if (!(data.type in CosmereActor.metadata.embedded))
-            return;
-        // Get the document
-        const document = fromUuidSync(data.uuid);
-        if (!document)
-            return;
-        if (document.parent === this.application.actor) {
-            // Document already on this actor
-            if (data.type !== 'Item')
-                return;
-            const item = document;
-            if ($(event.target).closest('.drop-area').length &&
-                !item.isFavorite) {
-                // Mark item as favorited
-                void item.markFavorite(this.application.actor.favorites.length);
-            }
-            else if ($(event.target).closest('.favorite.item').length) {
-                const el = $(event.target)
-                    .closest('.favorite.item')
-                    .get(0);
-                // Get the index
-                let index = $(event.target)
-                    .closest('app-character-favorites')
-                    .find('.favorite.item')
-                    .toArray()
-                    .indexOf(el);
-                // Get bounding rect
-                const bounds = el.getBoundingClientRect();
-                // If item is dropped below the current element, move index over by 1
-                if (event.clientY > bounds.top + bounds.height / 2) {
-                    index++;
-                }
-                await Promise.all([
-                    // Increase index of all subsequent favorites
-                    ...this.application.actor.favorites
-                        .slice(index)
-                        .map((item, i) => item.markFavorite(index + i + 1, false)),
-                    // Mark as favorite
-                    item.markFavorite(index, false),
-                ]);
-                // Normalize
-                this.application.actor.favorites.forEach((item, i) => void item.markFavorite(i, false));
-                // Render
-                void this.render();
-            }
-            // Clean up
-            $(this.element)
-                .find('app-character-favorites .drop-area')
-                .removeClass('dropping');
-            $(this.element)
-                .find('app-character-favorites .drop-indicator')
-                .remove();
-        }
-    }
-    /* --- Context --- */
-    _prepareContext(params, context) {
-        return Promise.resolve({
-            ...context,
-            favorites: this.application.actor.favorites,
-        });
-    }
-}
-// Register
-CharacterFavoritesComponent.register('app-character-favorites');
 
 class CharacterPathsComponent extends HandlebarsApplicationComponent {
     static TEMPLATE = `systems/${SYSTEM_ID}/templates/${TEMPLATES.ACTOR_CHARACTER_PATHS}`;
@@ -18436,7 +18581,6 @@ class CharacterPathsComponent extends HandlebarsApplicationComponent {
                         .rank,
                     mod: this.application.actor.system.skills[skillId].mod,
                 })),
-                level: this.application.actor.talents.filter((talent) => talent.pathId === path.id).length,
             })),
         });
     }
@@ -18508,49 +18652,15 @@ class CharacterGoalsListComponent extends HandlebarsApplicationComponent {
      */
     /* eslint-disable @typescript-eslint/unbound-method */
     static ACTIONS = {
-        'toggle-goal-controls': this.onToggleGoalControls,
         'adjust-goal-progress': {
             handler: this.onAdjustGoalProgress,
             buttons: [MouseButton.Primary, MouseButton.Secondary],
         },
         'toggle-hide-completed-goals': this.onToggleHideCompletedGoals,
-        'edit-goal': this.onEditGoal,
-        'remove-goal': this.onRemoveGoal,
         'add-goal': this.onAddGoal,
     };
     /* eslint-enable @typescript-eslint/unbound-method */
-    contextGoalId = null;
-    controlsDropdownExpanded = false;
     /* --- Actions --- */
-    static onToggleGoalControls(event) {
-        // Get goal id
-        const goalId = $(event.currentTarget)
-            .closest('[data-id]')
-            .data('id');
-        const target = event.currentTarget;
-        const root = $(target).closest('.tab-body');
-        const dropdown = $(target)
-            .closest('.item-list')
-            .siblings('.controls-dropdown');
-        const targetRect = target.getBoundingClientRect();
-        const rootRect = root[0].getBoundingClientRect();
-        if (this.contextGoalId !== goalId) {
-            dropdown.css({
-                top: `${Math.round(targetRect.top - rootRect.top)}px`,
-                right: `${Math.round(rootRect.right - targetRect.right + targetRect.width)}px`,
-            });
-            if (!this.controlsDropdownExpanded) {
-                dropdown.addClass('expanded');
-                this.controlsDropdownExpanded = true;
-            }
-            this.contextGoalId = goalId;
-        }
-        else if (this.controlsDropdownExpanded) {
-            dropdown.removeClass('expanded');
-            this.controlsDropdownExpanded = false;
-            this.contextGoalId = null;
-        }
-    }
     static async onAdjustGoalProgress(event) {
         if (!this.application.isEditable)
             return;
@@ -18573,54 +18683,51 @@ class CharacterGoalsListComponent extends HandlebarsApplicationComponent {
             : Math.max(currentLevel - 1, 0);
         // Update the goal
         await goalItem.update({
-            'system.level': newLevel,
+            system: {
+                level: newLevel,
+            },
         });
         // Render
         await this.render();
     }
     static async onToggleHideCompletedGoals() {
         // Get current state
-        const hideCompletedGoals = this.application.actor.getFlag(SYSTEM_ID, HIDE_COMPLETED_FLAG) ?? false;
+        const hideCompletedGoals = this.application.actor.getFlag(SYSTEM_ID, HIDE_COMPLETED_FLAG) ??
+            false;
         // Update
         await this.application.actor.update({
-            [`flags.cosmere-rpg.${HIDE_COMPLETED_FLAG}`]: !hideCompletedGoals,
+            flags: {
+                'cosmere-rpg': {
+                    [HIDE_COMPLETED_FLAG]: !hideCompletedGoals,
+                },
+            },
         }, { render: false });
-        // Close controls dropdown if it happens to be open
-        this.controlsDropdownExpanded = false;
         // Render
         await this.render();
     }
-    static async onEditGoal() {
-        this.controlsDropdownExpanded = false;
-        // Render
-        await this.render();
-        // Ensure context goal id is set
-        if (this.contextGoalId !== null) {
-            // Get the goal
-            const goalItem = this.application.actor.items.get(this.contextGoalId);
-            if (!goalItem?.isGoal())
-                return;
-            // Show item sheet
-            void goalItem.sheet?.render(true);
-            this.contextGoalId = null;
-        }
+    static onEditGoal(element) {
+        const goalId = element.closest('[data-id]')?.getAttribute('data-id');
+        if (!goalId)
+            return;
+        // Get the goal
+        const goalItem = this.application.actor.items.get(goalId);
+        if (!goalItem?.isGoal())
+            return;
+        // Show item sheet
+        void goalItem.sheet?.render(true);
     }
-    static async onRemoveGoal() {
-        this.controlsDropdownExpanded = false;
-        // Ensure context goal id is set
-        if (this.contextGoalId !== null) {
-            // Get the goal
-            const goalItem = this.application.actor.items.get(this.contextGoalId);
-            if (!goalItem?.isGoal())
-                return;
-            // Delete the goal
-            await goalItem.delete();
-            this.contextGoalId = null;
-        }
+    static onRemoveGoal(element) {
+        const goalId = element.closest('[data-id]')?.getAttribute('data-id');
+        if (!goalId)
+            return;
+        // Get the goal
+        const goalItem = this.application.actor.items.get(goalId);
+        if (!goalItem?.isGoal())
+            return;
+        // Delete the goal
+        void goalItem.delete();
     }
     static async onAddGoal() {
-        // Ensure controls dropdown is closed
-        this.controlsDropdownExpanded = false;
         // Create goal
         const goal = (await Item.create({
             type: "goal" /* ItemType.Goal */,
@@ -18636,7 +18743,8 @@ class CharacterGoalsListComponent extends HandlebarsApplicationComponent {
     }
     /* --- Context --- */
     async _prepareContext(params, context) {
-        const hideCompletedGoals = this.application.actor.getFlag(SYSTEM_ID, HIDE_COMPLETED_FLAG) ?? false;
+        const hideCompletedGoals = this.application.actor.getFlag(SYSTEM_ID, HIDE_COMPLETED_FLAG) ??
+            false;
         return Promise.resolve({
             ...context,
             goals: this.application.actor.goals
@@ -18648,6 +18756,29 @@ class CharacterGoalsListComponent extends HandlebarsApplicationComponent {
             }))
                 .filter((goal) => !hideCompletedGoals || !goal.achieved),
             hideCompletedGoals,
+        });
+    }
+    /* --- Lifecyle --- */
+    _onInitialize() {
+        if (!this.application.isEditable)
+            return;
+        // Create context menu
+        AppContextMenu.create({
+            parent: this,
+            items: [
+                {
+                    name: 'GENERIC.Button.Edit',
+                    icon: 'fa-solid fa-pen-to-square',
+                    callback: CharacterGoalsListComponent.onEditGoal.bind(this),
+                },
+                {
+                    name: 'GENERIC.Button.Remove',
+                    icon: 'fa-solid fa-trash',
+                    callback: CharacterGoalsListComponent.onRemoveGoal.bind(this),
+                },
+            ],
+            selectors: ['a[data-action="toggle-controls"]'],
+            anchor: 'right',
         });
     }
     /* --- Helpers --- */
@@ -18695,46 +18826,12 @@ class CharacterConnectionsListComponent extends HandlebarsApplicationComponent {
      */
     /* eslint-disable @typescript-eslint/unbound-method */
     static ACTIONS = {
-        'toggle-connection-controls': this.onToggleConnectionControls,
         'add-connection': this.onAddConnection,
-        'remove-connection': this.onRemoveConnection,
-        'edit-connection': this.onEditConnection,
         'toggle-expand-connection': this.onToggleExpandConnection,
     };
     /* eslint-enable @typescript-eslint/unbound-method */
     connectionItemStates = {};
-    contextConnectionId = null;
-    controlsDropdownExpanded = false;
     /* --- Connections --- */
-    static onToggleConnectionControls(event) {
-        // Get connection id
-        const connectionId = $(event.currentTarget)
-            .closest('[data-id]')
-            .data('id');
-        const target = event.currentTarget;
-        const root = $(target).closest('.tab-body');
-        const dropdown = $(target)
-            .closest('.item-list')
-            .siblings('.controls-dropdown');
-        const targetRect = target.getBoundingClientRect();
-        const rootRect = root[0].getBoundingClientRect();
-        if (this.contextConnectionId !== connectionId) {
-            dropdown.css({
-                top: `${Math.round(targetRect.top - rootRect.top)}px`,
-                right: `${Math.round(rootRect.right - targetRect.right + targetRect.width)}px`,
-            });
-            if (!this.controlsDropdownExpanded) {
-                dropdown.addClass('expanded');
-                this.controlsDropdownExpanded = true;
-            }
-            this.contextConnectionId = connectionId;
-        }
-        else if (this.controlsDropdownExpanded) {
-            dropdown.removeClass('expanded');
-            this.controlsDropdownExpanded = false;
-            this.contextConnectionId = null;
-        }
-    }
     static async onAddConnection() {
         // Create connection
         const [{ id }] = await this.application.actor.createEmbeddedDocuments('Item', [
@@ -18752,29 +18849,31 @@ class CharacterConnectionsListComponent extends HandlebarsApplicationComponent {
             this.editConnection(id);
         }, 50);
     }
-    static async onRemoveConnection() {
-        this.controlsDropdownExpanded = false;
-        // Ensure context goal id is set
-        if (this.contextConnectionId !== null) {
-            // Remove the connection
-            await this.application.actor.deleteEmbeddedDocuments('Item', [this.contextConnectionId], { render: false });
-            this.contextConnectionId = null;
-        }
-        // Render
-        await this.render();
+    static onRemoveConnection(element) {
+        const connectionId = element
+            .closest('[data-id]')
+            ?.getAttribute('data-id');
+        if (!connectionId)
+            return;
+        // Get the connection
+        const connectionItem = this.application.actor.items.get(connectionId);
+        if (!connectionItem?.isConnection())
+            return;
+        // Delete the connection
+        void connectionItem.delete();
     }
-    static onEditConnection() {
-        this.controlsDropdownExpanded = false;
-        // Ensure context goal id is set
-        if (this.contextConnectionId !== null) {
-            // Get the connection
-            const connection = this.application.actor.items.find((i) => i.id === this.contextConnectionId);
-            // Show connection sheet
-            void connection.sheet?.render(true);
-            this.contextConnectionId = null;
-        }
-        // Render
-        void this.render();
+    static onEditConnection(element) {
+        const connectionId = element
+            .closest('[data-id]')
+            ?.getAttribute('data-id');
+        if (!connectionId)
+            return;
+        // Get the connection
+        const connectionItem = this.application.actor.items.get(connectionId);
+        if (!connectionItem?.isConnection())
+            return;
+        // Show item sheet
+        void connectionItem.sheet?.render(true);
     }
     static onToggleExpandConnection(event) {
         // Get connection element
@@ -18808,15 +18907,37 @@ class CharacterConnectionsListComponent extends HandlebarsApplicationComponent {
                 ...item,
                 ...this.connectionItemStates[item.id],
                 id: item.id,
-                descriptionHTML: await TextEditor.enrichHTML(
+                descriptionHTML: await foundry.applications.ux.TextEditor.enrichHTML(
                 // NOTE: We use a logical OR here to catch both nullish values and empty string
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 item.system.description?.value || '<p>—</p>', {
                     relativeTo: item.system
                         .parent,
                 }),
             }))),
         };
+    }
+    /* --- Lifecycle --- */
+    _onInitialize() {
+        if (!this.application.isEditable)
+            return;
+        // Create context menu
+        AppContextMenu.create({
+            parent: this,
+            items: [
+                {
+                    name: 'GENERIC.Button.Edit',
+                    icon: 'fa-solid fa-pen-to-square',
+                    callback: CharacterConnectionsListComponent.onEditConnection.bind(this),
+                },
+                {
+                    name: 'GENERIC.Button.Remove',
+                    icon: 'fa-solid fa-trash',
+                    callback: CharacterConnectionsListComponent.onRemoveConnection.bind(this),
+                },
+            ],
+            selectors: ['a[data-action="toggle-controls"]'],
+            anchor: 'right',
+        });
     }
     /* --- Helpers --- */
     editConnection(id) {
@@ -19051,7 +19172,7 @@ class EditCreatureTypeDialog extends HandlebarsApplicationMixin$1((ApplicationV2
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'COSMERE.Actor.Sheet.EditType',
             minimizable: false,
@@ -19065,7 +19186,7 @@ class EditCreatureTypeDialog extends HandlebarsApplicationMixin$1((ApplicationV2
         actions: {
             'update-type': this.onUpdateType,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ADVERSARY_EDIT_CREATURE_TYPE}`,
@@ -19093,7 +19214,9 @@ class EditCreatureTypeDialog extends HandlebarsApplicationMixin$1((ApplicationV2
     /* --- Actions --- */
     static onUpdateType() {
         void this.actor.update({
-            'system.type': this.type,
+            system: {
+                type: this.type,
+            },
         });
         void this.close();
     }
@@ -19115,8 +19238,8 @@ class EditCreatureTypeDialog extends HandlebarsApplicationMixin$1((ApplicationV2
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     /* --- Context --- */
@@ -19175,7 +19298,7 @@ AdversaryHeaderComponent.register('app-adversary-header');
 const { ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
 class ConfigureSkillsDialog extends ComponentHandlebarsApplicationMixin((ApplicationV2$3)) {
     actor;
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'COSMERE.Actor.Sheet.ConfigureSkills',
             minimizable: false,
@@ -19186,7 +19309,7 @@ class ConfigureSkillsDialog extends ComponentHandlebarsApplicationMixin((Applica
         position: {
             width: 300,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ADVERSARY_CONFIGURE_SKILLS}`,
@@ -19203,12 +19326,14 @@ class ConfigureSkillsDialog extends ComponentHandlebarsApplicationMixin((Applica
         await new ConfigureSkillsDialog(actor).render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
-    _onFirstRender(context, options) {
-        super._onFirstRender(context, options);
+    async _onFirstRender(context, options) {
+        await super._onFirstRender(context, options);
+        // TODO: Resolve foundry-vtt-types typing issues
+        // @ts-expect-error Configure skills dialog is not assignable to Application.Any
         this.actor.apps[this.id] = this;
     }
     _onClose(options) {
@@ -19218,12 +19343,13 @@ class ConfigureSkillsDialog extends ComponentHandlebarsApplicationMixin((Applica
         }
     }
     /* --- Context --- */
-    _prepareContext() {
-        return Promise.resolve({
+    async _prepareContext() {
+        return {
+            ...(await super._prepareContext()),
             actor: this.actor,
             attributeGroups: Object.keys(CONFIG.COSMERE.attributeGroups),
             isEditMode: true,
-        });
+        };
     }
 }
 
@@ -19254,7 +19380,10 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
         event.preventDefault();
         event.stopPropagation();
         // Update the flag
-        void this.application.actor.setFlag(SYSTEM_ID, 'sheet.hideUnranked', !this.application.hideUnrankedSkills);
+        void this.application.actor.setFlag(SYSTEM_ID, 'sheet.hideUnranked', 
+        // TODO: Resolve typing issues
+        // @ts-expect-error AdversarySkillsComponent is not typed to have application of type AdversarySheet due to foundry-vtt-types issues
+        !this.application.hideUnrankedSkills);
     }
     static onConfigureSkills(event) {
         event.preventDefault();
@@ -19263,6 +19392,10 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
     }
     /* --- Context --- */
     _prepareContext(params, context) {
+        const shouldHideUnranked = 
+        // TODO: Resolve typing issues
+        // @ts-expect-error AdversarySkillsComponent is not typed to have application of type AdversarySheet due to foundry-vtt-types issues
+        this.application.hideUnrankedSkills;
         // Get the skill ids
         const skillIds = Object.keys(CONFIG.COSMERE.skills).sort((a, b) => a.localeCompare(b)); // Sort alphabetically
         // Get skills
@@ -19275,7 +19408,7 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
                 attributeLabel: CONFIG.COSMERE.attributes[skillConfig.attribute].label,
                 ...this.application.actor.system.skills[skillId],
                 active: (!skillConfig.hiddenUntilAcquired &&
-                    !this.application.hideUnrankedSkills) ||
+                    !shouldHideUnranked) ||
                     this.application.actor.system.skills[skillId].rank >= 1,
             };
         })
@@ -19287,7 +19420,7 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
         return Promise.resolve({
             ...context,
             sectionCollapsed: this.sectionCollapsed,
-            hideUnranked: this.application.hideUnrankedSkills,
+            hideUnranked: shouldHideUnranked,
             skills,
             hasActiveSkills: skills.some((skill) => skill.active),
         });
@@ -19295,6 +19428,8 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
     /* --- Lifecycle --- */
     _onInitialize(params) {
         super._onInitialize(params);
+        // TODO: Resolve typing issues
+        // @ts-expect-error AdversarySkillsComponent is not typed to have application of type AdversarySheet due to foundry-vtt-types issues
         this.sectionCollapsed = this.application.areSkillsCollapsed;
     }
     _onRender(params) {
@@ -19311,7 +19446,11 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
         if (!this.application.isEditable)
             return;
         void this.application.actor.update({
-            'flags.cosmere-rpg.sheet.skillsCollapsed': this.sectionCollapsed,
+            flags: {
+                'cosmere-rpg': {
+                    'sheet.skillsCollapsed': this.sectionCollapsed,
+                },
+            },
         }, { render: false });
     }
 }
@@ -19319,7 +19458,7 @@ class AdversarySkillsComponent extends HandlebarsApplicationComponent {
 AdversarySkillsComponent.register('app-adversary-skills');
 
 class AdversarySheet extends BaseActorSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'actor', 'adversary'],
         position: {
             width: 850,
@@ -19331,15 +19470,12 @@ class AdversarySheet extends BaseActorSheet {
             },
         ],
         actions: {},
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         content: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ACTOR_ADVERSARY_CONTENT}`,
         },
     });
-    get actor() {
-        return super.document;
-    }
     get areSkillsCollapsed() {
         return this.actor.getFlag(SYSTEM_ID, 'sheet.skillsCollapsed') ?? false;
     }
@@ -19366,13 +19502,13 @@ class AdversarySheet extends BaseActorSheet {
 }
 
 class CharacterSheet extends BaseActorSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'actor', 'character'],
         position: {
             width: 850,
             height: 1000,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         header: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ACTOR_CHARACTER_HEADER}`,
@@ -19393,13 +19529,10 @@ class CharacterSheet extends BaseActorSheet {
             sortIndex: 25,
         },
     });
-    get actor() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         // Find the ancestry
-        const ancestryItem = this.actor.items.find((item) => item.type === "ancestry" /* ItemType.Ancestry */);
+        const ancestryItem = this.actor.items.find((item) => item.isAncestry());
         // Find all paths
         const pathItems = this.actor.items.filter((item) => item.isPath());
         // Split paths by type
@@ -19439,12 +19572,12 @@ class ItemHeaderComponent extends HandlebarsApplicationComponent {
         if (!this.application.isEditable)
             return;
         const { img: defaultImg } = CosmereItem.getDefaultArtwork(this.application.item.toObject());
-        void new FilePicker({
+        void new foundry.applications.apps.FilePicker({
             current: this.application.item.img,
             type: 'image',
             redirectToRoot: [defaultImg],
-            top: this.application.position.top + 40,
-            left: this.application.position.left + 10,
+            // top: this.application.position.top + 40,
+            // left: this.application.position.left + 10,
             callback: (path) => {
                 void this.application.item.update({
                     img: path,
@@ -19454,9 +19587,10 @@ class ItemHeaderComponent extends HandlebarsApplicationComponent {
     }
     /* --- Context --- */
     _prepareContext(params, context) {
+        const item = this.application.item; // TEMP: Workaround
         return Promise.resolve({
             ...context,
-            typeLabel: CONFIG.COSMERE.items.types[this.application.item.type].label,
+            typeLabel: CONFIG.COSMERE.items.types[item.type].label,
         });
     }
 }
@@ -19522,7 +19656,8 @@ class ItemEffectsListComponent extends HandlebarsApplicationComponent {
     }
     /* --- Context --- */
     _prepareContext(params, context) {
-        const effects = this.application.item.effects.filter((effect) => {
+        const item = this.application.item; // TEMP: Workaround
+        const effects = item.effects.filter((effect) => {
             switch (params.type) {
                 case 'inactive':
                     return !effect.active;
@@ -19565,7 +19700,7 @@ class ItemEditEventRuleDialog extends ComponentHandlebarsApplicationMixin((Appli
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'DIALOG.EditEventRule.Title',
             minimizable: false,
@@ -19580,7 +19715,7 @@ class ItemEditEventRuleDialog extends ComponentHandlebarsApplicationMixin((Appli
         actions: {
             update: this.onUpdateRule,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.DIALOG_ITEM_EDIT_EVENT_RULE}`,
@@ -19608,7 +19743,8 @@ class ItemEditEventRuleDialog extends ComponentHandlebarsApplicationMixin((Appli
     /* --- Actions --- */
     static onUpdateRule() {
         // Get changes
-        const changes = foundry.utils.mergeObject(getObjectChanges(this.item.system.events.get(this.rule.id).toObject(), this.rule.toObject()), {
+        const changes = foundry.utils.mergeObject(getObjectChanges(this.item.system.events.get(this.rule.id).toObject(), // TEMP: Workaround
+        this.rule.toObject()), {
             /**
              * NOTE: We have to always include the handler type in the changes
              * otherwise the handler field cannot determine which schema to use
@@ -19643,8 +19779,8 @@ class ItemEditEventRuleDialog extends ComponentHandlebarsApplicationMixin((Appli
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     async _preRender(context, options) {
@@ -19663,8 +19799,7 @@ class ItemEditEventRuleDialog extends ComponentHandlebarsApplicationMixin((Appli
     }
     /* --- Context --- */
     _prepareContext() {
-        const allEventSelectOptions = this.rule.schema.fields.event
-            .choices();
+        const allEventSelectOptions = this.rule.schema.fields.event.choices();
         // Prepare the context
         return Promise.resolve({
             editable: true,
@@ -19714,7 +19849,7 @@ class ItemEventRulesListComponent extends HandlebarsApplicationComponent {
             },
         });
         // Get the rule
-        const rule = this.item.system.events.get(id);
+        const rule = this.item.system.events.get(id); // TEMP: Workaround
         // Show the edit dialog
         void ItemEditEventRuleDialog.show(this.item, rule);
     }
@@ -19724,7 +19859,7 @@ class ItemEventRulesListComponent extends HandlebarsApplicationComponent {
         if (!id)
             return;
         // Get the rule
-        const rule = this.item.system.events.get(id);
+        const rule = this.item.system.events.get(id); // TEMP: Workaround
         if (!rule)
             return;
         // Show the edit dialog
@@ -19737,7 +19872,7 @@ class ItemEventRulesListComponent extends HandlebarsApplicationComponent {
             return;
         // Delete the rule
         void this.item.update({
-            [`system.events.-=${id}`]: {},
+            [`system.events.-=${id}`]: null,
         });
     }
     /* --- Context --- */
@@ -19805,7 +19940,8 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
     }
     /* --- Context --- */
     _prepareContext(params, context) {
-        const isEquippable = this.application.item.isEquippable();
+        const item = this.application.item; // TEMP: Workaround
+        const isEquippable = item.isEquippable();
         if (!isEquippable) {
             return Promise.resolve({
                 ...context,
@@ -19819,8 +19955,8 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
                 ...acc,
                 [key]: type.label,
             }), {}),
-            holdTypeLabel: this.application.item.system.equip.hold
-                ? CONFIG.COSMERE.items.equip.hold[this.application.item.system.equip.hold].label
+            holdTypeLabel: item.system.equip.hold
+                ? CONFIG.COSMERE.items.equip.hold[item.system.equip.hold].label
                 : '—',
             normalTraitsCollapsed: this.normalTraitsCollapsed,
             expertTraitsCollapsed: this.expertTraitsCollapsed,
@@ -19831,7 +19967,7 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
         });
     }
     prepareTraitsData(expert) {
-        const item = this.application.item;
+        const item = this.application.item; // TEMP: Workaround
         if (!item.isArmor() && !item.isWeapon())
             return null;
         const isArmor = item.isArmor();
@@ -19859,8 +19995,8 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
                             {
                                 id,
                                 type: 'modify-trait-value',
-                                label: game
-                                    .i18n.localize('COSMERE.Item.Sheet.Equip.ModifyTraitValue')
+                                label: game.i18n
+                                    .localize('COSMERE.Item.Sheet.Equip.ModifyTraitValue')
                                     .replace('[trait]', game.i18n.localize(config.label))
                                     .replace('[value]', (traitData.defaultValue ?? 0).toString()),
                                 value: traitData.expertise.value ??
@@ -19872,8 +20008,8 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
                     {
                         id,
                         type: 'lose-trait',
-                        label: game
-                            .i18n.localize('COSMERE.Item.Sheet.Equip.LoseTrait')
+                        label: game.i18n
+                            .localize('COSMERE.Item.Sheet.Equip.LoseTrait')
                             .replace('[trait]', game.i18n.localize(config.label)),
                         active: traitData.expertise.toggleActive,
                     },
@@ -19894,7 +20030,7 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
             .flat();
     }
     prepareNormalTraitsString() {
-        const item = this.application.item;
+        const item = this.application.item; // TEMP: Workaround
         if (!item.hasTraits())
             return null;
         const isArmor = item.isArmor();
@@ -19909,30 +20045,29 @@ class DetailsEquipComponent extends HandlebarsApplicationComponent {
             .join(', ');
     }
     prepareExpertTraitsString() {
-        const item = this.application.item;
+        const item = this.application.item; // TEMP: Workaround
         if (!item.hasTraits())
             return null;
         const isArmor = item.isArmor();
         return item.system.traitsArray
-            .filter((trait) => !!trait.expertise.toggleActive ||
-            trait.expertise.value !== null)
+            .filter((trait) => !!trait.expertise.toggleActive || trait.expertise.value)
             .map((trait) => {
             const config = isArmor
                 ? CONFIG.COSMERE.traits.armorTraits[trait.id]
                 : CONFIG.COSMERE.traits.weaponTraits[trait.id];
             if (trait.defaultActive && trait.expertise.toggleActive) {
-                return game
-                    .i18n.localize('COSMERE.Item.Sheet.Equip.LoseTrait')
+                return game.i18n
+                    .localize('COSMERE.Item.Sheet.Equip.LoseTrait')
                     .replace('[trait]', game.i18n.localize(config.label));
             }
             else if (!trait.defaultActive &&
                 trait.expertise.toggleActive) {
                 return game.i18n.localize(config.label);
             }
-            else if (trait.defaultValue !== null &&
-                trait.expertise.value !== null) {
-                return game
-                    .i18n.localize('COSMERE.Item.Sheet.Equip.ModifyTraitValue')
+            else if (trait.defaultValue != null &&
+                trait.expertise.value != null) {
+                return game.i18n
+                    .localize('COSMERE.Item.Sheet.Equip.ModifyTraitValue')
                     .replace('[trait]', game.i18n.localize(config.label))
                     .replace('[value]', trait.defaultValue.toString())
                     .replace('[newValue]', trait.expertise.value.toString());
@@ -19982,7 +20117,7 @@ class DetailsDeflectComponent extends HandlebarsApplicationComponent {
         });
     }
     prepareDeflectedTypesString() {
-        const item = this.application.item;
+        const item = this.application.item; // TEMP: Workaround
         if (!item.hasDeflect())
             return null;
         return item.system.deflectsArray
@@ -20019,11 +20154,16 @@ class DetailsActivationComponent extends HandlebarsApplicationComponent {
             value: {
                 min: 0,
                 max: 0,
+                actual: 0,
             },
             resource: "foc" /* Resource.Focus */,
         });
         void this.application.item.update({
-            ['system.activation.consume']: activation.consume,
+            system: {
+                activation: {
+                    consume: activation.consume,
+                },
+            },
         });
     }
     /* --- Context --- */
@@ -20048,12 +20188,12 @@ class DetailsActivationComponent extends HandlebarsApplicationComponent {
             usesTypeSelectOptions: {
                 [NONE]: 'GENERIC.None',
                 ...this.application.item
-                    .system.schema.getField('activation.uses.type').options.choices,
+                    .system.schema.getField('activation.uses.type').options.choices, // TEMP: Workaround
             },
             consumeTypeSelectOptions: {
                 '': 'GENERIC.None',
                 ...this.application.item
-                    .system.schema.getField('activation.consume.element.type').options.choices,
+                    .system.schema.getField('activation.consume.element.type').options.choices, // TEMP: Workaround
             },
         };
     }
@@ -20125,7 +20265,8 @@ class DetailsDamageComponent extends HandlebarsApplicationComponent {
         const hasSkillTest = this.application.item.hasActivation() &&
             this.application.item.system.activation.type ===
                 "skill_test" /* ActivationType.SkillTest */;
-        const hasSkill = hasSkillTest &&
+        const hasSkill = this.application.item.hasActivation() &&
+            hasSkillTest &&
             this.application.item.system.activation.resolvedSkill;
         this.grazeOverrideCollapsed = this.application.item.system.damage
             .grazeOverrideFormula
@@ -20202,7 +20343,7 @@ class DetailsLinkedSkillsComponent extends HandlebarsApplicationComponent {
         if (!hasLinkedSkills)
             return Promise.resolve({ ...context, hasLinkedSkills });
         let linkedSkillsOptions = this.application.item
-            .system.schema.getField('linkedSkills').element.choices;
+            .system.schema.getField('linkedSkills').element.choices; // TEMP: Workaround
         if (linkedSkillsOptions instanceof Function)
             linkedSkillsOptions = linkedSkillsOptions();
         return Promise.resolve({
@@ -20251,7 +20392,12 @@ class ItemPropertiesComponent extends HandlebarsApplicationComponent {
 // Register component
 ItemPropertiesComponent.register('app-item-properties');
 
-class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsApplicationComponent)) {
+class AdvancementTalentListComponent extends DragDropComponentMixin(
+// HandlebarsApplicationComponent<ConstructorOf<AncestrySheet>>,
+// TODO: Resolve typing issues
+// NOTE: Use any as workaround for foundry-vtt-types issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(HandlebarsApplicationComponent)) {
     static TEMPLATE = `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_ANCESTRY_TALENT_LIST}`;
     /**
      * NOTE: Unbound methods is the standard for defining actions
@@ -20270,6 +20416,8 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
     ];
     /* --- Actions --- */
     static onRemoveTalent(event) {
+        if (!this.application.item.isAncestry())
+            return; // TEMP: Workaround
         // Get the element
         const el = $(event.currentTarget).closest('.talent');
         // Get the index
@@ -20280,7 +20428,11 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
         extraTalents.splice(index, 1);
         // Remove the talent
         void this.application.item.update({
-            'system.advancement.extraTalents': extraTalents,
+            system: {
+                advancement: {
+                    extraTalents,
+                },
+            },
         });
     }
     static onEditTalent(event) {
@@ -20315,8 +20467,9 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
         if (doc.type !== 'talent') {
             return ui.notifications.warn(game.i18n.localize('COSMERE.Item.Sheet.Ancestry.Component.AdvancementTalentList.Warning.WrongType'));
         }
+        const item = this.application.item; // TEMP: Workaround
         // Get the talents list
-        let talents = this.application.item.system.advancement.extraTalents;
+        let talents = item.system.advancement.extraTalents;
         // Append
         talents.push({
             uuid: data.uuid,
@@ -20326,7 +20479,11 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
         talents = talents.sort((a, b) => a.level - b.level);
         // Add the talent
         await this.application.item.update({
-            [`system.advancement.extraTalents`]: talents,
+            system: {
+                advancement: {
+                    extraTalents: talents,
+                },
+            },
         });
         // Find the index
         const index = talents.findIndex((talent) => talent.uuid === data.uuid);
@@ -20343,8 +20500,9 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
     }
     /* --- Context --- */
     async _prepareContext(params, context) {
+        const item = this.application.item; // TEMP: Workaround
         // Get the extra talents from the item
-        let { extraTalents } = this.application.item.system.advancement;
+        let { extraTalents } = item.system.advancement;
         // Sort
         extraTalents = extraTalents.sort((a, b) => a.level - b.level);
         // Process uuids to content links
@@ -20365,6 +20523,8 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
     }
     /* --- Helpers --- */
     editTalent(index) {
+        if (!this.application.item.isAncestry())
+            return; // TEMP: Workaround
         const extraTalents = this.application.item.system.advancement.extraTalents;
         // Get talent
         const talent = extraTalents[index];
@@ -20394,7 +20554,11 @@ class AdvancementTalentListComponent extends DragDropComponentMixin((HandlebarsA
                     // Update
                     extraTalents[index].level = newLevel;
                     void this.application.item.update({
-                        'system.advancement.extraTalents': extraTalents,
+                        system: {
+                            advancement: {
+                                extraTalents,
+                            },
+                        },
                     });
                 }
                 else {
@@ -20416,7 +20580,7 @@ class EditBonusTalentsRuleDialog extends HandlebarsApplicationMixin((Application
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'DIALOG.EditBonusTalentsRule.Title',
             minimizable: false,
@@ -20431,7 +20595,7 @@ class EditBonusTalentsRuleDialog extends HandlebarsApplicationMixin((Application
         actions: {
             update: this.onSubmit,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: 'systems/cosmere-rpg/templates/item/ancestry/dialogs/edit-bonus-talents-rule.hbs',
@@ -20472,8 +20636,8 @@ class EditBonusTalentsRuleDialog extends HandlebarsApplicationMixin((Application
         void this.close();
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
     }
     _onClose() {
@@ -20503,8 +20667,9 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
     /* eslint-enable @typescript-eslint/unbound-method */
     /* --- Actions --- */
     static async onAddRule(event) {
+        const item = this.application.item; // TEMP: Workaround
         // Get bonus talents
-        const { bonusTalents } = this.application.item.system.advancement;
+        const { bonusTalents } = item.system.advancement;
         // Find the highest level
         const highest = bonusTalents.reduce((acc, rule) => Math.max(acc, rule.level), 0);
         // Create a new rule
@@ -20515,7 +20680,11 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
         });
         // Update the item
         await this.application.item.update({
-            'system.advancement.bonusTalents': bonusTalents,
+            system: {
+                advancement: {
+                    bonusTalents,
+                },
+            },
         });
         // Edit the rule
         void this.editRule(bonusTalents.length - 1);
@@ -20529,6 +20698,8 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
         void this.editRule(index);
     }
     static onRemoveRule(event) {
+        if (!this.application.item.isAncestry())
+            return; // TEMP: Workaround
         // Get the element
         const el = $(event.currentTarget).closest('li');
         // Get the index
@@ -20539,12 +20710,17 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
         bonusTalents.splice(index, 1);
         // Update the item
         void this.application.item.update({
-            'system.advancement.bonusTalents': bonusTalents,
+            system: {
+                advancement: {
+                    bonusTalents,
+                },
+            },
         });
     }
     /* --- Context --- */
     _prepareContext(params, context) {
-        const levels = this.application.item.system.advancement.bonusTalents.sort((a, b) => a.level - b.level);
+        const item = this.application.item; // TEMP: Workaround
+        const levels = item.system.advancement.bonusTalents.sort((a, b) => a.level - b.level);
         return Promise.resolve({
             ...context,
             levels,
@@ -20552,8 +20728,9 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
     }
     /* --- Helpers --- */
     async editRule(index) {
+        const item = this.application.item; // TEMP: Workaround
         // Get bonus talents
-        const { bonusTalents } = this.application.item.system.advancement;
+        const { bonusTalents } = item.system.advancement;
         // Get the rule
         const rule = bonusTalents[index];
         const changes = await EditBonusTalentsRuleDialog.show(rule);
@@ -20563,13 +20740,17 @@ class AncestryBonusTalentsComponent extends HandlebarsApplicationComponent {
                 const existing = bonusTalents.find((r) => r.level === changes.level);
                 if (existing) {
                     return ui.notifications.warn(game.i18n.format('DIALOG.EditBonusTalentsRule.Warning.DuplicateLevel', {
-                        level: changes.level,
+                        level: changes.level.toFixed(),
                     }));
                 }
             }
             bonusTalents[index] = changes;
             void this.application.item.update({
-                'system.advancement.bonusTalents': bonusTalents,
+                system: {
+                    advancement: {
+                        bonusTalents,
+                    },
+                },
             });
         }
     }
@@ -21449,7 +21630,7 @@ class BaseConnection extends Drawable {
     /* --- Drawing --- */
     _draw() {
         // Draw path
-        this.drawPath();
+        this.drawConnectionPath();
         // // Debug hit area
         // this.lineStyle(1, 'red');
         // this.drawPolygon(this.hitArea as PIXI.Polygon);
@@ -21474,7 +21655,7 @@ class BaseConnection extends Drawable {
         }
         this.prevIsObtained = this.isObtained;
     }
-    drawPath() {
+    drawConnectionPath() {
         // Set line style
         this.lineStyle(this.getLineStyle());
         if (!this.path || this.path.length === 0) {
@@ -21720,6 +21901,12 @@ class TreeHeader extends Drawable {
         this.drawRect(this.node.contentBounds.x - this.node.padding.x, this.node.contentBounds.y - this.node.padding.y - size.height, size.width, size.height);
         // Update text position
         this.text.position.set(this.node.contentBounds.x + this.node.contentBounds.width / 2, this.node.contentBounds.y - this.node.padding.y - size.height / 2);
+    }
+    /**
+     * Measured width of the header text (unconstrained by the node size).
+     */
+    get textWidth() {
+        return this.text.width;
     }
 }
 class TreeBackground extends Drawable {
@@ -21997,18 +22184,42 @@ class TalentTreeNode extends BaseNode {
         this.calculateContentBounds();
     }
     calculateContentBounds() {
-        const leftMostPosition = Math.min(...this.nodesLayer.children.map((node) => node.data.position.x));
-        const rightMostPosition = Math.max(...this.nodesLayer.children.map((node) => {
-            if (node instanceof TalentNode) {
-                return node.data.position.x + node.data.size.width;
-            }
-            else if (node instanceof TalentTreeNode) {
-                return node.data.position.x + node.contentBounds.width;
+        // Compute horizontal extents, taking into account that a nested
+        // tree's header text may be wider than its content. When the
+        // header text is wider, expand the child's extents symmetrically
+        // so the title won't overflow the calculated content bounds.
+        let leftMostPosition = Number.POSITIVE_INFINITY;
+        let rightMostPosition = Number.NEGATIVE_INFINITY;
+        for (const node of this.nodesLayer.children) {
+            const left = node.data.position.x;
+            const nodeWidth = node instanceof TalentTreeNode
+                ? node.contentBounds.width
+                : node.data.size.width;
+            const right = node.data.position.x + nodeWidth;
+            leftMostPosition = Math.min(leftMostPosition, left);
+            rightMostPosition = Math.max(rightMostPosition, right);
+        }
+        const contentWidth = rightMostPosition - leftMostPosition;
+        // If the tree node has a header, make sure its title fits.
+        if (this.header) {
+            const headerTextWidth = this.header.textWidth;
+            // The node's total visual width (including padding)
+            const nodeTotalWidth = contentWidth + this.padding.x * 2;
+            const desiredTotalWidth = Math.max(nodeTotalWidth, headerTextWidth);
+            const extra = Math.max(0, desiredTotalWidth - nodeTotalWidth);
+            let halfExtra = extra / 2 + this.padding.x;
+            // Snap the expansion to the parent grid so nested trees align.
+            const gridStep = SUB_GRID_SIZE;
+            if (halfExtra > 0) {
+                halfExtra = Math.ceil(halfExtra / gridStep) * gridStep;
             }
             else {
-                return 0;
+                halfExtra = 0;
             }
-        }));
+            leftMostPosition -= halfExtra;
+            rightMostPosition += halfExtra;
+        }
+        // Compute vertical extents (unchanged): node positions and heights
         const topMostPosition = Math.min(...this.nodesLayer.children.map((node) => node.data.position.y));
         const bottomMostPosition = Math.max(...this.nodesLayer.children.map((node) => {
             if (node instanceof TalentNode) {
@@ -22831,7 +23042,7 @@ class TalentTreeViewComponent extends DragDropComponentMixin(HandlebarsApplicati
             !this.contextActor.hasTalent(node.talentId) &&
             this.contextActor.hasTalentPreRequisites(node.prerequisites, this.tree)) {
             // Get the item
-            const item = (await fromUuid(node.uuid));
+            const item = await fromUuid(node.uuid);
             if (!item)
                 return;
             const itemData = item.toObject();
@@ -22905,8 +23116,8 @@ class TalentTreeViewComponent extends DragDropComponentMixin(HandlebarsApplicati
     }
     async onMouseOverNode(event) {
         // Get the item
-        const item = (await fromUuid(event.node.data.uuid));
-        if (!item)
+        const item = await fromUuid(event.node.data.uuid);
+        if (!item?.hasDescription())
             return;
         // Get the node
         const node = event.node.data;
@@ -22952,7 +23163,7 @@ class TalentTreeViewComponent extends DragDropComponentMixin(HandlebarsApplicati
                         : undefined),
                 };
             }),
-            description: await TextEditor.enrichHTML(htmlStringHasContent(item.system.description?.short)
+            description: await foundry.applications.ux.TextEditor.enrichHTML(htmlStringHasContent(item.system.description?.short)
                 ? item.system.description.short
                 : htmlStringHasContent(item.system.description?.value)
                     ? item.system.description.value
@@ -22976,7 +23187,8 @@ class TalentTreeViewComponent extends DragDropComponentMixin(HandlebarsApplicati
         // Show tooltip
         game.tooltip.activate(toolTipRoot, {
             content: content,
-            direction: 'RIGHT',
+            direction: foundry.helpers.interaction.TooltipManager.TOOLTIP_DIRECTIONS
+                .RIGHT,
         });
     }
     onMouseOutNode() {
@@ -22988,7 +23200,7 @@ class TalentTreeViewComponent extends DragDropComponentMixin(HandlebarsApplicati
     /* --- Context --- */
     async _prepareContext(params, context) {
         const item = !!this.selected && this.selectedType === 'node'
-            ? (await fromUuid(this.selected.uuid))
+            ? await fromUuid(this.selected.uuid)
             : null;
         const itemLink = item ? item.toAnchor().outerHTML : null;
         return {
@@ -23040,15 +23252,17 @@ class TalentTreeEditorComponent extends TalentTreeViewComponent {
         };
         // Store the view position
         void this.tree.update({
-            'system.viewBounds': {
-                x: center.x,
-                y: center.y,
-                width: bounds.width,
-                height: bounds.height,
-            },
-            'system.display': {
-                width: windowSize.width - EDIT_MENU_WIDTH,
-                height: windowSize.height,
+            system: {
+                viewBounds: {
+                    x: center.x,
+                    y: center.y,
+                    width: bounds.width,
+                    height: bounds.height,
+                },
+                display: {
+                    width: windowSize.width - EDIT_MENU_WIDTH,
+                    height: windowSize.height,
+                },
             },
         });
     }
@@ -23078,12 +23292,12 @@ class TalentTreeEditorComponent extends TalentTreeViewComponent {
         return true;
     }
     async _onDrop(event) {
-        const data = TextEditor.getDragEventData(event);
+        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
         // Ensure type is correct
         if (data.type !== 'Item')
             return;
         // Get the item
-        const item = (await fromUuid(data.uuid));
+        const item = await fromUuid(data.uuid);
         // Handle item
         if (item?.isTalent())
             await this.onDropTalent(event, item);
@@ -23190,10 +23404,16 @@ class TalentTreeEditorComponent extends TalentTreeViewComponent {
             width: event.node.size.width * this.viewport.view.zoom,
             height: event.node.size.height * this.viewport.view.zoom,
         };
+        const applicationBounds = this.application.element.getBoundingClientRect();
+        const elementBounds = this.element.getBoundingClientRect();
+        const elementOffset = {
+            top: elementBounds.top - applicationBounds.top,
+            left: elementBounds.left - applicationBounds.left,
+        };
         // Show context menu
         await this.contextMenu.show(options, {
-            left: viewPos.x + size.width,
-            top: viewPos.y,
+            left: viewPos.x + size.width + elementOffset.left,
+            top: viewPos.y + elementOffset.top,
         });
     }
     onClickConnection(event) {
@@ -23259,7 +23479,7 @@ class TalentTreeEditorComponent extends TalentTreeViewComponent {
                 name: 'Edit',
                 callback: async () => {
                     // Get the item
-                    const item = (await fromUuid(node.uuid));
+                    const item = await fromUuid(node.uuid);
                     // Show item sheet
                     void item?.sheet?.render(true);
                 },
@@ -23300,7 +23520,7 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         window: {
             title: 'DIALOG.EditTalentPrerequisite.Title',
             minimizable: false,
@@ -23315,7 +23535,7 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
         actions: {
             update: this.onUpdatePrerequisite,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         form: {
             template: 'systems/cosmere-rpg/templates/item/talent-tree/dialogs/edit-prerequisite.hbs',
@@ -23366,7 +23586,7 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
                 // Add removals
                 ...removedTalents.reduce((acc, id) => ({
                     ...acc,
-                    [`system.nodes.${this.node.id}.prerequisites.${this.data.id}.talents.-=${id}`]: {},
+                    [`system.nodes.${this.node.id}.prerequisites.${this.data.id}.talents.-=${id}`]: null,
                 }), {}),
             });
         }
@@ -23385,7 +23605,7 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
                 // Add removals
                 ...removedGoals.reduce((acc, id) => ({
                     ...acc,
-                    [`system.nodes.${this.node.id}.prerequisites.${this.data.id}.goals.-=${id}`]: {},
+                    [`system.nodes.${this.node.id}.prerequisites.${this.data.id}.goals.-=${id}`]: null,
                 }), {}),
             });
         }
@@ -23423,10 +23643,12 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
             this.data.rank = parseInt(formData.get('rank'), 10);
         }
         else if (this.data.type === "talent" /* TalentTree.Node.Prerequisite.Type.Talent */) {
-            this.data.talents ??= new RecordCollection();
+            this.data.talents ??=
+                new RecordCollection();
         }
         else if (this.data.type === "goal" /* TalentTree.Node.Prerequisite.Type.Goal */) {
-            this.data.goals ??= new RecordCollection();
+            this.data.goals ??=
+                new RecordCollection();
         }
         else if (this.data.type === "connection" /* TalentTree.Node.Prerequisite.Type.Connection */) {
             this.data.description = formData.get('description');
@@ -23463,8 +23685,8 @@ class EditNodePrerequisiteDialog extends ComponentHandlebarsApplicationMixin((Ap
         void this.render(true);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element).prop('open', true);
         $(this.element)
             .find('app-talent-prerequisite-talent-list')
@@ -23515,6 +23737,8 @@ class NodePrerequisitesComponent extends HandlebarsApplicationComponent {
     }
     /* --- Actions --- */
     static async onCreatePrerequisite(event) {
+        if (!this.application.item.isTalentTree())
+            return; // TEMP: Workaround
         // Create a new prerequisite
         const newRule = {
             id: foundry.utils.randomID(),
@@ -23531,6 +23755,8 @@ class NodePrerequisitesComponent extends HandlebarsApplicationComponent {
         await EditNodePrerequisiteDialog.show(this.application.item, this.node, newRule);
     }
     static onEditPrerequisite(event) {
+        if (!this.application.item.isTalentTree())
+            return; // TEMP: Workaround
         // Get the rule ID
         const id = this.getRuleIdFromEvent(event);
         if (!id)
@@ -23546,6 +23772,8 @@ class NodePrerequisitesComponent extends HandlebarsApplicationComponent {
         void EditNodePrerequisiteDialog.show(this.application.item, this.node, rule);
     }
     static onDeletePrerequisite(event) {
+        if (!this.application.item.isTalentTree())
+            return; // TEMP: Workaround
         // Get the rule ID
         const id = this.getRuleIdFromEvent(event);
         if (!id)
@@ -23816,7 +24044,7 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         form: {
             handler: this.onFormEvent,
             submitOnChange: true,
@@ -23825,7 +24053,7 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
             'edit-description': this.editDescription,
             save: this.onSave,
         },
-    });
+    };
     /* eslint-enable @typescript-eslint/unbound-method */
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         description: {
@@ -23847,9 +24075,6 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
     expanded = false;
     get isUpdatingDescription() {
         return this.updatingDescription;
-    }
-    get item() {
-        return super.document;
     }
     /* --- Form --- */
     static async onFormEvent(event, form, formData) {
@@ -23984,7 +24209,8 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
         return {
             ...(await super._prepareContext(options)),
             item: this.item,
-            systemFields: this.item.system.schema.fields,
+            systemFields: this.item.system.schema
+                .fields,
             editable: this.isEditable,
             isUpdatingDescription: this.isUpdatingDescription,
             descHtml: enrichedDescValue,
@@ -23993,8 +24219,8 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
             proseDescName: this.proseDescName,
             proseDescHtml: this.proseDescHtml,
             expandDefault: expandDefaultSetting,
-            typeLabel: game
-                .i18n.localize(`TYPES.Item.${this.item.type}`)
+            typeLabel: game.i18n
+                .localize(`TYPES.Item.${this.item.type}`)
                 .toLowerCase(),
         };
     }
@@ -24002,27 +24228,28 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
         if (desc === CONFIG.COSMERE.items.types[this.item.type].desc_placeholder) {
             desc = game.i18n.localize(desc);
         }
-        return await TextEditor.enrichHTML(desc, {
+        return await foundry.applications.ux.TextEditor.implementation.enrichHTML(desc, {
             relativeTo: this.document,
         });
     }
     /* --- Actions --- */
     static async editDescription(event) {
+        if (!this.item.hasDescription())
+            return;
         event.stopPropagation();
         // Get description element
         const descElement = $(event.target).closest('[description-type]');
         // Get description type
         const proseDescType = descElement.attr('description-type');
-        const item = this.item;
         // Gets the description to display based on the type found
         if (proseDescType === 'value') {
-            this.proseDescHtml = item.system.description.value;
+            this.proseDescHtml = this.item.system.description.value;
         }
         else if (proseDescType === 'short') {
-            this.proseDescHtml = item.system.description.short;
+            this.proseDescHtml = this.item.system.description.short;
         }
         else if (proseDescType === 'chat') {
-            this.proseDescHtml = item.system.description.chat;
+            this.proseDescHtml = this.item.system.description.chat;
         }
         // Gets name for use in prose mirror
         this.proseDescName = 'system.description.' + proseDescType;
@@ -24037,8 +24264,8 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
         await this.saveDescription();
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element)
             .find('.collapsible .header')
             .on('click', (event) => this.onClickCollapsible(event));
@@ -24148,7 +24375,7 @@ class BaseItemSheet extends TabsApplicationMixin(ComponentHandlebarsApplicationM
 }
 
 class CultureItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'culture'],
         position: {
             width: 550,
@@ -24157,7 +24384,7 @@ class CultureItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         content: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_BASE_CONTENT}`,
@@ -24170,9 +24397,6 @@ class CultureItemSheet extends BaseItemSheet {
             sortIndex: 15,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24195,12 +24419,14 @@ function TalentsTabMixin(base) {
             return Object.values(this.components).find((component) => component instanceof TalentTreeViewComponent);
         }
         /* --- Lifecycle --- */
-        _onFirstRender(context, options) {
-            super._onFirstRender(context, options);
+        async _onFirstRender(context, options) {
+            await super._onFirstRender(context, options);
             // Invoke on tab change
             void this.onTabChange();
         }
         async onTabChange() {
+            if (!this.item.isTalentsProvider())
+                return;
             if (this.tab === 'talents') {
                 // Look up talent tree
                 const talentTree = this.item.system.talentTree
@@ -24240,7 +24466,7 @@ function TalentsTabMixin(base) {
                 ? this.item.actor
                 : undefined;
             // Look up talent tree
-            const talentTree = this.item.system.talentTree
+            const talentTree = this.item.isTalentsProvider()
                 ? (await fromUuid(this.item.system.talentTree))
                 : undefined;
             return {
@@ -24254,7 +24480,7 @@ function TalentsTabMixin(base) {
 
 // Base
 class AncestrySheet extends TalentsTabMixin(BaseItemSheet) {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'ancestry'],
         position: {
             width: 550,
@@ -24263,7 +24489,7 @@ class AncestrySheet extends TalentsTabMixin(BaseItemSheet) {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24276,9 +24502,6 @@ class AncestrySheet extends TalentsTabMixin(BaseItemSheet) {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_ANCESTRY_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         // Check if the ancestry has a talent tree set
@@ -24293,7 +24516,7 @@ class AncestrySheet extends TalentsTabMixin(BaseItemSheet) {
 
 // Base
 class PathItemSheet extends TalentsTabMixin(BaseItemSheet) {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'path'],
         position: {
             width: 550,
@@ -24302,7 +24525,7 @@ class PathItemSheet extends TalentsTabMixin(BaseItemSheet) {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24315,13 +24538,10 @@ class PathItemSheet extends TalentsTabMixin(BaseItemSheet) {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_PATH_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
 }
 
 class ConnectionItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'connection'],
         position: {
             width: 550,
@@ -24330,15 +24550,12 @@ class ConnectionItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         content: {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_BASE_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24348,7 +24565,7 @@ class ConnectionItemSheet extends BaseItemSheet {
 }
 
 class InjuryItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'injury'],
         position: {
             width: 550,
@@ -24357,7 +24574,7 @@ class InjuryItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24370,9 +24587,6 @@ class InjuryItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_INJURY_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24383,42 +24597,8 @@ class InjuryItemSheet extends BaseItemSheet {
     }
 }
 
-class SpecialtyItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
-        classes: [SYSTEM_ID, 'sheet', 'item', 'specialty'],
-        position: {
-            width: 550,
-        },
-        window: {
-            resizable: false,
-            positioned: true,
-        },
-    });
-    static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
-        details: {
-            label: 'COSMERE.Item.Sheet.Tabs.Details',
-            icon: '<i class="fa-solid fa-circle-info"></i>',
-            sortIndex: 15,
-        },
-    });
-    static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
-        content: {
-            template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_SPECIALTY_CONTENT}`,
-        },
-    });
-    get item() {
-        return super.document;
-    }
-    /* --- Context --- */
-    async _prepareContext(options) {
-        return {
-            ...(await super._prepareContext(options)),
-        };
-    }
-}
-
 class LootItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'loot'],
         position: {
             width: 550,
@@ -24427,7 +24607,7 @@ class LootItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24440,9 +24620,6 @@ class LootItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_LOOT_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24452,7 +24629,7 @@ class LootItemSheet extends BaseItemSheet {
 }
 
 class ArmorItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'armor'],
         position: {
             width: 550,
@@ -24461,7 +24638,7 @@ class ArmorItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24474,9 +24651,6 @@ class ArmorItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_ARMOR_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24486,7 +24660,7 @@ class ArmorItemSheet extends BaseItemSheet {
 }
 
 class TraitItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'trait'],
         position: {
             width: 550,
@@ -24495,7 +24669,7 @@ class TraitItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24508,9 +24682,6 @@ class TraitItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_BASE_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24520,7 +24691,7 @@ class TraitItemSheet extends BaseItemSheet {
 }
 
 class ActionItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'action'],
         position: {
             width: 550,
@@ -24529,7 +24700,7 @@ class ActionItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24542,9 +24713,6 @@ class ActionItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_ACTION_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24559,7 +24727,7 @@ class TalentItemSheet extends BaseItemSheet {
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'talent'],
         position: {
             width: 550,
@@ -24571,7 +24739,7 @@ class TalentItemSheet extends BaseItemSheet {
         form: {
             handler: this.onFormEvent,
         },
-    });
+    };
     /* eslint-enable @typescript-eslint/unbound-method */
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
@@ -24585,9 +24753,6 @@ class TalentItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_TALENT_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Form --- */
     static async onFormEvent(event, form, formData) {
         if ('system.path' in formData.object &&
@@ -24609,7 +24774,7 @@ class TalentItemSheet extends BaseItemSheet {
 }
 
 class EquipmentItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'equipment'],
         position: {
             width: 550,
@@ -24618,7 +24783,7 @@ class EquipmentItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24631,9 +24796,6 @@ class EquipmentItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_BASE_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24643,7 +24805,7 @@ class EquipmentItemSheet extends BaseItemSheet {
 }
 
 class WeaponItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'weapon'],
         position: {
             width: 550,
@@ -24652,7 +24814,7 @@ class WeaponItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24666,9 +24828,6 @@ class WeaponItemSheet extends BaseItemSheet {
             scrollable: ['.scroll-container'],
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24678,7 +24837,7 @@ class WeaponItemSheet extends BaseItemSheet {
 }
 
 class GoalItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'armor'],
         position: {
             width: 550,
@@ -24687,7 +24846,7 @@ class GoalItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24700,9 +24859,6 @@ class GoalItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_GOAL_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24712,7 +24868,7 @@ class GoalItemSheet extends BaseItemSheet {
 }
 
 class PowerItemSheet extends BaseItemSheet {
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'armor'],
         position: {
             width: 550,
@@ -24721,7 +24877,7 @@ class PowerItemSheet extends BaseItemSheet {
             resizable: false,
             positioned: true,
         },
-    });
+    };
     static TABS = foundry.utils.mergeObject(foundry.utils.deepClone(super.TABS), {
         details: {
             label: 'COSMERE.Item.Sheet.Tabs.Details',
@@ -24734,9 +24890,6 @@ class PowerItemSheet extends BaseItemSheet {
             template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.ITEM_POWER_CONTENT}`,
         },
     });
-    get item() {
-        return super.document;
-    }
     /* --- Context --- */
     async _prepareContext(options) {
         return {
@@ -24755,7 +24908,7 @@ class TalentTreeItemSheet extends EditModeApplicationMixin(ComponentHandlebarsAp
      * within ApplicationV2
      */
     /* eslint-disable @typescript-eslint/unbound-method */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+    static DEFAULT_OPTIONS = {
         classes: [SYSTEM_ID, 'sheet', 'item', 'talent-tree'],
         window: {
             positioned: true,
@@ -24768,7 +24921,7 @@ class TalentTreeItemSheet extends EditModeApplicationMixin(ComponentHandlebarsAp
             handler: this.onFormEvent,
             submitOnChange: true,
         },
-    });
+    };
     /* eslint-enable @typescript-eslint/unbound-method */
     static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
         'sheet-content': {
@@ -24839,9 +24992,6 @@ class TalentTreeItemSheet extends EditModeApplicationMixin(ComponentHandlebarsAp
         void this.item.update(formData.object);
     }
     /* --- Accessors --- */
-    get item() {
-        return super.document;
-    }
     get contextActor() {
         return this._contextActor;
     }
@@ -24849,8 +24999,8 @@ class TalentTreeItemSheet extends EditModeApplicationMixin(ComponentHandlebarsAp
         return Object.values(this.components).find((component) => component instanceof TalentTreeViewComponent);
     }
     /* --- Lifecycle --- */
-    _onRender(context, options) {
-        super._onRender(context, options);
+    async _onRender(context, options) {
+        await super._onRender(context, options);
         $(this.element)
             .find('.collapsible .header')
             .on('click', (event) => this.onClickCollapsible(event));
@@ -24940,67 +25090,72 @@ class TalentTreeItemSheet extends EditModeApplicationMixin(ComponentHandlebarsAp
 /**
  * Overrides default tracker template to implement slow/fast buckets and combatant activation button.
  */
-class CosmereCombatTracker extends CombatTracker {
-    get template() {
-        return `systems/${SYSTEM_ID}/templates/${TEMPLATES.COMBAT_TRACKER}`;
-    }
+class CosmereCombatTracker extends foundry.applications.sidebar.tabs
+    .CombatTracker {
     /**
-     *  modifies data being sent to the combat tracker template to add turn speed, type and activation status and splitting turns between the initiative phases.
+     * NOTE: Unbound methods is the standard for defining actions
+     * within ApplicationV2
      */
-    async getData(options) {
-        const data = (await super.getData(options));
-        // Add combatant type, speed, and activation status to existing turn data
-        data.turns = data.turns.flatMap((turn, i) => {
-            const combatant = this.viewed.turns[i];
-            // Prepare turn data
-            const newTurn = {
-                ...turn,
-                turnSpeed: combatant.turnSpeed,
-                type: combatant.actor.type,
-                activated: combatant.activated,
-                isBoss: combatant.isBoss,
-                bossFastActivated: combatant.bossFastActivated,
-            };
-            // Strip active player formatting
-            newTurn.css = '';
-            // provide current turn for non-boss combatants
-            return newTurn;
-        });
-        //split turn data into individual turn "buckets" to separate them in the combat tracker ui
-        data.fastPlayers = data.turns.filter((turn) => {
+    /* eslint-disable @typescript-eslint/unbound-method */
+    static DEFAULT_OPTIONS = {
+        actions: {
+            toggleSpeed: this._onClickToggleTurnSpeed,
+            activateCombatant: this._onActivateCombatant,
+        },
+    };
+    /* eslint-enable @typescript-eslint/unbound-method */
+    static PARTS = foundry.utils.mergeObject(foundry.utils.deepClone(super.PARTS), {
+        tracker: {
+            template: `systems/${SYSTEM_ID}/templates/${TEMPLATES.COMBAT_TRACKER}`,
+        },
+    });
+    async _prepareTrackerContext(context, options) {
+        const combat = this.viewed;
+        if (!combat)
+            return;
+        context.turns = await combat.turns
+            .filter((c) => c.visible)
+            .reduce(async (prev, combatant, i) => [
+            ...(await prev),
+            await this._prepareTurnContext(combat, combatant, i),
+        ], Promise.resolve([]));
+        // Split turn data into individual turn "buckets" to separate them in the combat tracker ui
+        context.fastPlayers = context.turns.filter((turn) => {
             return (turn.type === "character" /* ActorType.Character */ &&
                 turn.turnSpeed === "fast" /* TurnSpeed.Fast */);
         });
-        data.slowPlayers = data.turns.filter((turn) => {
+        context.slowPlayers = context.turns.filter((turn) => {
             return (turn.type === "character" /* ActorType.Character */ &&
                 turn.turnSpeed === "slow" /* TurnSpeed.Slow */);
         });
-        data.fastNPC = data.turns.filter((turn) => {
+        context.fastNPC = context.turns.filter((turn) => {
             return (turn.type === "adversary" /* ActorType.Adversary */ &&
                 turn.turnSpeed === "fast" /* TurnSpeed.Fast */);
         });
-        data.slowNPC = data.turns.filter((turn) => {
+        context.slowNPC = context.turns.filter((turn) => {
             return (turn.type === "adversary" /* ActorType.Adversary */ &&
                 turn.turnSpeed === "slow" /* TurnSpeed.Slow */);
         });
-        return data;
     }
-    /**
-     * add listeners to toggleTurnSpeed and activation buttons
-     */
-    activateListeners(html) {
-        super.activateListeners(html);
-        html.find(`[data-control='toggleSpeed']`).on('click', this._onClickToggleTurnSpeed.bind(this));
-        html.find(`[data-control='activateCombatant']`).on('click', this._onActivateCombatant.bind(this));
+    async _prepareTurnContext(combat, combatant, index) {
+        return {
+            ...(await super._prepareTurnContext(combat, combatant, index)),
+            turnSpeed: combatant.turnSpeed,
+            type: combatant.actor?.type,
+            activated: combatant.activated,
+            isBoss: combatant.isBoss,
+            bossFastActivated: combatant.bossFastActivated,
+            css: '', // Strip active player formatting
+        };
     }
     /**
      * toggles combatant turn speed on clicking the "fast/slow" button on the combat tracker window
      * */
-    _onClickToggleTurnSpeed(event) {
+    static _onClickToggleTurnSpeed(event) {
         event.preventDefault();
         event.stopPropagation();
         // Get the button and the closest combatant list item
-        const btn = event.currentTarget;
+        const btn = event.target;
         const li = btn.closest('.combatant');
         // Get the combatant
         const combatant = this.viewed.combatants.get(li.dataset.combatantId);
@@ -25010,11 +25165,11 @@ class CosmereCombatTracker extends CombatTracker {
     /**
      *  activates the combatant when clicking the activation button
      */
-    _onActivateCombatant(event) {
+    static _onActivateCombatant(event) {
         event.preventDefault();
         event.stopPropagation();
         // Get the button and the closest combatant list item
-        const btn = event.currentTarget;
+        const btn = event.target;
         const li = btn.closest('.combatant');
         // Get the combatant
         const combatant = this.viewed.combatants.get(li.dataset.combatantId);
@@ -25024,7 +25179,8 @@ class CosmereCombatTracker extends CombatTracker {
     /**
      * toggles combatant turn speed on clicking the "fast/slow" option in the turn tracker context menu
      */
-    _onContextToggleTurnSpeed(li) {
+    _onContextToggleTurnSpeed(el) {
+        const li = $(el);
         // Get the combatant from the list item
         const combatant = this.viewed.combatants.get(li.data('combatant-id'));
         // Toggle the combatant's turn speed
@@ -25033,15 +25189,13 @@ class CosmereCombatTracker extends CombatTracker {
     /**
      * resets combatants activation status to hasn't activated
      */
-    _onContextResetActivation(li) {
+    _onContextResetActivation(el) {
+        const li = $(el);
         // Get the combatant from the list item
         const combatant = this.viewed.combatants.get(li.data('combatant-id'));
         // Reset the combatant's activation status
         void combatant.resetActivation();
     }
-    /**
-     * Overwrites combatants context menu options, adding toggle turn speed and reset activation options. Removes initiative rolling options from base implementation.
-     */
     _getEntryContextOptions() {
         const menu = [
             {
@@ -25055,7 +25209,7 @@ class CosmereCombatTracker extends CombatTracker {
                 callback: this._onContextResetActivation.bind(this),
             },
         ];
-        //pushes existing context menu options, filtering out the initiative reroll and initiative clear options
+        // pushes existing context menu options, filtering out the initiative reroll and initiative clear options
         menu.push(...super
             ._getEntryContextOptions()
             .filter((i) => i.name !== 'COMBAT.CombatantReroll' &&
@@ -25064,17 +25218,18 @@ class CosmereCombatTracker extends CombatTracker {
     }
 }
 
+const SCHEMA$l = () => ({
+    role: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        initial: "minion" /* AdversaryRole.Minion */,
+        choices: Object.keys(CONFIG.COSMERE.adversary.roles),
+    }),
+});
 class AdversaryActorDataModel extends CommonActorDataModel {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            role: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-                initial: "minion" /* AdversaryRole.Minion */,
-                choices: Object.keys(CONFIG.COSMERE.adversary.roles),
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$l());
     }
 }
 
@@ -25083,25 +25238,29 @@ const config$2 = {
     ["adversary" /* ActorType.Adversary */]: AdversaryActorDataModel,
 };
 
+function SCHEMA$k(options = {}) {
+    const initial = typeof options.initial === 'function'
+        ? options.initial()
+        : options.initial;
+    const choices = typeof options.choices === 'function'
+        ? options.choices()
+        : options.choices;
+    const typeFieldOptions = {
+        required: true,
+        nullable: false,
+        initial: initial ?? 'unknown',
+        label: 'Type',
+        choices,
+    };
+    return {
+        type: new foundry.data.fields.StringField(typeFieldOptions),
+    };
+}
 function TypedItemMixin(options = {}) {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                const initial = typeof options.initial === 'function'
-                    ? options.initial()
-                    : options.initial;
-                const choices = typeof options.choices === 'function'
-                    ? options.choices()
-                    : options.choices;
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    type: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        initial: initial ?? 'unknown',
-                        label: 'Type',
-                        choices,
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$k(options));
             }
             get typeSelectOptions() {
                 let choices = this.schema.fields.type.choices;
@@ -25125,44 +25284,47 @@ function TypedItemMixin(options = {}) {
     };
 }
 
+function SCHEMA$j(options) {
+    const equipTypeInitial = typeof options.equipType?.initial === 'function'
+        ? options.equipType.initial()
+        : (options.equipType?.initial ?? "wear" /* EquipType.Wear */);
+    const equipTypeChoices = typeof options.equipType?.choices === 'function'
+        ? options.equipType.choices()
+        : (options.equipType?.choices ??
+            Object.keys(CONFIG.COSMERE.items.equip.types));
+    return {
+        equipped: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: false,
+            label: 'Equipped',
+        }),
+        alwaysEquipped: new foundry.data.fields.BooleanField({
+            nullable: true,
+        }),
+        equip: new foundry.data.fields.SchemaField({
+            type: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                initial: equipTypeInitial,
+                choices: equipTypeChoices,
+            }),
+            hold: new foundry.data.fields.StringField({
+                nullable: true,
+                choices: Object.keys(CONFIG.COSMERE.items.equip.hold),
+            }),
+            hand: new foundry.data.fields.StringField({
+                nullable: true,
+                choices: Object.keys(CONFIG.COSMERE.items.equip.hand),
+            }),
+        }),
+    };
+}
 function EquippableItemMixin(options = {}) {
     return (base) => {
         return class mixin extends base {
             static defineSchema() {
-                const equipTypeInitial = typeof options.equipType?.initial === 'function'
-                    ? options.equipType.initial()
-                    : (options.equipType?.initial ?? "wear" /* EquipType.Wear */);
-                const equipTypeChoices = typeof options.equipType?.choices === 'function'
-                    ? options.equipType.choices()
-                    : (options.equipType?.choices ??
-                        Object.keys(CONFIG.COSMERE.items.equip.types));
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    equipped: new foundry.data.fields.BooleanField({
-                        required: true,
-                        nullable: false,
-                        initial: false,
-                        label: 'Equipped',
-                    }),
-                    alwaysEquipped: new foundry.data.fields.BooleanField({
-                        nullable: true,
-                    }),
-                    equip: new foundry.data.fields.SchemaField({
-                        type: new foundry.data.fields.StringField({
-                            required: true,
-                            nullable: false,
-                            initial: equipTypeInitial,
-                            choices: equipTypeChoices,
-                        }),
-                        hold: new foundry.data.fields.StringField({
-                            nullable: true,
-                            choices: Object.keys(CONFIG.COSMERE.items.equip.hold),
-                        }),
-                        hand: new foundry.data.fields.StringField({
-                            nullable: true,
-                            choices: Object.keys(CONFIG.COSMERE.items.equip.hand),
-                        }),
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$j(options));
             }
             prepareDerivedData() {
                 super.prepareDerivedData();
@@ -25174,17 +25336,184 @@ function EquippableItemMixin(options = {}) {
     };
 }
 
-class StringField extends foundry.data.fields.StringField {
-    constructor(options, context) {
-        super(options, context);
-    }
-    clean(value, options) {
-        if (this.options.coerce)
-            value = this.options.coerce(value);
-        return super.clean(value, options);
-    }
-}
-
+const ACTIVATION_SCHEMA = () => ({
+    type: new foundry.data.fields.StringField({
+        required: true,
+        blank: false,
+        initial: "none" /* ActivationType.None */,
+        choices: Object.entries(CONFIG.COSMERE.items.activation.types).reduce((acc, [key, config]) => ({
+            ...acc,
+            [key]: config.label,
+        }), {}),
+        label: 'COSMERE.Item.Sheet.Activation.Type',
+    }),
+    cost: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({
+            nullable: true,
+            min: 0,
+            max: 3,
+            step: 1,
+            integer: true,
+        }),
+        type: new foundry.data.fields.StringField({
+            nullable: true,
+            choices: {
+                none: 'GENERIC.None',
+                ...Object.entries(CONFIG.COSMERE.action.costs).reduce((acc, [key, config]) => ({
+                    ...acc,
+                    [key]: config.label,
+                }), {}),
+            },
+            coerce: (value) => (value === '' ? null : value),
+        }),
+    }, {
+        required: true,
+        label: 'COSMERE.Item.Sheet.Activation.Cost',
+    }),
+    consume: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
+        type: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            choices: {
+                [NONE]: 'GENERIC.None',
+                ...Object.entries(CONFIG.COSMERE.items.activation.consumeTypes).reduce((acc, [key, config]) => ({
+                    ...acc,
+                    [key]: config.label,
+                }), {}),
+            },
+            initial: "resource" /* ItemConsumeType.Resource */,
+        }),
+        value: new foundry.data.fields.SchemaField({
+            min: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                min: 0,
+                integer: true,
+                initial: 0,
+            }),
+            max: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                min: -1,
+                integer: true,
+                initial: 0,
+            }),
+            actual: new foundry.data.fields.NumberField({
+                required: false,
+                nullable: false,
+                min: 0,
+                integer: true,
+                initial: 0,
+            }),
+        }),
+        resource: new foundry.data.fields.StringField({
+            blank: false,
+            choices: Object.entries(CONFIG.COSMERE.resources).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+            initial: "foc" /* Resource.Focus */,
+        }),
+    }, {
+        required: true,
+        nullable: false,
+    }), {
+        label: 'COSMERE.Item.Sheet.Activation.Consume',
+    }),
+    flavor: new foundry.data.fields.HTMLField(),
+    skill: new foundry.data.fields.StringField({
+        nullable: true,
+        choices: {
+            none: 'GENERIC.None',
+            ...Object.entries(CONFIG.COSMERE.skills).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        },
+        coerce: (value) => (value === '' ? null : value),
+        label: 'GENERIC.Skill',
+    }),
+    attribute: new foundry.data.fields.StringField({
+        nullable: true,
+        initial: 'default',
+        choices: {
+            none: 'GENERIC.None',
+            default: 'GENERIC.Default',
+            ...Object.entries(CONFIG.COSMERE.attributes).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        },
+        coerce: (value) => (value === '' ? null : value),
+        label: 'GENERIC.Attribute',
+    }),
+    modifierFormula: new foundry.data.fields.StringField({
+        nullable: true,
+        blank: true,
+        label: 'COSMERE.Item.Sheet.Activation.AdditionalFormula',
+    }),
+    plotDie: new foundry.data.fields.BooleanField({
+        nullable: true,
+        initial: false,
+        label: 'DICE.Plot.RaiseTheStakes',
+    }),
+    opportunity: new foundry.data.fields.NumberField({
+        nullable: true,
+        min: 1,
+        max: 20,
+        integer: true,
+        label: 'COSMERE.Item.Activation.Opportunity',
+    }),
+    complication: new foundry.data.fields.NumberField({
+        nullable: true,
+        min: 1,
+        max: 20,
+        integer: true,
+        label: 'COSMERE.Item.Activation.Complication',
+    }),
+    uses: new foundry.data.fields.SchemaField({
+        type: new foundry.data.fields.StringField({
+            required: true,
+            initial: "use" /* ItemUseType.Use */,
+            blank: false,
+            choices: Object.entries(CONFIG.COSMERE.items.activation.uses.types).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        }),
+        value: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            min: 0,
+            initial: 1,
+            integer: true,
+        }),
+        max: new foundry.data.fields.NumberField({
+            required: true,
+            min: 1,
+            initial: 1,
+            integer: true,
+        }),
+        recharge: new foundry.data.fields.StringField({
+            nullable: true,
+            initial: null,
+            choices: {
+                none: 'GENERIC.None',
+                ...Object.entries(CONFIG.COSMERE.items.activation.uses.recharge).reduce((acc, [key, config]) => ({
+                    ...acc,
+                    [key]: config.label,
+                }), {}),
+            },
+            coerce: (value) => (value === '' ? null : value),
+            label: 'COSMERE.Item.Sheet.Activation.Recharge',
+        }),
+    }, {
+        required: false,
+        nullable: true,
+        initial: null,
+        label: 'COSMERE.Item.Sheet.Activation.Uses',
+    }),
+});
 function ActivatableItemMixin(options) {
     if (options?.skill?.allowDefault && !options.skill.defaultResolver) {
         throw new Error('ActivatableItemMixin: If allowDefaultSkill is true, defaultSkillResolver must be provided.');
@@ -25222,7 +25551,7 @@ class ActivationField extends foundry.data.fields.SchemaField {
         this.model = cls;
     }
     _cast(value) {
-        return typeof value === 'object' ? value : {};
+        return value && typeof value === 'object' ? value : {};
     }
     initialize(value, model, options) {
         return new this.model(foundry.utils.deepClone(value), {
@@ -25231,189 +25560,10 @@ class ActivationField extends foundry.data.fields.SchemaField {
         });
     }
 }
-class Activation extends foundry.abstract.DataModel {
+class Activation extends foundry
+    .abstract.DataModel {
     static defineSchema() {
-        return {
-            type: new foundry.data.fields.StringField({
-                required: true,
-                blank: false,
-                initial: "none" /* ActivationType.None */,
-                choices: Object.entries(CONFIG.COSMERE.items.activation.types).reduce((acc, [key, config]) => ({
-                    ...acc,
-                    [key]: config.label,
-                }), {}),
-                label: 'COSMERE.Item.Sheet.Activation.Type',
-            }),
-            cost: new foundry.data.fields.SchemaField({
-                value: new foundry.data.fields.NumberField({
-                    nullable: true,
-                    min: 0,
-                    max: 3,
-                    step: 1,
-                    integer: true,
-                }),
-                type: new StringField({
-                    nullable: true,
-                    choices: {
-                        '': 'GENERIC.None',
-                        ...Object.entries(CONFIG.COSMERE.action.costs).reduce((acc, [key, config]) => ({
-                            ...acc,
-                            [key]: config.label,
-                        }), {}),
-                    },
-                    coerce: (value) => value === '' ? null : value,
-                }),
-            }, {
-                required: true,
-                label: 'COSMERE.Item.Sheet.Activation.Cost',
-            }),
-            consume: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                type: new StringField({
-                    required: true,
-                    nullable: false,
-                    choices: {
-                        [NONE]: 'GENERIC.None',
-                        ...Object.entries(CONFIG.COSMERE.items.activation
-                            .consumeTypes).reduce((acc, [key, config]) => ({
-                            ...acc,
-                            [key]: config.label,
-                        }), {}),
-                    },
-                    initial: "resource" /* ItemConsumeType.Resource */,
-                }),
-                value: new foundry.data.fields.SchemaField({
-                    min: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                        min: 0,
-                        integer: true,
-                        initial: 0,
-                    }),
-                    max: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                        min: -1,
-                        integer: true,
-                        initial: 0,
-                    }),
-                    actual: new foundry.data.fields.NumberField({
-                        required: false,
-                        nullable: false,
-                        min: 0,
-                        integer: true,
-                        initial: 0,
-                    }),
-                }),
-                resource: new foundry.data.fields.StringField({
-                    blank: false,
-                    choices: Object.entries(CONFIG.COSMERE.resources).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                    initial: "foc" /* Resource.Focus */,
-                }),
-            }, {
-                required: false,
-                nullable: true,
-                initial: null,
-            }), {
-                label: 'COSMERE.Item.Sheet.Activation.Consume',
-            }),
-            flavor: new foundry.data.fields.HTMLField(),
-            skill: new StringField({
-                nullable: true,
-                choices: {
-                    '': 'GENERIC.None',
-                    ...Object.entries(CONFIG.COSMERE.skills).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                },
-                coerce: (value) => (value === '' ? null : value),
-                label: 'GENERIC.Skill',
-            }),
-            attribute: new StringField({
-                nullable: true,
-                initial: 'default',
-                choices: {
-                    '': 'GENERIC.None',
-                    default: 'GENERIC.Default',
-                    ...Object.entries(CONFIG.COSMERE.attributes).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                },
-                coerce: (value) => (value === '' ? null : value),
-                label: 'GENERIC.Attribute',
-            }),
-            modifierFormula: new foundry.data.fields.StringField({
-                nullable: true,
-                blank: true,
-                label: 'COSMERE.Item.Sheet.Activation.AdditionalFormula',
-                hint: 'COSMERE.Item.Sheet.Activation.AdditionalFormulaDescription',
-            }),
-            plotDie: new foundry.data.fields.BooleanField({
-                nullable: true,
-                initial: false,
-                label: 'DICE.Plot.RaiseTheStakes',
-            }),
-            opportunity: new foundry.data.fields.NumberField({
-                nullable: true,
-                min: 1,
-                max: 20,
-                integer: true,
-                label: 'COSMERE.Item.Activation.Opportunity',
-            }),
-            complication: new foundry.data.fields.NumberField({
-                nullable: true,
-                min: 1,
-                max: 20,
-                integer: true,
-                label: 'COSMERE.Item.Activation.Complication',
-            }),
-            uses: new foundry.data.fields.SchemaField({
-                type: new StringField({
-                    required: true,
-                    initial: "use" /* ItemUseType.Use */,
-                    blank: false,
-                    choices: Object.entries(CONFIG.COSMERE.items.activation.uses.types).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                }),
-                value: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    min: 0,
-                    initial: 1,
-                    integer: true,
-                }),
-                max: new foundry.data.fields.NumberField({
-                    required: true,
-                    min: 1,
-                    initial: 1,
-                    integer: true,
-                }),
-                recharge: new StringField({
-                    nullable: true,
-                    initial: null,
-                    choices: {
-                        '': 'GENERIC.None',
-                        ...Object.entries(CONFIG.COSMERE.items.activation.uses.recharge).reduce((acc, [key, config]) => ({
-                            ...acc,
-                            [key]: config.label,
-                        }), {}),
-                    },
-                    coerce: (value) => value === '' ? null : value,
-                    label: 'COSMERE.Item.Sheet.Activation.Recharge',
-                }),
-            }, {
-                required: false,
-                nullable: true,
-                initial: null,
-                label: 'COSMERE.Item.Sheet.Activation.Uses',
-            }),
-        };
+        return ACTIVATION_SCHEMA();
     }
     /* --- Accessors --- */
     /**
@@ -25458,29 +25608,43 @@ class Activation extends foundry.abstract.DataModel {
     }
 }
 function getActivationDataModelCls(options) {
+    function _defineSchema() {
+        const baseSchema = Activation.defineSchema();
+        return {
+            ...baseSchema,
+            ...(options?.type?.initial
+                ? {
+                    type: new foundry.data.fields.StringField({
+                        ...baseSchema.type.options,
+                        initial: options.type.initial,
+                    }),
+                }
+                : {}),
+            ...(options?.skill?.initial
+                ? {
+                    skill: new foundry.data.fields.StringField({
+                        ...baseSchema.skill.options,
+                        initial: options.skill.initial,
+                    }),
+                }
+                : {}),
+            ...(options?.skill?.allowDefault
+                ? {
+                    skill: new foundry.data.fields.StringField({
+                        ...baseSchema.skill.options,
+                        choices: Object.fromEntries([
+                            ['none', 'GENERIC.None'],
+                            ['default', 'GENERIC.Default'],
+                            ...Object.entries(baseSchema.skill.options.choices).slice(1),
+                        ]),
+                    }),
+                }
+                : {}),
+        };
+    }
     return class extends Activation {
         static defineSchema() {
-            const schema = super.defineSchema();
-            if (options?.type?.initial) {
-                schema.type.options.initial = options.type.initial;
-                schema.type.initial = options.type.initial;
-            }
-            if (options?.skill?.initial) {
-                schema.skill.options.initial = options.skill.initial;
-                schema.skill.initial = options.skill.initial;
-            }
-            if (options?.skill?.allowDefault) {
-                schema.skill.options.choices = [
-                    ['', 'GENERIC.None'],
-                    ['default', 'GENERIC.Default'],
-                    ...Object.entries(foundry.utils.getProperty(schema, 'skill.options.choices')).filter(([key]) => key !== ''),
-                ].reduce((acc, [key, label]) => ({
-                    ...acc,
-                    [key]: label,
-                }), {});
-                schema.skill.choices = schema.skill.options.choices;
-            }
-            return schema;
+            return _defineSchema();
         }
         /* --- Accessors --- */
         get resolvedSkill() {
@@ -25496,69 +25660,105 @@ function getActivationDataModelCls(options) {
     };
 }
 
+const SCHEMA$i = () => ({
+    attack: new foundry.data.fields.SchemaField({
+        type: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            initial: "melee" /* AttackType.Melee */,
+            choices: Object.entries(CONFIG.COSMERE.attack.types).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        }),
+        range: new foundry.data.fields.SchemaField({
+            value: new foundry.data.fields.NumberField({
+                min: 0,
+            }),
+            long: new foundry.data.fields.NumberField({
+                min: 0,
+            }),
+            unit: new foundry.data.fields.StringField(),
+        }, { required: false, nullable: true }),
+    }),
+});
 function AttackingItemMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    attack: new foundry.data.fields.SchemaField({
-                        type: new foundry.data.fields.StringField({
-                            required: true,
-                            nullable: false,
-                            initial: "melee" /* AttackType.Melee */,
-                            choices: Object.entries(CONFIG.COSMERE.attack.types).reduce((acc, [key, config]) => ({
-                                ...acc,
-                                [key]: config.label,
-                            }), {}),
-                        }),
-                        range: new foundry.data.fields.SchemaField({
-                            value: new foundry.data.fields.NumberField({
-                                min: 0,
-                            }),
-                            long: new foundry.data.fields.NumberField({
-                                min: 0,
-                            }),
-                            unit: new foundry.data.fields.StringField(),
-                        }, { required: false, nullable: true }),
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$i());
             }
         };
     };
 }
 
+const SCHEMA$h = () => ({
+    damage: new foundry.data.fields.SchemaField({
+        formula: new foundry.data.fields.StringField({
+            nullable: true,
+            blank: false,
+        }),
+        grazeOverrideFormula: new foundry.data.fields.StringField({
+            nullable: true,
+        }),
+        type: new foundry.data.fields.StringField({
+            nullable: true,
+            choices: Object.keys(CONFIG.COSMERE.damageTypes),
+        }),
+        skill: new foundry.data.fields.StringField({
+            nullable: true,
+            choices: Object.keys(CONFIG.COSMERE.skills),
+        }),
+        attribute: new foundry.data.fields.StringField({
+            nullable: true,
+            choices: Object.keys(CONFIG.COSMERE.attributes),
+        }),
+    }),
+});
 function DamagingItemMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    damage: new foundry.data.fields.SchemaField({
-                        formula: new foundry.data.fields.StringField({
-                            nullable: true,
-                            blank: false,
-                        }),
-                        grazeOverrideFormula: new foundry.data.fields.StringField({
-                            nullable: true,
-                        }),
-                        type: new foundry.data.fields.StringField({
-                            nullable: true,
-                            choices: Object.keys(CONFIG.COSMERE.damageTypes),
-                        }),
-                        skill: new foundry.data.fields.StringField({
-                            nullable: true,
-                            choices: Object.keys(CONFIG.COSMERE.skills),
-                        }),
-                        attribute: new foundry.data.fields.StringField({
-                            nullable: true,
-                            choices: Object.keys(CONFIG.COSMERE.attributes),
-                        }),
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$h());
             }
         };
     };
 }
 
+const SCHEMA$g = () => ({
+    traits: new MappingField(new foundry.data.fields.SchemaField({
+        defaultValue: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: true,
+            integer: true,
+            initial: null,
+        }),
+        value: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: true,
+            integer: true,
+            initial: null,
+        }),
+        defaultActive: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: true,
+        }),
+        active: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: true,
+        }),
+        expertise: new foundry.data.fields.SchemaField({
+            toggleActive: new foundry.data.fields.BooleanField(),
+            value: new foundry.data.fields.NumberField({
+                integer: true,
+            }),
+        }),
+    }), {
+        required: true,
+    }),
+});
 /**
  * Mixin for weapon & armor traits
  */
@@ -25570,32 +25770,7 @@ function TraitsItemMixin() {
                 if (!('expertise' in superSchema)) {
                     throw new Error('TraitsItemMixin must be used in combination with ExpertiseItemMixin and must follow it');
                 }
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    traits: new MappingField(new foundry.data.fields.SchemaField({
-                        defaultValue: new foundry.data.fields.NumberField({
-                            integer: true,
-                        }),
-                        value: new foundry.data.fields.NumberField({
-                            integer: true,
-                        }),
-                        defaultActive: new foundry.data.fields.BooleanField({
-                            required: true,
-                            nullable: false,
-                            initial: true,
-                        }),
-                        active: new foundry.data.fields.BooleanField({
-                            required: true,
-                            nullable: false,
-                            initial: true,
-                        }),
-                        expertise: new foundry.data.fields.SchemaField({
-                            toggleActive: new foundry.data.fields.BooleanField(),
-                            value: new foundry.data.fields.NumberField({
-                                integer: true,
-                            }),
-                        }),
-                    })),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$g());
             }
             get traitsArray() {
                 return Object.entries(this.traits)
@@ -25624,88 +25799,112 @@ function TraitsItemMixin() {
     };
 }
 
+// export interface PhysicalItemData {
+//     quantity: number;
+//     weight: {
+//         value: number;
+//         unit: string;
+//     };
+//     price: {
+//         value: number;
+//         unit: string; // Dervived from currency / denomination
+//         currency: string;
+//         denomination: {
+//             primary: string;
+//             secondary?: string;
+//         };
+//         baseValue: number; // Derived value in base denomination
+//     };
+// }
+const SCHEMA$f = () => ({
+    quantity: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        min: 0,
+        initial: 1,
+        integer: true,
+    }),
+    weight: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({
+            min: 0,
+            initial: 0,
+            required: true,
+            nullable: false,
+        }),
+        unit: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            initial: CONFIG.COSMERE.units.weight[0],
+            choices: CONFIG.COSMERE.units.weight,
+        }),
+    }),
+    price: new foundry.data.fields.SchemaField({
+        value: new foundry.data.fields.NumberField({
+            min: 0,
+            initial: 0,
+            required: true,
+            nullable: false,
+        }),
+        currency: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            initial: 'none',
+            choices: {
+                none: localize('GENERIC.None'),
+                ...Object.entries(CONFIG.COSMERE.currencies).reduce((acc, [id, currency]) => ({
+                    ...acc,
+                    [id]: currency.label,
+                }), {}),
+            },
+        }),
+        denomination: new foundry.data.fields.SchemaField({
+            primary: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                initial: 'none',
+                choices: {
+                    none: localize('GENERIC.None'),
+                    ...Object.entries(CONFIG.COSMERE.currencies).reduce((acc, [currencyId, currency]) => ({
+                        ...acc,
+                        ...currency.denominations.primary.reduce((acc, denomination) => ({
+                            ...acc,
+                            [denomination.id]: denomination.label,
+                        }), {}),
+                    }), {}),
+                },
+            }),
+            secondary: new foundry.data.fields.StringField({
+                required: false,
+                initial: 'none',
+                choices: {
+                    none: localize('GENERIC.None'),
+                    ...Object.entries(CONFIG.COSMERE.currencies)
+                        .filter(([_, currency]) => currency.denominations.secondary)
+                        .reduce((acc, [currencyId, currency]) => ({
+                        ...acc,
+                        ...currency.denominations.secondary.reduce((acc, denomination) => ({
+                            ...acc,
+                            [denomination.id]: denomination.label,
+                        }), {}),
+                    }), {}),
+                },
+            }),
+        }),
+        unit: new foundry.data.fields.StringField(),
+    }),
+});
 function PhysicalItemMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    quantity: new foundry.data.fields.NumberField({
-                        min: 0,
-                        initial: 1,
-                        integer: true,
-                    }),
-                    weight: new foundry.data.fields.SchemaField({
-                        value: new foundry.data.fields.NumberField({
-                            min: 0,
-                            initial: 0,
-                            required: true,
-                        }),
-                        unit: new foundry.data.fields.StringField({
-                            required: true,
-                            initial: CONFIG.COSMERE.units.weight[0],
-                            choices: CONFIG.COSMERE.units.weight,
-                        }),
-                    }),
-                    price: new foundry.data.fields.SchemaField({
-                        value: new foundry.data.fields.NumberField({
-                            min: 0,
-                            initial: 0,
-                            required: true,
-                        }),
-                        currency: new foundry.data.fields.StringField({
-                            required: true,
-                            initial: 'none',
-                            choices: {
-                                none: game.i18n.localize('GENERIC.None'),
-                                ...Object.entries(CONFIG.COSMERE.currencies).reduce((acc, [id, currency]) => ({
-                                    ...acc,
-                                    [id]: currency.label,
-                                }), {}),
-                            },
-                        }),
-                        denomination: new foundry.data.fields.SchemaField({
-                            primary: new foundry.data.fields.StringField({
-                                required: true,
-                                initial: 'none',
-                                choices: {
-                                    none: game.i18n.localize('GENERIC.None'),
-                                    ...Object.entries(CONFIG.COSMERE.currencies).reduce((acc, [currencyId, currency]) => ({
-                                        ...acc,
-                                        ...currency.denominations.primary.reduce((acc, denomination) => ({
-                                            ...acc,
-                                            [denomination.id]: denomination.label,
-                                        }), {}),
-                                    }), {}),
-                                },
-                            }),
-                            secondary: new foundry.data.fields.StringField({
-                                required: false,
-                                initial: 'none',
-                                choices: {
-                                    none: game.i18n.localize('GENERIC.None'),
-                                    ...Object.entries(CONFIG.COSMERE.currencies)
-                                        .filter(([_, currency]) => currency.denominations
-                                        .secondary)
-                                        .reduce((acc, [currencyId, currency]) => ({
-                                        ...acc,
-                                        ...currency.denominations.secondary.reduce((acc, denomination) => ({
-                                            ...acc,
-                                            [denomination.id]: denomination.label,
-                                        }), {}),
-                                    }), {}),
-                                },
-                            }),
-                        }),
-                        unit: new foundry.data.fields.StringField(),
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$f());
             }
             prepareDerivedData() {
                 super.prepareDerivedData();
                 if (this.price.currency === 'none' ||
                     this.price.denomination.primary === 'none') {
                     this.price.unit = '—';
-                    this.price.baseValue = this.price.value;
+                    this.price.baseValue = this.price.value ?? 0;
                 }
                 else {
                     const currency = CONFIG.COSMERE.currencies[this.price.currency];
@@ -25716,7 +25915,7 @@ function PhysicalItemMixin() {
                     this.price.unit = `${this.price.currency}.${primary.id}`;
                     // Calculate base value
                     this.price.baseValue =
-                        this.price.value *
+                        (this.price.value ?? 0) *
                             primary.conversionRate *
                             (secondary ? secondary.conversionRate : 1);
                 }
@@ -25725,6 +25924,14 @@ function PhysicalItemMixin() {
     };
 }
 
+const SCHEMA$e = () => ({
+    expertise: new foundry.data.fields.BooleanField({
+        required: true,
+        nullable: false,
+        initial: false,
+        label: 'Expertise',
+    }),
+});
 function ExpertiseItemMixin() {
     return (base) => {
         return class extends base {
@@ -25734,14 +25941,7 @@ function ExpertiseItemMixin() {
                 if (!('id' in superSchema)) {
                     throw new Error('ExpertiseItemMixin must be used in combination with IdItemMixin');
                 }
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    expertise: new foundry.data.fields.BooleanField({
-                        required: true,
-                        nullable: false,
-                        initial: false,
-                        label: 'Expertise',
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$e());
             }
             prepareDerivedData() {
                 super.prepareDerivedData();
@@ -25761,29 +25961,30 @@ function ExpertiseItemMixin() {
     };
 }
 
+const SCHEMA$d = () => ({
+    linkedSkills: new foundry.data.fields.ArrayField(new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        choices: () => Object.entries(CONFIG.COSMERE.skills)
+            .filter(([key, skill]) => !skill.core)
+            .reduce((acc, [key, skill]) => ({
+            ...acc,
+            [key]: skill.label,
+        }), {}),
+    }), {
+        required: true,
+        nullable: false,
+        initial: [],
+        label: 'COSMERE.Item.General.LinkedSkills.Label',
+        hint: 'COSMERE.Item.General.LinkedSkills.Hint',
+    }),
+});
 function LinkedSkillsMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    linkedSkills: new foundry.data.fields.ArrayField(new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                        choices: () => Object.entries(CONFIG.COSMERE.skills)
-                            .filter(([key, skill]) => !skill.core)
-                            .reduce((acc, [key, skill]) => ({
-                            ...acc,
-                            [key]: skill.label,
-                        }), {}),
-                    }), {
-                        required: true,
-                        nullable: false,
-                        initial: [],
-                        label: 'COSMERE.Item.General.LinkedSkills.Label',
-                        hint: 'COSMERE.Item.General.LinkedSkills.Hint',
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$d());
             }
         };
     };
@@ -25817,9 +26018,6 @@ class WeaponItemDataModel extends DataModelMixin(IdItemMixin({
         initial: 'default',
     },
 }), AttackingItemMixin(), DamagingItemMixin(), ExpertiseItemMixin(), TraitsItemMixin(), PhysicalItemMixin(), EventsItemMixin(), LinkedSkillsMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {});
-    }
     prepareDerivedData() {
         super.prepareDerivedData();
         // Get active traits
@@ -25837,6 +26035,26 @@ class WeaponItemDataModel extends DataModelMixin(IdItemMixin({
     }
 }
 
+const DAMAGE_TYPE_SCHEMA = (type) => ({
+    active: new foundry.data.fields.BooleanField({
+        required: true,
+        nullable: false,
+        initial: !(CONFIG.COSMERE.damageTypes[type].ignoreDeflect ?? false),
+    }),
+});
+const SCHEMA$c = () => ({
+    deflect: new foundry.data.fields.NumberField({
+        required: true,
+        nullable: false,
+        initial: 0,
+        min: 0,
+        integer: true,
+    }),
+    deflects: new foundry.data.fields.SchemaField(Object.keys(CONFIG.COSMERE.damageTypes).reduce((schemas, key) => ({
+        ...schemas,
+        [key]: new foundry.data.fields.SchemaField(DAMAGE_TYPE_SCHEMA(key)),
+    }), {})),
+});
 /**
  * Mixin for deflect data
  */
@@ -25844,26 +26062,7 @@ function DeflectItemMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                const damageTypes = CONFIG.COSMERE.damageTypes;
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    deflect: new foundry.data.fields.NumberField({
-                        required: true,
-                        initial: 0,
-                        min: 0,
-                        integer: true,
-                    }),
-                    deflects: new foundry.data.fields.SchemaField(Object.keys(damageTypes).reduce((schemas, key) => {
-                        schemas[key] =
-                            new foundry.data.fields.SchemaField({
-                                active: new foundry.data.fields.BooleanField({
-                                    required: true,
-                                    nullable: false,
-                                    initial: !(damageTypes[key].ignoreDeflect ?? false),
-                                }),
-                            });
-                        return schemas;
-                    }, {})),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$c());
             }
             get deflectsArray() {
                 return Object.entries(this.deflects)
@@ -25897,25 +26096,36 @@ class EquipmentItemDataModel extends DataModelMixin(TypedItemMixin({
 }), DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Equipment.desc_placeholder',
 }), PhysicalItemMixin(), ActivatableItemMixin(), DamagingItemMixin(), EventsItemMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {});
-    }
 }
 
 // Mixins
+const SCHEMA$b = () => ({
+    isMoney: new foundry.data.fields.BooleanField({
+        required: true,
+        initial: false,
+        label: 'COSMERE.Item.Loot.isMoney',
+        nullable: false,
+    }),
+});
 class LootItemDataModel extends DataModelMixin(DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Loot.desc_placeholder',
 }), PhysicalItemMixin(), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            isMoney: new foundry.data.fields.BooleanField({
-                required: true,
-                initial: false,
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$b());
     }
 }
 
+const SCHEMA$a = () => ({
+    talentTree: new foundry.data.fields.DocumentUUIDField({
+        required: true,
+        nullable: true,
+        blank: false,
+        initial: null,
+        type: 'Item',
+        label: 'COSMERE.Item.Sheet.TalentsProvider.TalentTree.Label',
+        hint: 'COSMERE.Item.Sheet.TalentsProvider.TalentTree.Hint',
+    }),
+});
 /**
  * Mixin for items that provide a talent tree through the "talents" tab.
  * Used for Paths & Ancestries.
@@ -25924,22 +26134,13 @@ function TalentsProviderMixin() {
     return (base) => {
         return class extends base {
             static defineSchema() {
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    talentTree: new foundry.data.fields.DocumentUUIDField({
-                        required: true,
-                        nullable: true,
-                        blank: false,
-                        initial: null,
-                        label: 'COSMERE.Item.Sheet.TalentsProvider.TalentTree.Label',
-                        hint: 'COSMERE.Item.Sheet.TalentsProvider.TalentTree.Hint',
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$a());
             }
             async getTalents(includeNested = true) {
                 if (!this.talentTree)
                     return [];
                 // Get the talent tree item
-                const talentTreeItem = (await fromUuid(this.talentTree));
+                const talentTreeItem = await fromUuid(this.talentTree);
                 if (!talentTreeItem?.isTalentTree())
                     return [];
                 // Get all talents from the talent tree
@@ -25962,69 +26163,74 @@ function TalentsProviderMixin() {
 }
 
 // Mixins
+const SCHEMA$9 = () => ({
+    size: new foundry.data.fields.StringField({
+        required: true,
+        nullable: false,
+        blank: false,
+        initial: "medium" /* Size.Medium */,
+        choices: Object.entries(CONFIG.COSMERE.sizes).reduce((acc, [key, config]) => ({
+            ...acc,
+            [key]: config.label,
+        }), {}),
+    }),
+    type: new foundry.data.fields.SchemaField({
+        id: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            blank: false,
+            initial: "humanoid" /* CreatureType.Humanoid */,
+            choices: Object.entries(CONFIG.COSMERE.creatureTypes).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        }),
+        custom: new foundry.data.fields.StringField({ nullable: true }),
+        subtype: new foundry.data.fields.StringField({
+            nullable: true,
+        }),
+    }),
+    advancement: new foundry.data.fields.SchemaField({
+        extraPath: new foundry.data.fields.DocumentUUIDField({
+            type: 'Item',
+        }),
+        extraTalents: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
+            uuid: new foundry.data.fields.DocumentUUIDField({
+                type: 'Item',
+                nullable: false,
+            }),
+            level: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+            }),
+        })),
+        bonusTalents: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
+            level: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                min: 0,
+                initial: 0,
+            }),
+            quantity: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                min: 0,
+                initial: 0,
+            }),
+            restrictions: new foundry.data.fields.StringField(),
+        })),
+    }),
+});
 class AncestryItemDataModel extends DataModelMixin(IdItemMixin({
     initial: 'none',
 }), DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Ancestry.desc_placeholder',
 }), TalentsProviderMixin(), EventsItemMixin(), LinkedSkillsMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            size: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-                initial: "medium" /* Size.Medium */,
-                choices: Object.entries(CONFIG.COSMERE.sizes).reduce((acc, [key, config]) => ({
-                    ...acc,
-                    [key]: config.label,
-                }), {}),
-            }),
-            type: new foundry.data.fields.SchemaField({
-                id: new foundry.data.fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                    initial: "humanoid" /* CreatureType.Humanoid */,
-                    choices: Object.entries(CONFIG.COSMERE.creatureTypes).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                }),
-                custom: new foundry.data.fields.StringField({ nullable: true }),
-                subtype: new foundry.data.fields.StringField({
-                    nullable: true,
-                }),
-            }),
-            advancement: new foundry.data.fields.SchemaField({
-                extraPath: new foundry.data.fields.DocumentUUIDField({
-                    type: 'Item',
-                }),
-                extraTalents: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                    uuid: new foundry.data.fields.DocumentUUIDField({
-                        type: 'Item',
-                    }),
-                    level: new foundry.data.fields.NumberField(),
-                })),
-                bonusTalents: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                    level: new foundry.data.fields.NumberField({
-                        required: true,
-                        min: 0,
-                        initial: 0,
-                    }),
-                    quantity: new foundry.data.fields.NumberField({
-                        required: true,
-                        min: 0,
-                        initial: 0,
-                    }),
-                    restrictions: new foundry.data.fields.StringField(),
-                })),
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$9());
     }
     get typeFieldId() {
-        return this.schema.fields.type._getField([
-            'id',
-        ]);
+        return this.schema.fields.type.fields.id;
     }
     get sizeField() {
         return this.schema.fields.size;
@@ -26041,9 +26247,6 @@ class CultureItemDataModel extends DataModelMixin(IdItemMixin({
 }), DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Culture.desc_placeholder',
 }), EventsItemMixin(), LinkedSkillsMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {});
-    }
 }
 
 // Mixins
@@ -26058,43 +26261,20 @@ class PathItemDataModel extends DataModelMixin(IdItemMixin({ initialFromName: tr
 }), DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Path.desc_placeholder',
 }), TalentsProviderMixin(), EventsItemMixin(), LinkedSkillsMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-        // TODO: Advancements
-        });
-    }
     get typeLabel() {
         return CONFIG.COSMERE.paths.types[this.type].label;
     }
 }
 
-// Mixins
-class SpecialtyItemDataModel extends DataModelMixin(IdItemMixin({ initialFromName: true }), DescriptionItemMixin({
-    value: 'COSMERE.Item.Type.Specialty.desc_placeholder',
-}), EventsItemMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            path: new foundry.data.fields.StringField({
-                required: true,
-                nullable: false,
-                blank: false,
-                initial: '<path>',
-            }),
-            hasPath: new foundry.data.fields.BooleanField(),
-        });
-    }
-    prepareDerivedData() {
-        super.prepareDerivedData();
-        // Get item
-        const item = this.parent;
-        // Get actor
-        const actor = item.actor;
-        // Determine whether actor has path
-        this.hasPath =
-            actor?.items.some((item) => item.isPath() && item.id === this.path) ?? false;
-    }
-}
-
+const SCHEMA$8 = () => ({
+    modality: new foundry.data.fields.StringField({
+        required: true,
+        nullable: true,
+        label: 'COSMERE.Item.Modality.Label',
+        hint: 'COSMERE.Item.Modality.Hint',
+        initial: null,
+    }),
+});
 function ModalityItemMixin() {
     return (base) => {
         return class extends base {
@@ -26104,21 +26284,32 @@ function ModalityItemMixin() {
                 if (!('id' in superSchema)) {
                     throw new Error('ModalityItemMixin must be used in combination with IdItemMixin');
                 }
-                return foundry.utils.mergeObject(super.defineSchema(), {
-                    modality: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: true,
-                        label: 'COSMERE.Item.Modality.Label',
-                        hint: 'COSMERE.Item.Modality.Hint',
-                        initial: null,
-                    }),
-                });
+                return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$8());
             }
         };
     };
 }
 
 // Mixins
+const SCHEMA$7 = () => ({
+    path: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        initial: null,
+    }),
+    ancestry: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        initial: null,
+    }),
+    power: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        initial: null,
+        label: 'COSMERE.Item.Talent.Power.Label',
+        hint: 'COSMERE.Item.Talent.Power.Hint',
+    }),
+});
 class TalentItemDataModel extends DataModelMixin(IdItemMixin({
     initialFromName: true,
 }), TypedItemMixin({
@@ -26131,34 +26322,7 @@ class TalentItemDataModel extends DataModelMixin(IdItemMixin({
     value: 'COSMERE.Item.Type.Talent.desc_placeholder',
 }), ActivatableItemMixin(), DamagingItemMixin(), ModalityItemMixin(), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            path: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                initial: null,
-            }),
-            hasPath: new foundry.data.fields.BooleanField(),
-            specialty: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                initial: null,
-            }),
-            hasSpecialty: new foundry.data.fields.BooleanField(),
-            ancestry: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                initial: null,
-            }),
-            hasAncestry: new foundry.data.fields.BooleanField(),
-            power: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                initial: null,
-                label: 'COSMERE.Item.Talent.Power.Label',
-                hint: 'COSMERE.Item.Talent.Power.Hint',
-            }),
-            hasPower: new foundry.data.fields.BooleanField(),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$7());
     }
     prepareDerivedData() {
         super.prepareDerivedData();
@@ -26170,10 +26334,6 @@ class TalentItemDataModel extends DataModelMixin(IdItemMixin({
             this.hasPath =
                 actor?.items.some((item) => item.isPath() && item.id === this.path) ?? false;
         }
-        if (this.specialty) {
-            this.hasSpecialty =
-                actor?.items.some((item) => item.isSpecialty() && item.id === this.specialty) ?? false;
-        }
         if (this.ancestry) {
             this.hasAncestry =
                 actor?.items.some((item) => item.isAncestry() && item.id === this.ancestry) ?? false;
@@ -26182,34 +26342,6 @@ class TalentItemDataModel extends DataModelMixin(IdItemMixin({
             this.hasPower =
                 actor?.items.some((item) => item.isPower() && item.id === this.power) ?? false;
         }
-        // if (!actor) {
-        //     this.prerequisitesMet = false;
-        // } else {
-        //     this.prerequisitesMet = this.prerequisitesArray.every(
-        //         (prerequisite) => {
-        //             switch (prerequisite.type) {
-        //                 case Talent.Prerequisite.Type.Talent:
-        //                     return actor.items.some(
-        //                         (item) =>
-        //                             item.isTalent() &&
-        //                             item.id === prerequisite.id,
-        //                     );
-        //                 case Talent.Prerequisite.Type.Skill:
-        //                     return (
-        //                         actor.system.skills[prerequisite.skill].rank >=
-        //                         (prerequisite.rank ?? 1)
-        //                     );
-        //                 case Talent.Prerequisite.Type.Attribute:
-        //                     return (
-        //                         actor.system.attributes[prerequisite.attribute]
-        //                             .value >= (prerequisite.value ?? 1)
-        //                     );
-        //                 default:
-        //                     return true;
-        //             }
-        //         },
-        //     );
-        // }
     }
 }
 
@@ -26221,12 +26353,18 @@ class TalentItemDataModel extends DataModelMixin(IdItemMixin({
 class TraitItemDataModel extends DataModelMixin(DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Trait.desc_placeholder',
 }), ActivatableItemMixin(), EventsItemMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {});
-    }
 }
 
 // Mixins
+const SCHEMA$6 = {
+    ancestry: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        initial: null,
+        label: 'COSMERE.Item.Action.Ancestry.Label',
+        hint: 'COSMERE.Item.Action.Ancestry.Hint',
+    }),
+};
 class ActionItemDataModel extends DataModelMixin(IdItemMixin({
     initialFromName: true,
 }), TypedItemMixin({
@@ -26239,19 +26377,27 @@ class ActionItemDataModel extends DataModelMixin(IdItemMixin({
     value: 'COSMERE.Item.Type.Action.desc_placeholder',
 }), ActivatableItemMixin(), DamagingItemMixin(), ModalityItemMixin(), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            ancestry: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                initial: null,
-                label: 'COSMERE.Item.Action.Ancestry.Label',
-                hint: 'COSMERE.Item.Action.Ancestry.Hint',
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$6);
     }
 }
 
 // Mixins
+const SCHEMA$5 = () => ({
+    duration: new foundry.data.fields.SchemaField({
+        initial: new foundry.data.fields.NumberField({
+            nullable: true,
+            integer: true,
+            min: 0,
+            initial: 1,
+        }),
+        remaining: new foundry.data.fields.NumberField({
+            nullable: true,
+            integer: true,
+            min: 0,
+            initial: 1,
+        }),
+    }),
+});
 class InjuryItemDataModel extends DataModelMixin(TypedItemMixin({
     // Default to flesh wound data as the least impactful injury type
     initial: "flesh_wound" /* InjuryType.FleshWound */,
@@ -26263,22 +26409,7 @@ class InjuryItemDataModel extends DataModelMixin(TypedItemMixin({
     value: 'COSMERE.Item.Type.Injury.desc_placeholder',
 }), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            duration: new foundry.data.fields.SchemaField({
-                initial: new foundry.data.fields.NumberField({
-                    nullable: true,
-                    integer: true,
-                    min: 0,
-                    initial: 1,
-                }),
-                remaining: new foundry.data.fields.NumberField({
-                    nullable: true,
-                    integer: true,
-                    min: 0,
-                    initial: 1,
-                }),
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$5());
     }
     get typeLabel() {
         return CONFIG.COSMERE.injury.types[this.type].label;
@@ -26289,12 +26420,31 @@ class InjuryItemDataModel extends DataModelMixin(TypedItemMixin({
 class ConnectionItemDataModel extends DataModelMixin(DescriptionItemMixin({
     value: 'COSMERE.Item.Type.Connection.desc_placeholder',
 }), EventsItemMixin(), RelationshipsMixin()) {
-    static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {});
-    }
 }
 
 // Mixins
+const SCHEMA$4 = () => ({
+    customSkill: new foundry.data.fields.BooleanField({
+        required: true,
+        initial: false,
+        label: 'COSMERE.Item.Power.CustomSkill.Label',
+        hint: 'COSMERE.Item.Power.CustomSkill.Hint',
+    }),
+    skill: new foundry.data.fields.StringField({
+        required: true,
+        nullable: true,
+        blank: false,
+        label: 'COSMERE.Item.Power.Skill.Label',
+        hint: 'COSMERE.Item.Power.Skill.Hint',
+        initial: null,
+        choices: () => Object.entries(CONFIG.COSMERE.skills)
+            .filter(([key, skill]) => !skill.core)
+            .reduce((acc, [key, skill]) => ({
+            ...acc,
+            [key]: skill.label,
+        }), {}),
+    }),
+});
 class PowerItemDataModel extends DataModelMixin(IdItemMixin({
     initialFromName: true,
     hint: 'COSMERE.Item.Power.Identifier.Hint',
@@ -26308,28 +26458,7 @@ class PowerItemDataModel extends DataModelMixin(IdItemMixin({
     value: 'COSMERE.Item.Type.Power.desc_placeholder',
 }), EventsItemMixin(), RelationshipsMixin()) {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            customSkill: new foundry.data.fields.BooleanField({
-                required: true,
-                initial: false,
-                label: 'COSMERE.Item.Power.CustomSkill.Label',
-                hint: 'COSMERE.Item.Power.CustomSkill.Hint',
-            }),
-            skill: new foundry.data.fields.StringField({
-                required: true,
-                nullable: true,
-                blank: false,
-                label: 'COSMERE.Item.Power.Skill.Label',
-                hint: 'COSMERE.Item.Power.Skill.Hint',
-                initial: null,
-                choices: () => Object.entries(CONFIG.COSMERE.skills)
-                    .filter(([key, skill]) => !skill.core)
-                    .reduce((acc, [key, skill]) => ({
-                    ...acc,
-                    [key]: skill.label,
-                }), {}),
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$4());
     }
     prepareDerivedData() {
         super.prepareDerivedData();
@@ -26357,340 +26486,342 @@ class NodeRecordCollection extends RecordCollection {
         return super.set(id, value);
     }
 }
+const SCHEMA$3 = () => ({
+    // General node fields
+    id: new foundry.data.fields.DocumentIdField({
+        required: true,
+        nullable: false,
+        blank: false,
+        readonly: false,
+    }),
+    type: new foundry.data.fields.StringField({
+        required: false,
+        nullable: true,
+        blank: false,
+        initial: "talent" /* TalentTree.Node.Type.Talent */,
+        choices: [
+            "talent" /* TalentTree.Node.Type.Talent */,
+            "tree" /* TalentTree.Node.Type.Tree */,
+            "text" /* TalentTree.Node.Type.Text */,
+        ],
+    }),
+    position: new foundry.data.fields.SchemaField({
+        x: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            label: 'COSMERE.Item.TalentTree.Node.Position.X.Label',
+        }),
+        y: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            label: 'COSMERE.Item.TalentTree.Node.Position.Y.Label',
+        }),
+    }, {
+        required: true,
+        nullable: false,
+    }),
+    // Talent / Tree node fields
+    uuid: new foundry.data.fields.DocumentUUIDField({
+        nullable: true,
+    }),
+    size: new foundry.data.fields.SchemaField({
+        width: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            initial: 50,
+        }),
+        height: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            initial: 50,
+        }),
+    }, {
+        required: false,
+        nullable: true,
+    }),
+    showName: new foundry.data.fields.BooleanField({
+        nullable: true,
+        initial: false,
+    }),
+    talentId: new foundry.data.fields.StringField({
+        nullable: true,
+    }),
+    // Talent node fields
+    prerequisites: new CollectionField(new foundry.data.fields.SchemaField({
+        id: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            blank: false,
+        }),
+        type: new foundry.data.fields.StringField({
+            required: true,
+            nullable: false,
+            blank: false,
+            choices: CONFIG.COSMERE.items.talentTree.node
+                .prerequisite.types,
+        }),
+        managed: new foundry.data.fields.BooleanField({
+            required: true,
+            nullable: false,
+            initial: false,
+        }),
+        // Connection
+        description: new foundry.data.fields.StringField(),
+        // Attribute
+        attribute: new foundry.data.fields.StringField({
+            blank: false,
+            choices: Object.entries(CONFIG.COSMERE.attributes).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        }),
+        value: new foundry.data.fields.NumberField({
+            min: 0,
+            initial: 0,
+        }),
+        // Skill
+        skill: new foundry.data.fields.StringField({
+            blank: false,
+            choices: Object.entries(CONFIG.COSMERE.skills).reduce((acc, [key, config]) => ({
+                ...acc,
+                [key]: config.label,
+            }), {}),
+        }),
+        rank: new foundry.data.fields.NumberField({
+            min: 1,
+            initial: 1,
+        }),
+        // Talent
+        talents: new CollectionField(new foundry.data.fields.SchemaField({
+            uuid: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            id: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            label: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+        }), {
+            nullable: true,
+        }),
+        // Level
+        level: new foundry.data.fields.NumberField({
+            min: 0,
+            initial: 0,
+            label: 'COSMERE.Item.Talent.Prerequisite.Level.Label',
+        }),
+        // Ancestry
+        ancestry: new foundry.data.fields.SchemaField({
+            uuid: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            id: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            label: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+        }, {
+            nullable: true,
+            initial: null,
+            label: 'COSMERE.Item.Talent.Prerequisite.Ancestry.Label',
+        }),
+        // Culture
+        culture: new foundry.data.fields.SchemaField({
+            uuid: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            id: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            label: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+        }, {
+            nullable: true,
+            initial: null,
+            label: 'COSMERE.Item.Talent.Prerequisite.Culture.Label',
+        }),
+        // Goal
+        goals: new CollectionField(new foundry.data.fields.SchemaField({
+            uuid: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            id: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            label: new foundry.data.fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+        }), {
+            nullable: true,
+        }),
+    }), {
+        nullable: true,
+    }),
+    prerequisitesMet: new foundry.data.fields.BooleanField(),
+    connections: new CollectionField(new foundry.data.fields.SchemaField({
+        id: new foundry.data.fields.DocumentIdField({
+            required: true,
+            nullable: false,
+            blank: false,
+            readonly: false,
+        }),
+        prerequisiteId: new foundry.data.fields.DocumentIdField({
+            required: true,
+            nullable: false,
+        }),
+        path: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
+            x: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+            }),
+            y: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+            }),
+        }), {
+            nullable: true,
+        }),
+    }), {
+        nullable: true,
+    }),
+    // Text node fields
+    text: new foundry.data.fields.StringField({
+        nullable: true,
+    }),
+});
 class TalentTreeNodeField extends foundry.data.fields.SchemaField {
     constructor(options, context) {
         options ??= {};
         options.gmOnly = true;
-        super({
-            // General node fields
-            id: new foundry.data.fields.DocumentIdField({
-                required: true,
-                nullable: false,
-                blank: false,
-                readonly: false,
-            }),
-            type: new foundry.data.fields.StringField({
-                required: false,
-                nullable: true,
-                blank: false,
-                initial: "talent" /* TalentTree.Node.Type.Talent */,
-                choices: [
-                    "talent" /* TalentTree.Node.Type.Talent */,
-                    "tree" /* TalentTree.Node.Type.Tree */,
-                    "text" /* TalentTree.Node.Type.Text */,
-                ],
-            }),
-            position: new foundry.data.fields.SchemaField({
-                x: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    label: 'COSMERE.Item.TalentTree.Node.Position.X.Label',
-                }),
-                y: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    label: 'COSMERE.Item.TalentTree.Node.Position.Y.Label',
-                }),
-            }, {
-                required: true,
-                nullable: false,
-            }),
-            // Talent / Tree node fields
-            uuid: new foundry.data.fields.DocumentUUIDField({
-                nullable: true,
-            }),
-            size: new foundry.data.fields.SchemaField({
-                width: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    initial: 50,
-                }),
-                height: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    initial: 50,
-                }),
-            }, {
-                required: false,
-                nullable: true,
-            }),
-            showName: new foundry.data.fields.BooleanField({
-                nullable: true,
-                initial: false,
-            }),
-            talentId: new foundry.data.fields.StringField({
-                nullable: true,
-            }),
-            // Talent node fields
-            prerequisites: new CollectionField(new foundry.data.fields.SchemaField({
-                id: new foundry.data.fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                }),
-                type: new foundry.data.fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                    choices: CONFIG.COSMERE.items.talentTree.node
-                        .prerequisite.types,
-                }),
-                managed: new foundry.data.fields.BooleanField({
-                    required: true,
-                    nullable: false,
-                    initial: false,
-                }),
-                // Connection
-                description: new foundry.data.fields.StringField(),
-                // Attribute
-                attribute: new foundry.data.fields.StringField({
-                    blank: false,
-                    choices: Object.entries(CONFIG.COSMERE.attributes).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                }),
-                value: new foundry.data.fields.NumberField({
-                    min: 0,
-                    initial: 0,
-                }),
-                // Skill
-                skill: new foundry.data.fields.StringField({
-                    blank: false,
-                    choices: Object.entries(CONFIG.COSMERE.skills).reduce((acc, [key, config]) => ({
-                        ...acc,
-                        [key]: config.label,
-                    }), {}),
-                }),
-                rank: new foundry.data.fields.NumberField({
-                    min: 1,
-                    initial: 1,
-                }),
-                // Talent
-                talents: new CollectionField(new foundry.data.fields.SchemaField({
-                    uuid: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    id: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    label: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                }), {
-                    nullable: true,
-                }),
-                // Level
-                level: new foundry.data.fields.NumberField({
-                    min: 0,
-                    initial: 0,
-                    label: 'COSMERE.Item.Talent.Prerequisite.Level.Label',
-                }),
-                // Ancestry
-                ancestry: new foundry.data.fields.SchemaField({
-                    uuid: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    id: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    label: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                }, {
-                    nullable: true,
-                    initial: null,
-                    label: 'COSMERE.Item.Talent.Prerequisite.Ancestry.Label',
-                }),
-                // Culture
-                culture: new foundry.data.fields.SchemaField({
-                    uuid: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    id: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    label: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                }, {
-                    nullable: true,
-                    initial: null,
-                    label: 'COSMERE.Item.Talent.Prerequisite.Culture.Label',
-                }),
-                // Goal
-                goals: new CollectionField(new foundry.data.fields.SchemaField({
-                    uuid: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    id: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    label: new foundry.data.fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                }), {
-                    nullable: true,
-                }),
-            }), {
-                nullable: true,
-            }),
-            prerequisitesMet: new foundry.data.fields.BooleanField(),
-            connections: new CollectionField(new foundry.data.fields.SchemaField({
-                id: new foundry.data.fields.DocumentIdField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                    readonly: false,
-                }),
-                prerequisiteId: new foundry.data.fields.DocumentIdField({
-                    required: true,
-                    nullable: false,
-                }),
-                path: new foundry.data.fields.ArrayField(new foundry.data.fields.SchemaField({
-                    x: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                    }),
-                    y: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                    }),
-                }), {
-                    nullable: true,
-                }),
-            }), {
-                nullable: true,
-            }),
-            // Text node fields
-            text: new foundry.data.fields.StringField({
-                nullable: true,
-            }),
-        }, options, context);
+        super(SCHEMA$3(), options, context);
     }
 }
 
+const SCHEMA$2 = () => ({
+    nodes: new TalentTreeNodeCollectionField({
+        required: true,
+        nullable: false,
+        gmOnly: true,
+    }),
+    viewBounds: new foundry.data.fields.SchemaField({
+        x: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+            label: 'COSMERE.Item.TalentTree.ViewBounds.X.Label',
+        }),
+        y: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+            label: 'COSMERE.Item.TalentTree.ViewBounds.Y.Label',
+        }),
+        width: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 800,
+            label: 'COSMERE.Item.TalentTree.ViewBounds.Width.Label',
+        }),
+        height: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 650,
+            label: 'COSMERE.Item.TalentTree.ViewBounds.Height.Label',
+        }),
+    }, {
+        required: true,
+        nullable: false,
+    }),
+    display: new foundry.data.fields.SchemaField({
+        width: new foundry.data.fields.NumberField({
+            required: false,
+            nullable: true,
+            integer: true,
+            label: 'COSMERE.Item.TalentTree.Display.Width.Label',
+        }),
+        height: new foundry.data.fields.NumberField({
+            required: false,
+            nullable: true,
+            integer: true,
+            label: 'COSMERE.Item.TalentTree.Display.Height.Label',
+        }),
+    }),
+    background: new foundry.data.fields.SchemaField({
+        img: new foundry.data.fields.FilePathField({
+            required: false,
+            nullable: true,
+            categories: ['IMAGE'],
+            label: 'COSMERE.Item.TalentTree.Background.Img.Label',
+        }),
+        width: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+            label: 'COSMERE.Item.TalentTree.Background.Size.Width.Label',
+        }),
+        height: new foundry.data.fields.NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: 0,
+            label: 'COSMERE.Item.TalentTree.Background.Size.Height.Label',
+        }),
+        position: new foundry.data.fields.SchemaField({
+            x: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                integer: true,
+                initial: 0,
+                label: 'COSMERE.Item.TalentTree.Background.Position.X.Label',
+            }),
+            y: new foundry.data.fields.NumberField({
+                required: true,
+                nullable: false,
+                integer: true,
+                initial: 0,
+                label: 'COSMERE.Item.TalentTree.Background.Position.Y.Label',
+            }),
+        }, {
+            required: true,
+            nullable: false,
+        }),
+    }),
+});
 class TalentTreeItemDataModel extends DataModelMixin() {
     static defineSchema() {
-        return foundry.utils.mergeObject(super.defineSchema(), {
-            nodes: new TalentTreeNodeCollectionField({
-                required: true,
-                nullable: false,
-                gmOnly: true,
-            }),
-            viewBounds: new foundry.data.fields.SchemaField({
-                x: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                    label: 'COSMERE.Item.TalentTree.ViewBounds.X.Label',
-                }),
-                y: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                    label: 'COSMERE.Item.TalentTree.ViewBounds.Y.Label',
-                }),
-                width: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 800,
-                    label: 'COSMERE.Item.TalentTree.ViewBounds.Width.Label',
-                }),
-                height: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 650,
-                    label: 'COSMERE.Item.TalentTree.ViewBounds.Height.Label',
-                }),
-            }, {
-                required: true,
-                nullable: false,
-            }),
-            display: new foundry.data.fields.SchemaField({
-                width: new foundry.data.fields.NumberField({
-                    required: false,
-                    nullable: true,
-                    integer: true,
-                    label: 'COSMERE.Item.TalentTree.Display.Width.Label',
-                }),
-                height: new foundry.data.fields.NumberField({
-                    required: false,
-                    nullable: true,
-                    integer: true,
-                    label: 'COSMERE.Item.TalentTree.Display.Height.Label',
-                }),
-            }),
-            background: new foundry.data.fields.SchemaField({
-                img: new foundry.data.fields.FilePathField({
-                    required: false,
-                    nullable: true,
-                    categories: ['IMAGE'],
-                    label: 'COSMERE.Item.TalentTree.Background.Img.Label',
-                }),
-                width: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                    label: 'COSMERE.Item.TalentTree.Background.Size.Width.Label',
-                }),
-                height: new foundry.data.fields.NumberField({
-                    required: true,
-                    nullable: false,
-                    integer: true,
-                    initial: 0,
-                    label: 'COSMERE.Item.TalentTree.Background.Size.Height.Label',
-                }),
-                position: new foundry.data.fields.SchemaField({
-                    x: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                        integer: true,
-                        initial: 0,
-                        label: 'COSMERE.Item.TalentTree.Background.Position.X.Label',
-                    }),
-                    y: new foundry.data.fields.NumberField({
-                        required: true,
-                        nullable: false,
-                        integer: true,
-                        initial: 0,
-                        label: 'COSMERE.Item.TalentTree.Background.Position.Y.Label',
-                    }),
-                }, {
-                    required: true,
-                    nullable: false,
-                }),
-            }),
-        });
+        return foundry.utils.mergeObject(super.defineSchema(), SCHEMA$2());
     }
     prepareDerivedData() {
         // Get item
@@ -26727,7 +26858,6 @@ const config$1 = {
     ["ancestry" /* ItemType.Ancestry */]: AncestryItemDataModel,
     ["culture" /* ItemType.Culture */]: CultureItemDataModel,
     ["path" /* ItemType.Path */]: PathItemDataModel,
-    ["specialty" /* ItemType.Specialty */]: SpecialtyItemDataModel,
     ["talent" /* ItemType.Talent */]: TalentItemDataModel,
     ["trait" /* ItemType.Trait */]: TraitItemDataModel,
     ["action" /* ItemType.Action */]: ActionItemDataModel,
@@ -26738,19 +26868,20 @@ const config$1 = {
     ["talent_tree" /* ItemType.TalentTree */]: TalentTreeItemDataModel,
 };
 
+const SCHEMA$1 = () => ({
+    isStackable: new foundry.data.fields.BooleanField({
+        required: true,
+        initial: false,
+    }),
+    stacks: new foundry.data.fields.NumberField({
+        required: false,
+        nullable: true,
+        min: 0,
+    }),
+});
 class ActiveEffectDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
-        return {
-            isStackable: new foundry.data.fields.BooleanField({
-                required: true,
-                initial: false,
-            }),
-            stacks: new foundry.data.fields.NumberField({
-                required: false,
-                nullable: true,
-                min: 0,
-            }),
-        };
+        return SCHEMA$1();
     }
 }
 
@@ -26758,23 +26889,34 @@ const config = {
     base: ActiveEffectDataModel,
 };
 
+const SCHEMA = () => ({
+    /**
+     * The turn speed type of the combatant, either slow or fast.
+     */
+    turnSpeed: new foundry.data.fields.StringField({
+        required: true,
+        blank: false,
+        initial: "slow" /* TurnSpeed.Slow */,
+        choices: ["slow" /* TurnSpeed.Slow */, "fast" /* TurnSpeed.Fast */],
+    }),
+    /**
+     * Whether or not the combatant has acted this turn.
+     */
+    activated: new foundry.data.fields.BooleanField({
+        required: true,
+        initial: false,
+    }),
+    /**
+     * Whether or not the boss combatant has acted on its fast turn.
+     * This is only used for boss adversaries.
+     */
+    bossFastActivated: new foundry.data.fields.BooleanField({
+        required: false,
+    }),
+});
 class CombatantDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
-        return {
-            turnSpeed: new foundry.data.fields.StringField({
-                required: true,
-                blank: false,
-                initial: "slow" /* TurnSpeed.Slow */,
-                choices: ["slow" /* TurnSpeed.Slow */, "fast" /* TurnSpeed.Fast */],
-            }),
-            activated: new foundry.data.fields.BooleanField({
-                required: true,
-                initial: false,
-            }),
-            bossFastActivated: new foundry.data.fields.BooleanField({
-                required: false,
-            }),
-        };
+        return SCHEMA();
     }
 }
 
@@ -27016,9 +27158,40 @@ function registerSkill(data) {
         register,
     });
 }
+function registerRollData(data) {
+    if (!CONFIG.COSMERE) {
+        throw new Error('Cannot access the API until after the system is initialized.');
+    }
+    // Clean data, remove fields that are not part of the config
+    data = {
+        id: data.id,
+        override: data.override,
+        types: data.types,
+        data: data.data,
+        source: data.source,
+        priority: data.priority,
+        strict: data.strict,
+    };
+    const key = `rollData.${data.id}`;
+    const register = () => {
+        CONFIG.COSMERE.rollData[data.id] = {
+            label: data.id,
+            override: data.override,
+            types: data.types,
+            data: data.data,
+        };
+        return true;
+    };
+    return RegistrationHelper.tryRegisterConfig({
+        key,
+        data,
+        register,
+    });
+}
 
 var ActorAPI = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    registerRollData: registerRollData,
     registerSkill: registerSkill
 });
 
@@ -27592,6 +27765,9 @@ var CosmereUtils = {
     macros,
 };
 
+// TODO: Resolve typing issues
+// NOTE: Use any as workaround for foundry-vtt-types issues
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
 Hooks.once('init', async () => {
     globalThis.cosmereRPG = Object.assign(game.system, {
         api: CosmereAPI,
@@ -27608,8 +27784,7 @@ Hooks.once('init', async () => {
     // NOTE: Disabled for now as v12 doesn't permit users to update the system of combatants they own
     // (CONFIG.Combatant as AnyMutableObject).dataModels =
     //     dataModels.combatant.config;
-    CONFIG.Combatant.documentClass =
-        CosmereCombatant;
+    CONFIG.Combatant.documentClass = CosmereCombatant;
     CONFIG.Token.documentClass = CosmereTokenDocument;
     CONFIG.ActiveEffect.dataModels =
         config;
@@ -27632,7 +27807,6 @@ Hooks.once('init', async () => {
     registerItemSheet("path" /* ItemType.Path */, PathItemSheet);
     registerItemSheet("connection" /* ItemType.Connection */, ConnectionItemSheet);
     registerItemSheet("injury" /* ItemType.Injury */, InjuryItemSheet);
-    registerItemSheet("specialty" /* ItemType.Specialty */, SpecialtyItemSheet);
     registerItemSheet("loot" /* ItemType.Loot */, LootItemSheet);
     registerItemSheet("armor" /* ItemType.Armor */, ArmorItemSheet);
     registerItemSheet("trait" /* ItemType.Trait */, TraitItemSheet);
@@ -27646,26 +27820,24 @@ Hooks.once('init', async () => {
     CONFIG.Dice.types.push(PlotDie);
     CONFIG.Dice.terms.p = PlotDie;
     CONFIG.Dice.termTypes[PlotDie.name] = PlotDie;
-    // NOTE: foundry-vtt-types has two version of the RollTerm class which do not match
-    // causing this to error. Bug?
-    // @league-of-foundry-developers/foundry-vtt-types/src/foundry/client/dice/term.d.mts
-    // @league-of-foundry-developers/foundry-vtt-types/src/foundry/client-esm/dice/terms/term.d.mts
-    // @ts-expect-error see note
     CONFIG.Dice.rolls.push(D20Roll);
-    // @ts-expect-error see note
     CONFIG.Dice.rolls.push(DamageRoll);
-    CONFIG.Canvas.visionModes.sense = new VisionMode({
+    CONFIG.Canvas.visionModes.sense = new foundry.canvas.perception.VisionMode({
         id: 'sense',
         label: 'COSMERE.Actor.Statistics.SensesRange',
         canvas: {
-            shader: ColorAdjustmentsSamplerShader,
+            shader: foundry.canvas.rendering.shaders
+                .ColorAdjustmentsSamplerShader,
             uniforms: { contrast: 0, saturation: -1.0, brightness: 0 },
         },
         lighting: {
             levels: {
-                [VisionMode.LIGHTING_LEVELS.DIM]: VisionMode.LIGHTING_LEVELS.BRIGHT,
+                [foundry.canvas.perception.VisionMode.LIGHTING_LEVELS.DIM]: foundry.canvas.perception.VisionMode.LIGHTING_LEVELS.BRIGHT,
             },
-            background: { visibility: VisionMode.LIGHTING_VISIBILITY.REQUIRED },
+            background: {
+                visibility: foundry.canvas.perception.VisionMode.LIGHTING_VISIBILITY
+                    .REQUIRED,
+            },
         },
         vision: {
             darkness: { adaptive: false },
@@ -27725,23 +27897,20 @@ function registerStatusEffects() {
     // Register status effects
     CONFIG.statusEffects = statusEffects;
 }
-// NOTE: Must cast to `any` as registerSheet type doesn't accept ApplicationV2 (even though it's valid to pass it)
-/* eslint-disable @typescript-eslint/no-explicit-any */
 function registerActorSheet(type, sheet) {
-    Actors.registerSheet(SYSTEM_ID, sheet, {
+    foundry.documents.collections.Actors.registerSheet(SYSTEM_ID, sheet, {
         types: [type],
         makeDefault: true,
         label: `TYPES.Actor.${type}`,
     });
 }
 function registerItemSheet(type, sheet) {
-    Items.registerSheet(SYSTEM_ID, sheet, {
+    foundry.documents.collections.Items.registerSheet(SYSTEM_ID, sheet, {
         types: [type],
         makeDefault: true,
         label: `TYPES.Item.${type}`,
     });
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 /**
  * Configure additional system fonts.
  */
@@ -27868,3 +28037,4 @@ function configureFonts() {
         },
     });
 }
+/* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
