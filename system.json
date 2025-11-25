@@ -172,7 +172,7 @@
         "units": "ft"
     },
     "background": "systems/cosmere-rpg/assets/art/foundry_setup_Cosmere_RPG.webp",
-    "url": "https://github.com/the-metalworks/cosmere-rpg",
+    "url": "https://raw.githubusercontent.com/IvanZadorozhniy/cosmere-rpg-translation",
     "manifest": "https://raw.githubusercontent.com/IvanZadorozhniy/cosmere-rpg-translation/refs/heads/main/system.json",
-    "download": "https://github.com/the-metalworks/cosmere-rpg/releases/download/release-2.0.3/cosmere-rpg-release-2.0.3.zip"
+    "download": "https://github.com/IvanZadorozhniy/cosmere-rpg-translation/releases/download/v2.0.3/cosmere-rpg.zip"
 }
